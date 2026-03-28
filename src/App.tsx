@@ -166,8 +166,9 @@ export default function App() {
     saveProjects(data);
   }, []);
 
-  const handleExportForSimulator = useCallback(() => {
-    return exportForSimulator(controllers, qty, projects[0]?.name ?? 'Project');
+  const handleExportForSimulator = useCallback((projectId: string) => {
+    const project = projects.find(p => p.id === projectId);
+    return exportForSimulator(controllers, qty, project?.name ?? 'Project', projectId);
   }, [controllers, qty, projects]);
 
   const handleImport = useCallback((json: string) => {
@@ -278,6 +279,7 @@ export default function App() {
             med={med}
             qty={qty}
             mod={mod}
+            projects={projects}
             onExportAll={exportAll}
             onImport={handleImport}
             onExportForSimulator={handleExportForSimulator}

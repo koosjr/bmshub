@@ -1,5 +1,6 @@
 import { useState, useMemo, useRef } from 'react';
 import { Controller, EquipEntry, MedEntry, QtyEntry, ModEntry } from '../types';
+import type { Project } from '../types';
 
 interface Props {
   controllers: Controller[];
@@ -7,9 +8,10 @@ interface Props {
   med: MedEntry[];
   qty: QtyEntry[];
   mod: ModEntry[];
+  projects: Project[];
   onExportAll: () => string;
   onImport: (json: string) => void;
-  onExportForSimulator: () => string;
+  onExportForSimulator: (projectId: string) => string;
 }
 
 const IO_COLORS: Record<string, { bg: string; text: string }> = {
@@ -64,10 +66,11 @@ function CopyBlock({ title, content, lang = 'text' }: { title: string; content: 
   );
 }
 
-export default function ExportTab({ controllers, qty: qtyList, onExportAll, onImport, onExportForSimulator }: Props) {
+export default function ExportTab({ controllers, qty: qtyList, projects, onExportAll, onImport, onExportForSimulator }: Props) {
   const [selectedCtrlId, setSelectedCtrlId] = useState<string>(
     controllers[0]?.id ?? ''
   );
+  const [simProjectId, setSimProjectId] = useState<string>(projects[0]?.id ?? '');
   const [importError, setImportError] = useState('');
   const fileRef = useRef<HTMLInputElement>(null);
 
@@ -171,7 +174,7 @@ export default function ExportTab({ controllers, qty: qtyList, onExportAll, onIm
   }
 
   function handleExportForSimulator() {
-    const json = onExportForSimulator();
+    const json = onExportForSimulator(simProjectId);
     const blob = new Blob([json], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -246,6 +249,23 @@ export default function ExportTab({ controllers, qty: qtyList, onExportAll, onIm
       {/* JSON Import / Export */}
       <div className="bg-white rounded-xl border p-5" style={{ borderColor: '#D3D1C7' }}>
         <h3 className="font-semibold text-sm mb-4" style={{ color: '#2C2C2A' }}>Full Data — JSON Import / Export</h3>
+        <div className="flex gap-3 flex-wrap items-end mb-3">
+          <div>
+            <label className="text-xs font-medium block mb-1" style={{ color: '#888780' }}>
+              Site / Project
+            </label>
+            <select
+              className="border rounded px-3 py-2 text-sm"
+              style={{ borderColor: '#D3D1C7', minWidth: 160 }}
+              value={simProjectId}
+              onChange={e => setSimProjectId(e.target.value)}
+            >
+              {projects.map(p => (
+                <option key={p.id} value={p.id}>{p.name}</option>
+              ))}
+            </select>
+          </div>
+        </div>
         <div className="flex gap-3 flex-wrap">
           <button
             onClick={handleExportJson}

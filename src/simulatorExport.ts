@@ -35,10 +35,12 @@ export function exportForSimulator(
   controllers: Controller[],
   qtyList: QtyEntry[],
   projectName: string,
+  projectId: string | null = null,
 ): string {
   const devices: SimExportDevice[] = [];
 
   for (const ctrl of controllers) {
+    if (projectId !== null && ctrl.projectId !== projectId) continue; // filter by project
     const points: SimExportPoint[] = [];
     for (const v of ctrl.variables) {
       const io = resolveIOType(v, qtyList);
@@ -47,17 +49,12 @@ export function exportForSimulator(
     }
     if (points.length === 0) continue;
 
-    // Handle duplicates — each duplicate becomes a separate device entry
-    const count = ctrl.duplicates ?? 1;
-    for (let i = 0; i < count; i++) {
-      const suffix = count > 1 ? ` (${i + 1})` : '';
-      devices.push({
-        id: count > 1 ? `${ctrl.id}-${i}` : ctrl.id,
-        name: `${ctrl.siteName}${suffix}`,
-        description: ctrl.label,
-        points,
-      });
-    }
+    devices.push({
+      id: ctrl.id,
+      name: ctrl.siteName,
+      description: ctrl.label,
+      points,
+    });
   }
 
   const payload: SimulatorExportFile = {

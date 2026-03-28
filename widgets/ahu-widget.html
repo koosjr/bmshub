@@ -1,0 +1,1149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BMSHub — AHU-01</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;700&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+/* ── PALETTE: Wong (2011) colorblind-safe ──────────────────────────
+   OK/Running  #009E73  bluish-green    ●
+   Warning     #E69F00  amber           ▲
+   Fault/Alarm #D55E00  vermillion      ■
+   Info/Target #0072B2  blue            ◆
+   Air stream  #56B4E9  sky blue
+   Inactive    #888888  grey            ○
+   ─────────────────────────────────────────────────────────────── */
+:root {
+  --bg:      #F2F4F7;
+  --surface: #FFFFFF;
+  --border:  #DDE3EC;
+  --bd2:     #C0CEDD;
+  --ok:    #009E73;
+  --warn:  #E69F00;
+  --fault: #D55E00;
+  --info:  #0072B2;
+  --sky:   #56B4E9;
+  --inact: #9AAABB;
+  --t1: #0F1923;
+  --t2: #44556A;
+  --t3: #8A9BB0;
+  --duct-bg:  #EDF3FA;
+  --duct-br:  #9BB8D0;
+  --ret-bg:   #EDF0FA;
+  --fm: 'IBM Plex Mono', monospace;
+  --fs: 'IBM Plex Sans', sans-serif;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0 }
+html { background: var(--bg); font-family: var(--fs); color: var(--t1) }
+body { padding: 12px }
+
+/* ── WIDGET SHELL ─────────────────────────────────────────────── */
+.w {
+  max-width: 1400px; margin: 0 auto;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 16px rgba(0,0,0,.07);
+}
+
+/* ── HEADER ───────────────────────────────────────────────────── */
+.hdr {
+  display: flex; align-items: center; gap: 8px;
+  padding: 9px 16px;
+  border-bottom: 1px solid var(--border);
+  background: #FAFBFC;
+  flex-wrap: wrap;
+}
+.pulse {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--ok); flex-shrink: 0;
+  animation: pulse 2s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%,100% { box-shadow: 0 0 0 0 rgba(0,158,115,.45) }
+  50%      { box-shadow: 0 0 0 5px rgba(0,158,115,0) }
+}
+.unit-name {
+  font-family: var(--fm); font-size: 14px; font-weight: 700;
+  letter-spacing: .04em; color: var(--t1);
+}
+.bdg {
+  padding: 2px 8px; border-radius: 3px;
+  font-family: var(--fm); font-size: 10px; font-weight: 700;
+  letter-spacing: .09em; text-transform: uppercase;
+}
+.bdg-ok    { background: #E4F5EE; color: var(--ok) }
+.bdg-warn  { background: #FFF3DC; color: var(--warn) }
+.bdg-fault { background: #FDECEA; color: var(--fault) }
+.bdg-info  { background: #E3EFF9; color: var(--info) }
+.bdg-grey  { background: #F0F2F4; color: var(--inact) }
+.hdr-ts { margin-left: auto; font-family: var(--fm); font-size: 10px; color: var(--t3) }
+
+/* ── SCHEMATIC SECTION LABEL ─────────────────────────────────── */
+.sec-lbl {
+  font-family: var(--fm); font-size: 9px; letter-spacing: .18em;
+  text-transform: uppercase; color: var(--t3);
+  padding: 8px 16px 4px;
+}
+
+/* ── SCHEMATIC OUTER WRAP ─────────────────────────────────────── */
+.schem-outer {
+  overflow-x: auto;
+  padding: 0 12px 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* ── P&ID GRID ────────────────────────────────────────────────── */
+/*
+   11 columns — one per air-path station
+   Col:  1=OAT  2=FAD  3=FILT  4=MIX  5=FAN  6=HW  7=CHW  8=HUM  9=FD  10=SAT  11=ZONE
+   Rows: 1=return sensors  2=return duct  3=main duct  4=below sensors
+*/
+.pgrid {
+  display: grid;
+  grid-template-columns: repeat(11, 96px);
+  grid-template-rows: 76px 28px 108px 72px;
+  min-width: 1056px;
+  position: relative;
+}
+
+/* ── DUCT CELL BACKGROUNDS ──────────────────────────────────────
+   Row 3 (main duct): cols 1-10 get the duct fill + top/bottom border.
+   Cols 2-9 are "inside the AHU box".
+   Col 1 = OA inlet section (outside, green-tinted).
+   Col 10 = supply exit (outside).
+   ─────────────────────────────────────────────────────────────── */
+.dc { /* duct cell */
+  background: var(--duct-bg);
+  border-top: 2px solid var(--duct-br);
+  border-bottom: 2px solid var(--duct-br);
+  display: flex; align-items: center; justify-content: center;
+}
+.dc-oa { background: #EAF5EE; } /* OA inlet — greenish tint */
+.dc-start { border-left: 2px solid var(--duct-br); border-radius: 4px 0 0 4px }
+.dc-end   { border-right: 2px solid var(--duct-br); border-radius: 0 4px 4px 0 }
+.dc-gap   { background: transparent; border: none } /* no-man's land */
+/* AHU unit box border — cols 2-9 get a top outline */
+.dc-box-top    { border-top-color: #7090A8; border-top-width: 2.5px }
+.dc-box-left   { border-left: 2px solid #7090A8 }
+.dc-box-right  { border-right: 2px solid #7090A8 }
+
+/* Return duct cells — row 2, cols 4-10 */
+.rc { /* return duct cell */
+  background: var(--ret-bg);
+  border-top: 1.5px solid #9AAED0;
+  border-bottom: 1.5px solid #9AAED0;
+}
+.rc-start { border-left: 1.5px solid #9AAED0; border-radius: 4px 0 0 4px }
+.rc-end   {
+  border-right: 1.5px solid #9AAED0;
+  border-radius: 0 4px 4px 0;
+  /* descends into mixing on row 3 */
+  border-bottom: none;
+}
+/* Vertical drop from return duct down into mixing point */
+.rc-drop {
+  background: var(--ret-bg);
+  border-left: 1.5px solid #9AAED0;
+  border-right: 1.5px solid #9AAED0;
+  grid-row: 2; grid-column: 4;
+}
+
+/* Spacer cells */
+.sp { background: transparent }
+
+/* ── AIR FLOW ARROWS in duct cells ─────────────────────────────
+   Small CSS arrow markers showing flow direction.
+   Fresh air (green ▶), return air (blue ◀), supply (sky ▶)
+   ─────────────────────────────────────────────────────────────── */
+.arr-r, .arr-l {
+  width: 0; height: 0;
+  pointer-events: none;
+}
+.arr-r { /* pointing right — supply/fresh */
+  border-top: 6px solid transparent;
+  border-bottom: 6px solid transparent;
+  border-left: 9px solid var(--sky);
+  opacity: .55;
+}
+.arr-r.arr-oa { border-left-color: var(--ok); opacity: .7 }
+.arr-l { /* pointing left — return air */
+  border-top: 6px solid transparent;
+  border-bottom: 6px solid transparent;
+  border-right: 9px solid #7BAFD4;
+  opacity: .5;
+}
+.fan-off .arr-r  { opacity: .12 }
+.fan-off .arr-l  { opacity: .12 }
+
+/* ── TICKET BASE ──────────────────────────────────────────────── */
+.tk {
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 3px;
+  cursor: pointer;
+  transition: transform .14s;
+  user-select: none;
+  position: relative; /* for fault badge */
+}
+.tk:hover { transform: scale(1.07) }
+.tk.selected .tk-shape { outline: 2px solid var(--info); outline-offset: 2px }
+
+.tk-tag {
+  font-family: var(--fm); font-size: 9px; font-weight: 700;
+  letter-spacing: .09em; text-transform: uppercase;
+  color: var(--t3); line-height: 1; text-align: center;
+}
+.tk-val {
+  font-family: var(--fm); font-size: 13px; font-weight: 700;
+  color: var(--t1); line-height: 1.1; text-align: center;
+  transition: color .3s;
+}
+.tk-unit {
+  font-family: var(--fm); font-size: 8px;
+  color: var(--t3); line-height: 1;
+}
+.tk-badge {
+  font-family: var(--fm); font-size: 8px; font-weight: 700;
+  padding: 1px 4px; border-radius: 2px; letter-spacing: .04em;
+}
+.io-AI { background: #E3EFF9; color: var(--info) }
+.io-AO { background: #FFF3DC; color: var(--warn) }
+.io-DI { background: #E4F5EE; color: var(--ok) }
+.io-DO { background: #FDECEA; color: var(--fault) }
+
+/* ── SHAPE: CIRCLE (analogue sensor / AI) ─────────────────────── */
+.tk-shape.circle {
+  width: 54px; height: 54px; border-radius: 50%;
+  border: 2.5px solid var(--info);
+  background: white;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  transition: border-color .3s;
+}
+.tk[data-state="ok"]    .tk-shape.circle { border-color: var(--ok) }
+.tk[data-state="warn"]  .tk-shape.circle { border-color: var(--warn) }
+.tk[data-state="fault"] .tk-shape.circle { border-color: var(--fault) }
+
+/* ── SHAPE: DIAMOND (discrete switch / DI) ───────────────────── */
+.tk-shape.diamond-host {
+  width: 58px; height: 58px;
+  display: flex; align-items: center; justify-content: center;
+}
+.tk-shape.diamond {
+  width: 40px; height: 40px;
+  transform: rotate(45deg);
+  border: 2.5px solid var(--ok);
+  background: white;
+  display: flex; align-items: center; justify-content: center;
+  transition: border-color .3s, background .3s;
+}
+.tk-shape.diamond .diamond-inner {
+  transform: rotate(-45deg);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 0;
+}
+.tk[data-state="ok"]    .tk-shape.diamond { border-color: var(--ok);    background: #EDF8F4 }
+.tk[data-state="warn"]  .tk-shape.diamond { border-color: var(--warn);  background: #FFF8E8 }
+.tk[data-state="fault"] .tk-shape.diamond { border-color: var(--fault); background: #FEF0EC }
+
+/* ── SHAPE: HEXAGON (damper / AO) ─────────────────────────────── */
+.tk-shape.hex-host {
+  width: 58px; height: 52px;
+  position: relative;
+  display: flex; align-items: center; justify-content: center;
+}
+/* Two-layer hex: outer = border colour, inner = white fill */
+.tk-shape.hex-host::before,
+.tk-shape.hex-host::after {
+  content: '';
+  position: absolute;
+  clip-path: polygon(25% 0%,75% 0%,100% 50%,75% 100%,25% 100%,0% 50%);
+}
+.tk-shape.hex-host::before {
+  inset: 0; background: var(--inact);
+  transition: background .3s;
+}
+.tk-shape.hex-host::after {
+  inset: 2.5px; background: white;
+}
+.tk-shape.hex-host .hex-content {
+  position: relative; z-index: 1;
+  display: flex; flex-direction: column;
+  align-items: center; gap: 0;
+}
+.tk[data-state="active"] .tk-shape.hex-host::before { background: var(--ok) }
+.tk[data-state="warn"]   .tk-shape.hex-host::before { background: var(--warn) }
+.tk[data-state="stby"]   .tk-shape.hex-host { opacity: .45 }
+
+/* ── SHAPE: RECTANGLE (analogue actuator / valve) ─────────────── */
+.tk-shape.rect {
+  min-width: 70px; min-height: 52px;
+  border: 2.5px solid var(--inact);
+  border-radius: 3px; background: white;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 5px 7px; gap: 3px;
+  transition: border-color .3s;
+}
+.tk-shape.rect .pbar {
+  width: 100%; height: 4px;
+  background: #E8EDF2; border-radius: 2px; overflow: hidden;
+}
+.tk-shape.rect .pbar-fill {
+  height: 100%; border-radius: 2px;
+  background: var(--ok);
+  transition: width .8s ease, background .3s;
+}
+.tk[data-state="active"] .tk-shape.rect { border-color: var(--ok) }
+.tk[data-state="active"] .pbar-fill     { background: var(--ok) }
+.tk[data-state="warn"]   .tk-shape.rect { border-color: var(--warn) }
+.tk[data-state="warn"]   .pbar-fill     { background: var(--warn) }
+.tk[data-state="fault"]  .tk-shape.rect { border-color: var(--fault) }
+.tk[data-state="fault"]  .pbar-fill     { background: var(--fault) }
+.tk[data-state="stby"]   .tk-shape.rect { border-color: var(--inact); opacity: .45 }
+
+/* ── SHAPE: FAN CIRCLE ────────────────────────────────────────── */
+.tk-shape.fan {
+  width: 60px; height: 60px; border-radius: 50%;
+  border: 3px solid var(--inact);
+  background: white;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  position: relative; overflow: hidden;
+  transition: border-color .3s;
+}
+.tk-shape.fan .fan-ring {
+  position: absolute; inset: 6px; border-radius: 50%;
+  border: 2px solid transparent;
+  border-top-color: rgba(0,158,115,.35);
+  border-right-color: rgba(0,158,115,.35);
+  opacity: 0;
+  transition: opacity .4s;
+}
+.tk[data-state="run"] .tk-shape.fan           { border-color: var(--ok) }
+.tk[data-state="run"] .fan-ring               { opacity: 1; animation: spin 1.3s linear infinite }
+.tk[data-state="fault"] .tk-shape.fan         { border-color: var(--fault) }
+@keyframes spin { to { transform: rotate(360deg) } }
+
+/* ── DIMMED (feature not installed) ──────────────────────────── */
+.tk.dimmed { opacity: .28; pointer-events: none; filter: grayscale(.8) }
+
+/* ── FAULT BADGE on ticket ───────────────────────────────────── */
+.tk-fault-dot {
+  position: absolute; top: -4px; right: 2px;
+  width: 10px; height: 10px; border-radius: 50%;
+  background: var(--fault); border: 2px solid white;
+  display: none;
+}
+.tk[data-state="fault"] .tk-fault-dot,
+.tk[data-state="warn"]  .tk-fault-dot  { display: block }
+.tk[data-state="warn"]  .tk-fault-dot  { background: var(--warn) }
+
+/* ── RETURN DUCT LABEL ───────────────────────────────────────── */
+.ret-duct-lbl {
+  grid-row: 2; grid-column: 6 / 9;
+  display: flex; align-items: center; justify-content: center;
+}
+.ret-lbl-text {
+  font-family: var(--fm); font-size: 8px; letter-spacing: .13em;
+  text-transform: uppercase; color: var(--t3);
+}
+
+/* ── AHU BOX LABEL ───────────────────────────────────────────── */
+.ahu-box-lbl {
+  position: absolute;
+  font-family: var(--fm); font-size: 8px; letter-spacing: .16em;
+  text-transform: uppercase; color: #90A4B4;
+}
+
+/* ── CHARTS ROW ───────────────────────────────────────────────── */
+.charts-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  border-top: 1px solid var(--border);
+  background: var(--border);
+  gap: 1px;
+}
+.chart-cell {
+  background: var(--surface);
+  padding: 10px 16px 14px;
+}
+.ch-label {
+  font-family: var(--fm); font-size: 9px; letter-spacing: .15em;
+  text-transform: uppercase; color: var(--t3);
+  display: flex; align-items: center; gap: 6px;
+  margin-bottom: 4px;
+}
+.ch-big {
+  font-family: var(--fm); font-size: 26px; font-weight: 700;
+  color: var(--t1); line-height: 1; margin-bottom: 8px;
+}
+.ch-big sub { font-size: 12px; color: var(--t3); font-weight: 400; vertical-align: baseline }
+.ch-wrap { height: 72px; position: relative }
+
+/* ── DIAGNOSTICS ──────────────────────────────────────────────── */
+.diag-band {
+  padding: 8px 14px;
+  border-top: 1px solid var(--border);
+  background: #FAFBFC;
+  display: flex; flex-wrap: wrap; gap: 8px; align-items: flex-start;
+}
+.diag-ok {
+  font-family: var(--fm); font-size: 12px; color: var(--ok);
+  display: flex; align-items: center; gap: 7px;
+}
+.diag-ok::before { content: '●'; font-size: 10px }
+.diag-card {
+  flex: 1; min-width: 260px;
+  border-left: 3px solid var(--fault);
+  background: white; border-radius: 0 4px 4px 0;
+  padding: 7px 10px;
+  box-shadow: 0 1px 4px rgba(0,0,0,.05);
+}
+.diag-card.warn  { border-left-color: var(--warn) }
+.diag-title {
+  font-size: 12px; font-weight: 600; color: var(--t1);
+  margin-bottom: 3px; display: flex; align-items: center; gap: 5px;
+}
+.diag-title::before { content: '■'; font-size: 8px; color: var(--fault) }
+.diag-card.warn .diag-title::before { color: var(--warn) }
+.diag-msg { font-size: 11px; color: var(--t2); line-height: 1.6; font-family: var(--fs) }
+
+/* ── CONTROL BAR ──────────────────────────────────────────────── */
+.ctrl-bar {
+  padding: 8px 14px; border-top: 1px solid var(--border);
+  background: #FAFBFC;
+  display: flex; gap: 7px; flex-wrap: wrap; align-items: center;
+}
+.ctrl-lbl {
+  font-family: var(--fm); font-size: 10px; letter-spacing: .14em;
+  text-transform: uppercase; color: var(--t3);
+}
+.sep { width: 1px; height: 18px; background: var(--border); margin: 0 2px }
+.btn {
+  padding: 4px 11px; border-radius: 4px;
+  font-family: var(--fm); font-size: 10px; font-weight: 700;
+  letter-spacing: .07em; cursor: pointer;
+  border: 1px solid; background: white;
+  transition: background .13s;
+}
+.btn-n { border-color: var(--bd2); color: var(--t2) }
+.btn-n:hover { background: #F0F4F8 }
+.btn-d { border-color: rgba(213,94,0,.4); color: var(--fault) }
+.btn-d:hover { background: #FEF0EC }
+.btn-w { border-color: rgba(230,159,0,.4); color: var(--warn) }
+.btn-w:hover { background: #FFF8E8 }
+.btn-g { border-color: rgba(0,158,115,.4); color: var(--ok) }
+.btn-g:hover { background: #EDF8F4 }
+
+/* Feature toggles */
+.feat-wrap {
+  padding: 6px 14px 8px; border-top: 1px solid var(--border);
+  background: #FAFBFC;
+  display: flex; gap: 14px; flex-wrap: wrap; align-items: center;
+}
+.feat-item {
+  display: flex; align-items: center; gap: 5px;
+  font-family: var(--fm); font-size: 11px; color: var(--t2); cursor: pointer;
+}
+.feat-item input[type=checkbox] {
+  accent-color: var(--ok); width: 13px; height: 13px; cursor: pointer;
+}
+
+/* ── DETAIL PANEL ─────────────────────────────────────────────── */
+.detail {
+  position: fixed; right: 16px; bottom: 16px;
+  width: 250px;
+  background: white; border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: 0 8px 32px rgba(0,0,0,.13);
+  padding: 14px; z-index: 200;
+  transform: translateY(20px) scale(.96);
+  opacity: 0; pointer-events: none;
+  transition: transform .22s cubic-bezier(.34,1.56,.64,1), opacity .18s;
+}
+.detail.open {
+  transform: translateY(0) scale(1);
+  opacity: 1; pointer-events: all;
+}
+.dp-close {
+  position: absolute; top: 9px; right: 11px;
+  font-size: 14px; color: var(--t3);
+  background: none; border: none; cursor: pointer; line-height: 1;
+}
+.dp-tag  { font-family: var(--fm); font-size: 14px; font-weight: 700; color: var(--t1) }
+.dp-desc { font-size: 11px; color: var(--t3); margin-bottom: 8px; margin-top: 1px }
+.dp-val  { font-family: var(--fm); font-size: 30px; font-weight: 700; color: var(--t1); line-height: 1 }
+.dp-unit { font-size: 13px; color: var(--t3) }
+.dp-wrap { height: 72px; margin-top: 10px }
+.dp-io   { margin-top: 6px }
+
+.brand {
+  padding: 4px 14px 7px; text-align: right;
+  font-family: var(--fm); font-size: 8px;
+  letter-spacing: .2em; color: var(--t3); text-transform: uppercase;
+}
+</style>
+</head>
+<body>
+<div class="w">
+
+  <!-- ── HEADER ──────────────────────────────────────────────── -->
+  <div class="hdr" id="hdr">
+    <div class="pulse" id="pulse"></div>
+    <span class="unit-name">AHU-01 — K Floor</span>
+    <span class="bdg" id="bdg-run">RUNNING</span>
+    <span class="bdg" id="bdg-mode">AUTO</span>
+    <span class="bdg" id="bdg-sched">SCHEDULE ACTIVE</span>
+    <span class="bdg" id="bdg-fault" style="display:none">FAULT</span>
+    <span class="hdr-ts" id="ts">—</span>
+  </div>
+
+  <div class="sec-lbl">P&amp;ID Process Schematic</div>
+
+  <!-- ── SCHEMATIC ──────────────────────────────────────────── -->
+  <div class="schem-outer" id="schem-outer">
+    <div class="pgrid" id="pgrid">
+
+      <!-- ─── ROW 1: RETURN AIR SENSORS (grid-row 1) ─────────
+           Only cols 4,5,6 used — sit above the mixing zone      -->
+
+      <!-- ─── ROW 2: RETURN DUCT CHANNEL (grid-row 2) ───────── -->
+      <!-- cols 4-10: return duct background -->
+      <div class="rc rc-start" style="grid-row:2;grid-column:4"></div>
+      <div class="rc" style="grid-row:2;grid-column:5">
+        <div class="arr-l" id="ret-arr1"></div>
+      </div>
+      <div class="rc ret-duct-lbl" style="grid-row:2;grid-column:6/9">
+        <span class="ret-lbl-text">↩ Return Air</span>
+      </div>
+      <div class="rc" style="grid-row:2;grid-column:9">
+        <div class="arr-l" id="ret-arr2"></div>
+      </div>
+      <div class="rc rc-end" style="grid-row:2;grid-column:10"></div>
+
+      <!-- ─── ROW 3: MAIN DUCT (grid-row 3) ──────────────────── -->
+      <!-- Col 1: OA inlet — outside, green tint -->
+      <div class="dc dc-oa dc-start dc-gap" style="grid-row:3;grid-column:1">
+        <div class="arr-r arr-oa" id="oa-arr"></div>
+      </div>
+      <!-- Cols 2-9: inside AHU unit box -->
+      <div class="dc dc-box-top dc-box-left" style="grid-row:3;grid-column:2"></div>
+      <div class="dc dc-box-top" style="grid-row:3;grid-column:3"></div>
+      <div class="dc dc-box-top" style="grid-row:3;grid-column:4">
+        <!-- vertical return duct connector -->
+        <div style="position:absolute;top:-28px;left:50%;transform:translateX(-50%);
+                    width:38px;bottom:0;border-left:1.5px solid #9AAED0;
+                    border-right:1.5px solid #9AAED0;background:var(--ret-bg);z-index:0;
+                    pointer-events:none"></div>
+      </div>
+      <div class="dc dc-box-top" style="grid-row:3;grid-column:5">
+        <div class="arr-r" id="darr1"></div>
+      </div>
+      <div class="dc dc-box-top" style="grid-row:3;grid-column:6"></div>
+      <div class="dc dc-box-top" style="grid-row:3;grid-column:7">
+        <div class="arr-r" id="darr2"></div>
+      </div>
+      <div class="dc dc-box-top" style="grid-row:3;grid-column:8"></div>
+      <div class="dc dc-box-top dc-box-right" style="grid-row:3;grid-column:9">
+        <div class="arr-r" id="darr3"></div>
+      </div>
+      <!-- Col 10: SAT — supply exit -->
+      <div class="dc dc-end" style="grid-row:3;grid-column:10"></div>
+      <!-- Col 11: Zone — outside, no duct background -->
+      <div class="sp" style="grid-row:3;grid-column:11"></div>
+
+      <!-- ─── ROW 4: BELOW SENSORS (grid-row 4) ───────────────
+           Spacers — tickets injected by JS                       -->
+
+    </div><!-- /pgrid -->
+  </div><!-- /schem-outer -->
+
+  <!-- ── DIAGNOSTICS ────────────────────────────────────────── -->
+  <div class="diag-band" id="diag-band">
+    <div class="diag-ok">All systems operating normally</div>
+  </div>
+
+  <!-- ── CHARTS ─────────────────────────────────────────────── -->
+  <div class="charts-row">
+    <div class="chart-cell">
+      <div class="ch-label">
+        Supply Air Temp <span class="tk-badge io-AI">AI</span>
+      </div>
+      <div class="ch-big" id="cv-sat">16.2 <sub>°C</sub></div>
+      <div class="ch-wrap"><canvas id="ch-sat"></canvas></div>
+    </div>
+    <div class="chart-cell">
+      <div class="ch-label">
+        Zone Temperature <span class="tk-badge io-AI">AI</span>
+      </div>
+      <div class="ch-big" id="cv-zone">22.4 <sub>°C</sub></div>
+      <div class="ch-wrap"><canvas id="ch-zone"></canvas></div>
+    </div>
+    <div class="chart-cell">
+      <div class="ch-label">
+        CO₂ Level <span class="tk-badge io-AI">AI</span>
+      </div>
+      <div class="ch-big" id="cv-co2">847 <sub>ppm</sub></div>
+      <div class="ch-wrap"><canvas id="ch-co2"></canvas></div>
+    </div>
+  </div>
+
+  <!-- ── CONTROLS ───────────────────────────────────────────── -->
+  <div class="ctrl-bar">
+    <span class="ctrl-lbl">Simulate</span>
+    <button class="btn btn-d" onclick="simFire()">🔴 Fire Alarm</button>
+    <button class="btn btn-w" onclick="simFilter()">▲ Dirty Filter</button>
+    <button class="btn btn-g" onclick="clearSim()">● Clear Faults</button>
+    <div class="sep"></div>
+    <span class="ctrl-lbl">Fan</span>
+    <button class="btn btn-n" onclick="toggleFan()">Toggle Fan</button>
+  </div>
+
+  <!-- ── FEATURE TOGGLES ────────────────────────────────────── -->
+  <div class="feat-wrap">
+    <span class="ctrl-lbl">Features</span>
+    <label class="feat-item"><input type="checkbox" checked onchange="setFeat('economy',this.checked)"> Economy Cycle</label>
+    <label class="feat-item"><input type="checkbox" checked onchange="setFeat('heating',this.checked)"> Heating</label>
+    <label class="feat-item"><input type="checkbox" checked onchange="setFeat('cooling',this.checked)"> Cooling</label>
+    <label class="feat-item"><input type="checkbox" checked onchange="setFeat('humid',this.checked)"> Humidifier</label>
+    <label class="feat-item"><input type="checkbox" checked onchange="setFeat('co2',this.checked)"> CO₂ / IAQ</label>
+  </div>
+
+  <div class="brand">BMSHub · AHU Widget v3</div>
+</div><!-- /widget -->
+
+<!-- ── DETAIL PANEL ──────────────────────────────────────────── -->
+<div class="detail" id="detail">
+  <button class="dp-close" onclick="closeDetail()">✕</button>
+  <div class="dp-tag"  id="dp-tag">—</div>
+  <div class="dp-desc" id="dp-desc">—</div>
+  <span class="dp-val"  id="dp-val">—</span>
+  <span class="dp-unit" id="dp-unit"></span>
+  <div class="dp-io"   id="dp-io"></div>
+  <div class="dp-wrap"><canvas id="dp-ch"></canvas></div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+//  MOCK DATA
+// ═══════════════════════════════════════════════════════════════
+const D = {
+  FAN_RUN:1, FAN_FLT:0, FAN_VSD:65,
+  SAT:16.2,  RAT:24.1,  OAT:18.0, MAT:18.3,
+  ZONE_TMP:22.4, ZONE_SP:22.0, ZONE_HUM:48,
+  CO2:847,
+  CHW_VLV:34, CHW_ST:7.2, CHW_RT:12.8,
+  HW_VLV:0,
+  OA_DMP:35,  RA_DMP:65,
+  HUM_EN:1,   HUM_SP:50, HUM_RH:48,
+  FIRE_ALM:0, FIRE_DMP:1,
+  FILT_DP:1,  FROST:0,
+  AUTO:1, SCHED:1, BMS_START:1,
+  _frozen: false
+};
+
+const FEAT = { economy:true, heating:true, cooling:true, humid:true, co2:true };
+
+// ═══════════════════════════════════════════════════════════════
+//  COMPONENT DEFINITIONS
+//  Each component: id, shape, type, label, desc,
+//                  gridCol, gridRow, feature?,
+//                  getValue(), getUnit(), getState(), histKey?
+// ═══════════════════════════════════════════════════════════════
+const COMPS = [
+  // ── RETURN AIR SENSORS (row 1, above mixing zone) ──────────
+  { id:'RAT',    shape:'circle',  type:'AI', label:'RAT',    desc:'Return Air Temp',
+    col:4, row:1, pct:true,
+    getValue:()=>D.RAT.toFixed(1),    getUnit:()=>'°C',
+    getState:()=>'ok',                histKey:'RAT' },
+
+  { id:'RAH',    shape:'circle',  type:'AI', label:'RA H',   desc:'Return Air Humidity',
+    col:5, row:1,
+    getValue:()=>D.ZONE_HUM.toFixed(0), getUnit:()=>'%RH',
+    getState:()=>'ok',                  histKey:'RAH' },
+
+  { id:'RACO2',  shape:'circle',  type:'AI', label:'CO₂',    desc:'Return Air CO₂',
+    col:6, row:1, feature:'co2',
+    getValue:()=>Math.round(D.CO2).toString(), getUnit:()=>'ppm',
+    getState:()=>D.CO2>1500?'fault':D.CO2>1200?'warn':'ok', histKey:'CO2' },
+
+  // ── MAIN DUCT (row 3) ───────────────────────────────────────
+  { id:'OAT',    shape:'circle',  type:'AI', label:'OAT',    desc:'Outside Air Temp',
+    col:1, row:3,
+    getValue:()=>D.OAT.toFixed(1),    getUnit:()=>'°C',
+    getState:()=>'ok',                histKey:'OAT' },
+
+  { id:'FAD',    shape:'hex',     type:'AO', label:'FAD',    desc:'Fresh Air Damper',
+    col:2, row:3, feature:'economy',
+    getValue:()=>D.OA_DMP+'%',        getUnit:()=>'',
+    getState:()=>FEAT.economy ? (D.OA_DMP>5?'active':'stby') : 'stby' },
+
+  { id:'FILT',   shape:'rect',    type:'DI', label:'FILTER', desc:'Air Filter',
+    col:3, row:3,
+    getValue:()=>D.FILT_DP?'DIRTY':'CLEAN', getUnit:()=>'',
+    getState:()=>D.FILT_DP?'warn':'active' },
+
+  { id:'RAD',    shape:'hex',     type:'AO', label:'RAD',    desc:'Return Air Damper',
+    col:4, row:3, feature:'economy',
+    getValue:()=>D.RA_DMP+'%',        getUnit:()=>'',
+    getState:()=>FEAT.economy ? 'active' : 'stby' },
+
+  { id:'FAN',    shape:'fan',     type:'DO', label:'FAN',    desc:'Supply Fan / VSD',
+    col:5, row:3,
+    getValue:()=>D.FAN_RUN ? D.FAN_VSD.toFixed(0)+'%' : 'OFF', getUnit:()=>'VSD',
+    getState:()=>D.FAN_FLT?'fault': D.FAN_RUN?'run':'stby' },
+
+  { id:'HWVLV',  shape:'rect',    type:'AO', label:'HW VLV', desc:'Heating Valve',
+    col:6, row:3, feature:'heating',
+    getValue:()=>D.HW_VLV.toFixed(0)+'%', getUnit:()=>'',
+    getState:()=>!FEAT.heating?'stby': D.HW_VLV>5?'active':'stby' },
+
+  { id:'CHWVLV', shape:'rect',    type:'AO', label:'CHW VLV',desc:'Cooling Valve',
+    col:7, row:3, feature:'cooling',
+    getValue:()=>D.CHW_VLV.toFixed(0)+'%', getUnit:()=>'',
+    getState:()=>!FEAT.cooling?'stby': D.CHW_VLV>5?'active':'stby' },
+
+  { id:'HUM',    shape:'rect',    type:'DO', label:'HUMID',  desc:'Humidifier',
+    col:8, row:3, feature:'humid',
+    getValue:()=>D.HUM_EN && FEAT.humid ? D.HUM_RH.toFixed(0)+'%' : 'OFF', getUnit:()=>'RH',
+    getState:()=>!FEAT.humid?'stby': D.HUM_EN?'active':'stby' },
+
+  { id:'FD',     shape:'diamond', type:'DI', label:'FIRE D', desc:'Fire Damper',
+    col:9, row:3,
+    getValue:()=>D.FIRE_DMP?'OPEN':'CLOSED', getUnit:()=>'',
+    getState:()=>D.FIRE_ALM?'fault': !D.FIRE_DMP?'fault': 'ok' },
+
+  { id:'SAT',    shape:'circle',  type:'AI', label:'SAT',    desc:'Supply Air Temp',
+    col:10, row:3,
+    getValue:()=>D.SAT.toFixed(1),    getUnit:()=>'°C',
+    getState:()=>D.SAT<8?'warn': D.SAT>28?'warn':'ok', histKey:'SAT' },
+
+  { id:'ZONE',   shape:'circle',  type:'AI', label:'ZONE',   desc:'Zone Temperature',
+    col:11, row:3,
+    getValue:()=>D.ZONE_TMP.toFixed(1), getUnit:()=>'°C',
+    getState:()=>Math.abs(D.ZONE_TMP-D.ZONE_SP)>2?'warn':'ok', histKey:'ZONE' },
+
+  // ── BELOW DUCT (row 4) ──────────────────────────────────────
+  { id:'DFSW',   shape:'diamond', type:'DI', label:'DFSW',   desc:'Dirty Filter Switch',
+    col:3, row:4,
+    getValue:()=>D.FILT_DP?'DIRTY':'CLEAN', getUnit:()=>'',
+    getState:()=>D.FILT_DP?'warn':'ok' },
+
+  { id:'AFS',    shape:'diamond', type:'DI', label:'AFS',    desc:'Airflow Switch',
+    col:5, row:4,
+    getValue:()=>D.FAN_RUN && !D.AFS===false ? 'FLOW':'FLOW', getUnit:()=>'',
+    getState:()=>(D.FAN_RUN && D.AFS===0)?'fault':'ok' },
+
+  { id:'FROST',  shape:'diamond', type:'DI', label:'FROST',  desc:'Frost Stat',
+    col:6, row:4,
+    getValue:()=>D.FROST?'TRIP':'CLEAR', getUnit:()=>'',
+    getState:()=>D.FROST?'fault':'ok' },
+];
+
+// ═══════════════════════════════════════════════════════════════
+//  BUILD SCHEMATIC — inject tickets into the CSS grid
+// ═══════════════════════════════════════════════════════════════
+function buildSchematic() {
+  const grid = document.getElementById('pgrid');
+
+  COMPS.forEach(c => {
+    const el = document.createElement('div');
+    el.className = 'tk';
+    el.id = 'tk-' + c.id;
+    el.dataset.state = c.getState();
+    el.style.gridColumn = c.col;
+    el.style.gridRow    = c.row;
+    el.style.alignSelf  = 'center';
+    el.style.justifySelf= 'center';
+    el.style.zIndex     = '10';
+    el.style.position   = 'relative';
+    if (c.feature && !FEAT[c.feature]) el.classList.add('dimmed');
+    el.onclick = () => openDetail(c);
+    el.title   = c.desc;
+
+    el.innerHTML = buildTicketHTML(c);
+    grid.appendChild(el);
+  });
+}
+
+function buildTicketHTML(c) {
+  const val  = c.getValue();
+  const unit = c.getUnit();
+  const pct  = parseFloat(val) || 0;
+  let shapeHTML = '';
+
+  if (c.shape === 'circle') {
+    shapeHTML = `
+      <div class="tk-shape circle">
+        <span class="tk-val" id="v-${c.id}">${val}</span>
+        <span class="tk-unit">${unit}</span>
+      </div>`;
+  } else if (c.shape === 'diamond') {
+    shapeHTML = `
+      <div class="tk-shape diamond-host">
+        <div class="tk-shape diamond">
+          <div class="diamond-inner">
+            <span class="tk-val" id="v-${c.id}" style="font-size:9px">${val}</span>
+          </div>
+        </div>
+      </div>`;
+  } else if (c.shape === 'hex') {
+    shapeHTML = `
+      <div class="tk-shape hex-host">
+        <div class="hex-content">
+          <span class="tk-val" id="v-${c.id}" style="font-size:11px">${val}</span>
+        </div>
+      </div>`;
+  } else if (c.shape === 'rect') {
+    const showBar = c.type === 'AO';
+    shapeHTML = `
+      <div class="tk-shape rect">
+        <span class="tk-val" id="v-${c.id}">${val}</span>
+        ${showBar ? `<div class="pbar"><div class="pbar-fill" id="pb-${c.id}" style="width:${pct}%"></div></div>` : ''}
+      </div>`;
+  } else if (c.shape === 'fan') {
+    shapeHTML = `
+      <div class="tk-shape fan">
+        <div class="fan-ring"></div>
+        <span class="tk-val" id="v-${c.id}" style="font-size:12px">${val}</span>
+        <span class="tk-unit">${unit}</span>
+      </div>`;
+  }
+
+  return `
+    <div class="tk-fault-dot"></div>
+    <span class="tk-tag">${c.label}</span>
+    ${shapeHTML}
+    <span class="tk-badge io-${c.type}">${c.type}</span>`;
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  DATA UPDATE
+// ═══════════════════════════════════════════════════════════════
+function drift() {
+  if (D._frozen) return;
+  D.OAT      = clamp(D.OAT      + rand(.25),  -5, 40);
+  D.SAT      = clamp(D.SAT      + rand(.35),   5, 35);
+  D.RAT      = clamp(D.RAT      + rand(.15),  15, 35);
+  D.ZONE_TMP = clamp(D.ZONE_TMP + rand(.12),  18, 30);
+  D.FAN_VSD  = clamp(D.FAN_VSD  + rand(1.5),  30, 100);
+  D.CO2      = clamp(D.CO2      + rand(10),  400, 1600);
+  D.CHW_VLV  = clamp(D.CHW_VLV  + rand(2),    0, 100);
+  D.ZONE_HUM = clamp(D.ZONE_HUM + rand(.3),   20, 80);
+  D.HUM_RH   = clamp(D.HUM_RH   + rand(.3),   20, 80);
+}
+const rand  = n => (Math.random()-.5)*2*n;
+const clamp = (v,mn,mx) => Math.max(mn, Math.min(mx, v));
+
+function updateAll() {
+  drift();
+
+  COMPS.forEach(c => {
+    const el = document.getElementById('tk-' + c.id);
+    if (!el) return;
+
+    const state = c.getState();
+    el.dataset.state = state;
+
+    // Dim if feature off
+    if (c.feature && !FEAT[c.feature]) {
+      el.classList.add('dimmed');
+    } else {
+      el.classList.remove('dimmed');
+    }
+
+    // Update value text
+    const vEl = document.getElementById('v-' + c.id);
+    if (vEl) {
+      const newVal = c.getValue();
+      vEl.textContent = newVal;
+      // Colour the value text by state
+      vEl.style.color =
+        state==='fault' ? 'var(--fault)' :
+        state==='warn'  ? 'var(--warn)'  :
+        (state==='ok'||state==='run'||state==='active') ? 'var(--ok)' :
+        'var(--t2)';
+    }
+
+    // Progress bar
+    const pb = document.getElementById('pb-' + c.id);
+    if (pb) {
+      const pct = parseFloat(c.getValue()) || 0;
+      pb.style.width = pct + '%';
+    }
+  });
+
+  // Fan-state class on grid for arrow opacity
+  const grid = document.getElementById('pgrid');
+  grid.classList.toggle('fan-off', !D.FAN_RUN);
+
+  updateHeader();
+  updateDiag();
+  updateCharts();
+
+  // Update detail panel live
+  if (_activeComp) {
+    document.getElementById('dp-val').textContent = _activeComp.getValue().replace(/[°%]/g,'').trim();
+  }
+
+  document.getElementById('ts').textContent = 'Updated ' + new Date().toLocaleTimeString();
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  HEADER
+// ═══════════════════════════════════════════════════════════════
+function updateHeader() {
+  const runBdg   = document.getElementById('bdg-run');
+  const modeBdg  = document.getElementById('bdg-mode');
+  const schedBdg = document.getElementById('bdg-sched');
+  const faultBdg = document.getElementById('bdg-fault');
+  const pulse    = document.getElementById('pulse');
+
+  // Status
+  if (D.FIRE_ALM) {
+    runBdg.className='bdg bdg-fault'; runBdg.textContent='ALARM';
+    pulse.style.background='var(--fault)';
+  } else if (!D.FAN_RUN) {
+    runBdg.className='bdg bdg-grey'; runBdg.textContent='STOPPED';
+    pulse.style.background='var(--inact)';
+  } else {
+    runBdg.className='bdg bdg-ok'; runBdg.textContent='RUNNING';
+    pulse.style.background='var(--ok)';
+  }
+
+  // Mode
+  modeBdg.className = 'bdg ' + (D.AUTO ? 'bdg-info' : 'bdg-warn');
+  modeBdg.textContent = D.AUTO ? 'AUTO' : 'MANUAL';
+
+  // Schedule
+  schedBdg.className = 'bdg ' + (D.SCHED ? 'bdg-ok' : 'bdg-grey');
+  schedBdg.textContent = D.SCHED ? 'SCHEDULE ACTIVE' : 'UNOCCUPIED';
+
+  // Fault badge
+  const faults = COMPS.filter(c => {
+    if (c.feature && !FEAT[c.feature]) return false;
+    return c.getState() === 'fault';
+  });
+  const warns = COMPS.filter(c => {
+    if (c.feature && !FEAT[c.feature]) return false;
+    return c.getState() === 'warn';
+  });
+
+  if (faults.length) {
+    faultBdg.style.display='';
+    faultBdg.className='bdg bdg-fault';
+    faultBdg.textContent = faults.length + ' FAULT' + (faults.length>1?'S':'');
+  } else if (warns.length) {
+    faultBdg.style.display='';
+    faultBdg.className='bdg bdg-warn';
+    faultBdg.textContent = warns.length + ' WARNING' + (warns.length>1?'S':'');
+  } else {
+    faultBdg.style.display='none';
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  DIAGNOSTICS ENGINE
+// ═══════════════════════════════════════════════════════════════
+const RULES = [
+  { id:'fire',  sv:'fault',
+    cond: d => d.FIRE_ALM,
+    title: 'Fire alarm — unit shutdown',
+    msg: 'Fire signal received. Fan stopped, fire damper commanded closed. Do NOT restart until building cleared by fire brigade and event logged.' },
+  { id:'fd-no-alarm', sv:'fault',
+    cond: d => !d.FIRE_DMP && !d.FIRE_ALM,
+    title: 'Fire damper closed — no fire alarm active',
+    msg: 'Fire damper showing closed but no fire alarm active. May indicate failed actuator or wiring fault. Supply air will be restricted or blocked.' },
+  { id:'fan-afs', sv:'fault',
+    cond: d => d.FAN_RUN && d.AFS === 0,
+    title: 'Fan running — no airflow confirmed',
+    msg: 'Fan start command active but airflow proving switch has not closed. Check drive belt, VSD for trip, isolating dampers open, airflow switch adjustment.' },
+  { id:'filter', sv:'warn',
+    cond: d => d.FILT_DP === 1,
+    title: 'Dirty filter — service required',
+    msg: 'Filter DP switch has tripped. Schedule filter replacement. Running with blocked filter risks motor overload and reduced airflow.' },
+  { id:'cool-cap', sv:'warn',
+    cond: d => FEAT.cooling && d.ZONE_TMP - d.ZONE_SP > 2.5 && d.CHW_VLV > 92,
+    title: 'Insufficient cooling capacity',
+    msg: 'Zone is more than 2.5°C above setpoint with CHW valve fully open. Check chilled water supply temperature and chiller plant status.' },
+  { id:'heat-cap', sv:'warn',
+    cond: d => FEAT.heating && d.ZONE_SP - d.ZONE_TMP > 2.5 && d.HW_VLV > 92,
+    title: 'Insufficient heating capacity',
+    msg: 'Zone is more than 2.5°C below setpoint with heating valve fully open. Check hot water supply temperature and boiler plant status.' },
+  { id:'frost', sv:'warn',
+    cond: d => d.SAT < 8 && d.HW_VLV < 5,
+    title: 'Frost risk — low supply air temperature',
+    msg: 'Supply air below 8°C with heating valve not responding. Check hot water supply and heating valve. Risk of coil freeze if OA is below 0°C.' },
+  { id:'co2', sv:'warn',
+    cond: d => FEAT.co2 && d.CO2 > 1200,
+    title: `High CO₂ — ${Math.round(D.CO2)} ppm`,
+    msg: 'CO₂ above 1200 ppm. Verify OA damper is opening and economy cycle is active. May indicate higher-than-design occupancy.' },
+];
+
+function updateDiag() {
+  const active = RULES.filter(r => { try { return r.cond(D) } catch(_) { return false } });
+  active.sort((a,b) => (a.sv==='fault'?0:1) - (b.sv==='fault'?0:1));
+
+  const band = document.getElementById('diag-band');
+  if (!active.length) {
+    band.innerHTML = '<div class="diag-ok">All systems operating normally</div>';
+    return;
+  }
+  band.innerHTML = active.map(r => `
+    <div class="diag-card ${r.sv==='warn'?'warn':''}">
+      <div class="diag-title">${r.title}</div>
+      <div class="diag-msg">${r.msg}</div>
+    </div>`).join('');
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  CHARTS
+// ═══════════════════════════════════════════════════════════════
+const hist = { SAT:[], RAT:[], OAT:[], ZONE:[], RAH:[], CO2:[], RACO2:[] };
+const chartObjs = {};
+
+function makeChart(canvasId, color, yMin, yMax) {
+  const ctx = document.getElementById(canvasId).getContext('2d');
+  return new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: Array(30).fill(''),
+      datasets: [{
+        data: Array(30).fill(null),
+        borderColor: color, borderWidth: 1.5,
+        pointRadius: 0, fill: true,
+        backgroundColor: color + '16', tension: 0.4,
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      animation: { duration: 300 },
+      plugins: { legend: { display: false }, tooltip: { enabled: false } },
+      scales: {
+        x: { display: false },
+        y: { display: false, min: yMin, max: yMax }
+      }
+    }
+  });
+}
+
+function initCharts() {
+  chartObjs.sat  = makeChart('ch-sat',  '#009E73', 10,  24);
+  chartObjs.zone = makeChart('ch-zone', '#0072B2', 20,  26);
+  chartObjs.co2  = makeChart('ch-co2',  '#E69F00', 500, 1400);
+  // Detail panel chart — starts blank
+  const dpCtx = document.getElementById('dp-ch').getContext('2d');
+  chartObjs.dp = new Chart(dpCtx, {
+    type: 'line',
+    data: { labels: Array(30).fill(''), datasets: [{
+      data: Array(30).fill(null), borderColor: '#0072B2', borderWidth: 2,
+      pointRadius: 0, fill: true, backgroundColor: 'rgba(0,114,178,.1)', tension: 0.4
+    }]},
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      animation: { duration: 200 },
+      plugins: { legend: { display: false }, tooltip: { enabled: false } },
+      scales: { x: { display: false }, y: { display: false } }
+    }
+  });
+}
+
+const push = (arr, v, max=30) => { arr.push(v); if (arr.length > max) arr.shift() };
+const pushChart = (ch, arr) => {
+  ch.data.datasets[0].data = [...arr];
+  ch.update('none');
+};
+
+function updateCharts() {
+  push(hist.SAT,  D.SAT);
+  push(hist.ZONE, D.ZONE_TMP);
+  push(hist.CO2,  D.CO2);
+  push(hist.OAT,  D.OAT);
+  push(hist.RAT,  D.RAT);
+
+  pushChart(chartObjs.sat,  hist.SAT);
+  pushChart(chartObjs.zone, hist.ZONE);
+  pushChart(chartObjs.co2,  hist.CO2);
+
+  document.getElementById('cv-sat').innerHTML  = D.SAT.toFixed(1)  + ' <sub>°C</sub>';
+  document.getElementById('cv-zone').innerHTML = D.ZONE_TMP.toFixed(1) + ' <sub>°C</sub>';
+  document.getElementById('cv-co2').innerHTML  = Math.round(D.CO2) + ' <sub>ppm</sub>';
+
+  // Colour the big values
+  colorBig('cv-sat',  D.SAT  < 8  || D.SAT > 28  ? 'warn' : 'ok');
+  colorBig('cv-co2',  D.CO2  > 1500 ? 'fault' : D.CO2 > 1200 ? 'warn' : 'ok');
+
+  // Push to detail chart if open
+  if (_activeComp?.histKey) {
+    const h = hist[_activeComp.histKey] || [];
+    if (h.length) pushChart(chartObjs.dp, h);
+  }
+}
+
+function colorBig(id, state) {
+  const el = document.getElementById(id);
+  el.style.color = state==='fault' ? 'var(--fault)' : state==='warn' ? 'var(--warn)' : 'var(--t1)';
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  DETAIL PANEL
+// ═══════════════════════════════════════════════════════════════
+let _activeComp = null;
+
+function openDetail(c) {
+  _activeComp = c;
+  document.getElementById('dp-tag').textContent  = c.label;
+  document.getElementById('dp-desc').textContent = c.desc;
+  document.getElementById('dp-val').textContent  =
+    c.getValue().replace(/[°%]/g,'').trim();
+  document.getElementById('dp-unit').textContent = c.getUnit();
+  document.getElementById('dp-io').innerHTML =
+    `<span class="tk-badge io-${c.type}">${c.type}</span>`;
+
+  // Load history into detail chart
+  const key   = c.histKey || '';
+  const h     = hist[key] || [];
+  const color = c.getState()==='fault' ? '#D55E00' :
+                c.getState()==='warn'  ? '#E69F00' : '#0072B2';
+  const ch = chartObjs.dp;
+  ch.data.datasets[0].data = h.length ? [...h] : Array(30).fill(null);
+  ch.data.datasets[0].borderColor    = color;
+  ch.data.datasets[0].backgroundColor = color.replace('var(--','').replace(')','') + '16';
+  ch.update();
+
+  document.querySelectorAll('.tk').forEach(el => el.classList.remove('selected'));
+  document.getElementById('tk-' + c.id)?.classList.add('selected');
+  document.getElementById('detail').classList.add('open');
+}
+
+function closeDetail() {
+  _activeComp = null;
+  document.getElementById('detail').classList.remove('open');
+  document.querySelectorAll('.tk').forEach(el => el.classList.remove('selected'));
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  SIMULATION BUTTONS
+// ═══════════════════════════════════════════════════════════════
+function simFire()   { D.FIRE_ALM=1; D.FAN_RUN=0; D.FIRE_DMP=0; D._frozen=true }
+function simFilter() { D.FILT_DP = D.FILT_DP ? 0 : 1 }
+function clearSim()  { D.FIRE_ALM=0; D.FAN_RUN=1; D.FIRE_DMP=1; D.FILT_DP=0; D.FROST=0; D._frozen=false }
+function toggleFan() { D.FAN_RUN = D.FAN_RUN ? 0 : 1 }
+function setFeat(k, v) { FEAT[k] = v; updateAll() }
+
+// ═══════════════════════════════════════════════════════════════
+//  BOOT
+// ═══════════════════════════════════════════════════════════════
+buildSchematic();
+initCharts();
+updateAll();
+setInterval(updateAll, 3000);
+</script>
+</body>
+</html>

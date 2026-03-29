@@ -44,7 +44,7 @@ export default function App() {
       // Try to fetch seed.json from the public folder
       async function fetchSeed(): Promise<Record<string, unknown> | null> {
         try {
-          const base = (import.meta as { env?: { BASE_URL?: string } }).env?.BASE_URL ?? '/';
+          const base = import.meta.env.BASE_URL ?? '/';
           const res = await fetch(`${base}seed.json`);
           if (!res.ok) return null;
           return await res.json();

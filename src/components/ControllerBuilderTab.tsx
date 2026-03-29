@@ -167,33 +167,27 @@ function ControllerIOStatusBadge({
 
 // ---- New Project Modal ----
 function NewProjectModal({ onConfirm, onCancel }: {
-  onConfirm: (name: string, description: string) => void;
+  onConfirm: (name: string) => void;
   onCancel: () => void;
 }) {
   const [name, setName] = useState('');
-  const [description, setDescription] = useState('');
   const [error, setError] = useState('');
 
   function submit() {
     if (!name.trim()) { setError('Project name is required'); return; }
-    onConfirm(name.trim(), description.trim());
+    onConfirm(name.trim());
   }
 
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50" style={{ background: 'rgba(0,0,0,0.4)' }}>
       <div className="bg-white rounded-xl p-6 w-full max-w-sm shadow-xl">
         <h2 className="font-bold text-base mb-4" style={{ color: '#2C2C2A' }}>New Project</h2>
-        <div className="space-y-3 mb-4">
-          <div>
-            <label className="text-xs font-medium block mb-1" style={{ color: '#888780' }}>Name *</label>
-            <input className="border rounded px-3 py-2 text-sm w-full" style={{ borderColor: '#D3D1C7' }}
-              value={name} onChange={e => setName(e.target.value)} placeholder="e.g. PACOFS" autoFocus />
-          </div>
-          <div>
-            <label className="text-xs font-medium block mb-1" style={{ color: '#888780' }}>Description</label>
-            <input className="border rounded px-3 py-2 text-sm w-full" style={{ borderColor: '#D3D1C7' }}
-              value={description} onChange={e => setDescription(e.target.value)} placeholder="Short description" />
-          </div>
+        <div className="mb-4">
+          <label className="text-xs font-medium block mb-1" style={{ color: '#888780' }}>Project name *</label>
+          <input className="border rounded px-3 py-2 text-sm w-full" style={{ borderColor: '#D3D1C7' }}
+            value={name} onChange={e => setName(e.target.value)}
+            onKeyDown={e => e.key === 'Enter' && submit()}
+            placeholder="e.g. PACOFS" autoFocus />
         </div>
         {error && <p className="text-xs mb-3" style={{ color: '#E24B4A' }}>{error}</p>}
         <div className="flex gap-2 justify-end">
@@ -1579,9 +1573,9 @@ export default function ControllerBuilderTab({
     }
   }
 
-  function handleAddProject(name: string, description: string) {
+  function handleAddProject(name: string) {
     const now = new Date().toISOString();
-    const proj: Project = { id: uuidv4(), name, description, createdAt: now, updatedAt: now };
+    const proj: Project = { id: uuidv4(), name, description: '', createdAt: now, updatedAt: now };
     const updated = [...projects, proj];
     onUpdateProjects(updated);
     setActiveProjectId(proj.id);

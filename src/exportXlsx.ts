@@ -39,7 +39,6 @@ function buildSheet1(
   const rows: (string | number)[][] = [];
 
   for (const ctrl of controllers) {
-    const dup = Number(ctrl.duplicates) || 1;
     const modelName = controllerModels.find(m => m.id === ctrl.modelId)?.name ?? '(no model)';
     const ctrlTitle = ctrl.siteName
       ? `${ctrl.label}  —  ${ctrl.siteName}`

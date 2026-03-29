@@ -45,36 +45,36 @@ function buildSheet1(
       ? `${ctrl.label}  —  ${ctrl.siteName}`
       : ctrl.label;
 
-    // Controller heading row
-    rows.push([ctrlTitle, '', '', '']);
-    // Column headers
+    // Controller heading (show ×N if duplicated so engineers know to copy this group)
+    const heading = dup > 1 ? `${ctrlTitle}  (× ${dup} in project)` : ctrlTitle;
+    rows.push([heading, '', '', '']);
     rows.push(['Item No', 'Item', 'Unit', 'No']);
 
     let item = 1;
 
-    // Item: controller itself
+    // Item: controller itself — always 1 per group
     if (ctrl.modelId) {
-      rows.push([item++, modelName, 'No', dup]);
+      rows.push([item++, modelName, 'No', 1]);
     }
 
-    // Items: expansion modules
+    // Items: expansion modules — qty per group, no multiplication
     for (const exp of ctrl.expansions ?? []) {
       const mod = expansionModules.find(m => m.id === exp.moduleId);
       if (mod) {
-        rows.push([item++, mod.name, 'No', exp.quantity * dup]);
+        rows.push([item++, mod.name, 'No', exp.quantity]);
       }
     }
 
-    // Items: field devices — group physical IO vars by description
+    // Items: field devices — count per group, no multiplication
     const deviceTotals: Map<string, number> = new Map();
     for (const v of ctrl.variables) {
       const io = ioTypeOf(v.qty, qtyList, v.ioOverride);
-      if (io === 'AV' || io === 'BV') continue; // skip RS-485 / soft points
+      if (io === 'AV' || io === 'BV') continue;
       const desc = deviceDesc(v, qtyList);
       deviceTotals.set(desc, (deviceTotals.get(desc) ?? 0) + 1);
     }
     for (const [desc, count] of deviceTotals) {
-      rows.push([item++, desc, 'No', count * dup]);
+      rows.push([item++, desc, 'No', count]);
     }
 
     // Blank spacer

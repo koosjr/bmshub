@@ -49,9 +49,13 @@ export function exportForSimulator(
     }
     if (points.length === 0) continue;
 
+    const deviceName = ctrl.siteName
+      ? `${ctrl.siteName} — ${ctrl.label}`
+      : ctrl.label;
+
     devices.push({
       id: ctrl.id,
-      name: ctrl.siteName,
+      name: deviceName,
       description: ctrl.label,
       points,
     });

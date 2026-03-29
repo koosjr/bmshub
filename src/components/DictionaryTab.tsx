@@ -9,10 +9,11 @@ interface Props {
   mod: ModEntry[];
   semanticConfig: SemanticConfig;
   controllers: Controller[];
-  onUpdateEquip: (d: EquipEntry[]) => void;
-  onUpdateMed:   (d: MedEntry[]) => void;
-  onUpdateQty:   (d: QtyEntry[]) => void;
-  onUpdateMod:   (d: ModEntry[]) => void;
+  onUpdateEquip:         (d: EquipEntry[]) => void;
+  onUpdateMed:           (d: MedEntry[]) => void;
+  onUpdateQty:           (d: QtyEntry[]) => void;
+  onUpdateMod:           (d: ModEntry[]) => void;
+  onUpdateSemanticConfig:(d: SemanticConfig) => void;
 }
 
 type IOType = 'AI' | 'AO' | 'DI' | 'DO';
@@ -560,19 +561,50 @@ function ModSection({ mod, controllers, onUpdate }: {
 }
 
 // ---- Semantic Config Section ----
-function SemanticConfigSection({ cfg, equip, med, qty, mod }: {
+function SemanticConfigSection({ cfg, equip, med, qty, mod, onUpdate }: {
   cfg: SemanticConfig;
   equip: EquipEntry[];
   med: MedEntry[];
   qty: QtyEntry[];
   mod: ModEntry[];
+  onUpdate: (cfg: SemanticConfig) => void;
 }) {
   const [openTable, setOpenTable] = useState<'equip' | 'med' | 'qty'>('equip');
+  // editingKey: which row key is being edited (e.g. 'AHU', 'CW', 'TMP')
+  const [editingKey, setEditingKey] = useState<string | null>(null);
+  // addingRow: show the "add new row" form
+  const [addingRow, setAddingRow] = useState(false);
 
   function equipLabel(code: string) { return equip.find(e => e.code === code)?.label ?? code; }
   function medLabel(code: string)   { return code === '' ? '(none)' : (med.find(m => m.code === code)?.label ?? code); }
   function qtyLabel(code: string)   { return qty.find(q => q.code === code)?.label ?? code; }
   function modLabel(code: string)   { return code === '' ? '(none)' : (mod.find(m => m.code === code)?.label ?? code); }
+
+  // helpers to patch a single key in one of the three maps
+  function patchEquipMeds(key: string, vals: string[]) {
+    onUpdate({ ...cfg, equipMeds: { ...cfg.equipMeds, [key]: vals } });
+  }
+  function deleteEquipMedsRow(key: string) {
+    const next = { ...cfg.equipMeds };
+    delete next[key];
+    onUpdate({ ...cfg, equipMeds: next });
+  }
+  function patchMedQtys(key: string, vals: string[]) {
+    onUpdate({ ...cfg, medQtys: { ...cfg.medQtys, [key]: vals } });
+  }
+  function deleteMedQtysRow(key: string) {
+    const next = { ...cfg.medQtys };
+    delete next[key];
+    onUpdate({ ...cfg, medQtys: next });
+  }
+  function patchQtyMods(key: string, vals: string[]) {
+    onUpdate({ ...cfg, qtyMods: { ...cfg.qtyMods, [key]: vals } });
+  }
+  function deleteQtyModsRow(key: string) {
+    const next = { ...cfg.qtyMods };
+    delete next[key];
+    onUpdate({ ...cfg, qtyMods: next });
+  }
 
   const tabStyle = (active: boolean) => ({
     padding: '6px 14px',
@@ -590,138 +622,284 @@ function SemanticConfigSection({ cfg, equip, med, qty, mod }: {
     zIndex: active ? 1 : 0,
   });
 
-  function CodePill({ code, title }: { code: string; title: string }) {
+  // Inline row editor: shows current values as removable pills + dropdown to add more
+  function RowEditor({ rowKey, values, options, labelFn, onSave, onDelete }: {
+    rowKey: string;
+    values: string[];
+    options: string[];       // all possible values for the dropdown
+    labelFn: (c: string) => string;
+    onSave: (vals: string[]) => void;
+    onDelete: () => void;
+  }) {
+    const [vals, setVals] = useState<string[]>(values);
+    const available = options.filter(o => !vals.includes(o));
+
+    function remove(v: string) { setVals(vs => vs.filter(x => x !== v)); }
+    function add(v: string)    { if (v && !vals.includes(v)) setVals(vs => [...vs, v]); }
+
     return (
-      <span
-        title={title}
-        className="inline-block font-mono text-xs px-1.5 py-0.5 rounded mr-1 mb-1"
-        style={{ background: code === '' ? '#F1EFE8' : '#E1F5EE', color: code === '' ? '#888780' : '#085041', border: '1px solid', borderColor: code === '' ? '#D3D1C7' : '#A8D5C4' }}
-      >
-        {code === '' ? '∅' : code}
-      </span>
+      <div className="py-2 px-3 rounded-lg border" style={{ background: '#FAEEDA', borderColor: '#EF9F27' }}>
+        <div className="flex items-center gap-2 mb-2">
+          <span className="font-mono text-xs font-bold" style={{ color: '#2C2C2A' }}>{rowKey || '∅'}</span>
+          <span className="text-xs" style={{ color: '#888780' }}>— editing valid values</span>
+        </div>
+        {/* Current values as removable pills */}
+        <div className="flex flex-wrap gap-1 mb-2">
+          {vals.map(v => (
+            <span key={v}
+              className="inline-flex items-center gap-1 font-mono text-xs px-1.5 py-0.5 rounded"
+              style={{ background: v === '' ? '#F1EFE8' : '#E1F5EE', color: v === '' ? '#888780' : '#085041', border: '1px solid', borderColor: v === '' ? '#D3D1C7' : '#A8D5C4' }}
+              title={labelFn(v)}
+            >
+              {v === '' ? '∅' : v}
+              <button onClick={() => remove(v)} className="ml-0.5 hover:text-red-500 font-bold leading-none" style={{ fontSize: '10px' }}>×</button>
+            </span>
+          ))}
+          {vals.length === 0 && <span className="text-xs italic" style={{ color: '#D3D1C7' }}>no values — row will match nothing</span>}
+        </div>
+        {/* Add from available options */}
+        {available.length > 0 && (
+          <div className="flex items-center gap-2 mb-2">
+            <select
+              className="border rounded px-2 py-1 text-xs font-mono"
+              style={{ borderColor: '#D3D1C7' }}
+              defaultValue=""
+              onChange={e => { add(e.target.value); e.target.value = ''; }}
+            >
+              <option value="">+ add value…</option>
+              {available.map(o => (
+                <option key={o} value={o}>{o === '' ? '∅ (none)' : `${o} — ${labelFn(o)}`}</option>
+              ))}
+            </select>
+          </div>
+        )}
+        <div className="flex gap-2">
+          <button onClick={() => { onSave(vals); setEditingKey(null); }}
+            className="px-3 py-1 rounded text-xs text-white" style={{ background: '#1D9E75' }}>Save</button>
+          <button onClick={() => setEditingKey(null)}
+            className="px-3 py-1 rounded text-xs" style={{ background: '#D3D1C7', color: '#2C2C2A' }}>Cancel</button>
+          <button onClick={() => { if (confirm(`Delete row "${rowKey || '∅'}"?`)) { onDelete(); setEditingKey(null); } }}
+            className="px-3 py-1 rounded text-xs ml-auto" style={{ color: '#E24B4A' }}>Delete row</button>
+        </div>
+      </div>
+    );
+  }
+
+  // Generic read row
+  function ReadRow({ rowKey, values, labelFn, keyLabel, onEdit }: {
+    rowKey: string; values: string[]; labelFn: (c: string) => string; keyLabel: string; onEdit: () => void;
+  }) {
+    return (
+      <tr className="border-t group" style={{ borderColor: '#F1EFE8' }}>
+        <td className="py-2 pr-3 align-top">
+          <span className="font-mono text-xs font-bold" style={{ color: '#2C2C2A' }}>{rowKey === '' ? '∅' : rowKey}</span>
+        </td>
+        <td className="py-2 pr-4 align-top text-xs" style={{ color: '#888780', whiteSpace: 'nowrap' }}>{keyLabel}</td>
+        <td className="py-1.5 align-top">
+          {values.map(v => (
+            <span key={v} title={labelFn(v)}
+              className="inline-block font-mono text-xs px-1.5 py-0.5 rounded mr-1 mb-1"
+              style={{ background: v === '' ? '#F1EFE8' : '#E1F5EE', color: v === '' ? '#888780' : '#085041', border: '1px solid', borderColor: v === '' ? '#D3D1C7' : '#A8D5C4' }}>
+              {v === '' ? '∅' : v}
+            </span>
+          ))}
+        </td>
+        <td className="py-2 pl-2 align-top">
+          <button onClick={onEdit}
+            className="text-xs px-2 py-0.5 rounded border opacity-0 group-hover:opacity-100 transition-opacity"
+            style={{ borderColor: '#D3D1C7', color: '#888780' }}>Edit</button>
+        </td>
+      </tr>
+    );
+  }
+
+  // Add-row form
+  function AddRowForm({ existingKeys, placeholder, onAdd, onCancel }: {
+    existingKeys: string[]; placeholder: string; onAdd: (key: string) => void; onCancel: () => void;
+  }) {
+    const [key, setKey] = useState('');
+    const err = key && existingKeys.includes(key) ? 'Key already exists' : '';
+    return (
+      <div className="mt-3 p-3 rounded-lg border flex items-end gap-3" style={{ background: '#F1EFE8', borderColor: '#D3D1C7' }}>
+        <div>
+          <label className="text-xs font-medium block mb-1" style={{ color: '#888780' }}>New key</label>
+          <input
+            className="border rounded px-2 py-1 text-sm font-mono uppercase w-28"
+            style={{ borderColor: err ? '#E24B4A' : '#D3D1C7' }}
+            placeholder={placeholder}
+            value={key}
+            onChange={e => setKey(e.target.value.toUpperCase())}
+            maxLength={5}
+          />
+          {err && <p className="text-xs mt-1" style={{ color: '#E24B4A' }}>{err}</p>}
+        </div>
+        <button
+          onClick={() => { if (key && !err) onAdd(key); }}
+          disabled={!key || !!err}
+          className="px-3 py-1.5 rounded text-xs text-white"
+          style={{ background: key && !err ? '#1D9E75' : '#D3D1C7' }}>Add</button>
+        <button onClick={onCancel} className="px-3 py-1.5 rounded text-xs" style={{ background: '#D3D1C7', color: '#2C2C2A' }}>Cancel</button>
+      </div>
     );
   }
 
   return (
     <SectionCard title="Semantic Filter Tables">
       <p className="text-xs mb-4" style={{ color: '#888780' }}>
-        Three allowlist tables control what combinations are valid in the builder.
-        Each dropdown filters to only show valid options based on the previous selection.
+        Three allowlist tables control which combinations are valid in the builder.
+        Hover any row and click <strong>Edit</strong> to change its values.
       </p>
 
       {/* Tab bar */}
       <div style={{ borderBottom: '1px solid #D3D1C7', marginBottom: '0' }}>
-        <button style={tabStyle(openTable === 'equip')} onClick={() => setOpenTable('equip')}>
+        <button style={tabStyle(openTable === 'equip')} onClick={() => { setOpenTable('equip'); setEditingKey(null); setAddingRow(false); }}>
           Table 1 — EQUIP → MED
         </button>
-        <button style={tabStyle(openTable === 'med')} onClick={() => setOpenTable('med')}>
+        <button style={tabStyle(openTable === 'med')} onClick={() => { setOpenTable('med'); setEditingKey(null); setAddingRow(false); }}>
           Table 2 — MED → QTY
         </button>
-        <button style={tabStyle(openTable === 'qty')} onClick={() => setOpenTable('qty')}>
+        <button style={tabStyle(openTable === 'qty')} onClick={() => { setOpenTable('qty'); setEditingKey(null); setAddingRow(false); }}>
           Table 3 — QTY → MOD
         </button>
       </div>
 
       <div className="border rounded-b rounded-tr p-4" style={{ borderColor: '#D3D1C7', background: '#fff' }}>
 
-        {/* Table 1: EQUIP → valid MEDs */}
+        {/* ── Table 1: EQUIP → valid MEDs ── */}
         {openTable === 'equip' && (
           <div>
             <p className="text-xs mb-3" style={{ color: '#888780' }}>
-              For each equipment type, which media codes are valid. ∅ means "no medium" (status/fault points).
+              For each equipment type, which media codes are valid. ∅ = no-medium points (STS, FLT…).
             </p>
             <table className="w-full text-sm">
               <thead>
                 <tr className="text-xs uppercase" style={{ color: '#888780' }}>
-                  <th className="text-left pb-2 font-medium w-24">EQUIP</th>
-                  <th className="text-left pb-2 font-medium" style={{ color: '#888780' }}>Equipment</th>
+                  <th className="text-left pb-2 font-medium w-20">EQUIP</th>
+                  <th className="text-left pb-2 font-medium w-40">Equipment</th>
                   <th className="text-left pb-2 font-medium">Valid Media</th>
+                  <th className="w-16" />
                 </tr>
               </thead>
               <tbody>
-                {Object.entries(cfg.equipMeds).map(([equipCode, meds]) => (
-                  <tr key={equipCode} className="border-t" style={{ borderColor: '#F1EFE8' }}>
-                    <td className="py-2 pr-3 align-top">
-                      <span className="font-mono text-xs font-bold" style={{ color: '#2C2C2A' }}>{equipCode}</span>
-                    </td>
-                    <td className="py-2 pr-4 align-top text-xs" style={{ color: '#888780', whiteSpace: 'nowrap' }}>
-                      {equipLabel(equipCode)}
-                    </td>
-                    <td className="py-1.5 align-top">
-                      {meds.map(m => <CodePill key={m} code={m} title={medLabel(m)} />)}
-                    </td>
-                  </tr>
-                ))}
+                {Object.entries(cfg.equipMeds).map(([k, vals]) =>
+                  editingKey === k ? (
+                    <tr key={k}><td colSpan={4} className="py-2">
+                      <RowEditor rowKey={k} values={vals}
+                        options={['', ...med.map(m => m.code)]}
+                        labelFn={medLabel}
+                        onSave={v => patchEquipMeds(k, v)}
+                        onDelete={() => deleteEquipMedsRow(k)} />
+                    </td></tr>
+                  ) : (
+                    <ReadRow key={k} rowKey={k} values={vals} labelFn={medLabel}
+                      keyLabel={equipLabel(k)} onEdit={() => { setEditingKey(k); setAddingRow(false); }} />
+                  )
+                )}
               </tbody>
             </table>
+            {addingRow ? (
+              <AddRowForm
+                existingKeys={Object.keys(cfg.equipMeds)}
+                placeholder="AHU"
+                onAdd={key => { patchEquipMeds(key, ['']); setAddingRow(false); setEditingKey(key); }}
+                onCancel={() => setAddingRow(false)} />
+            ) : (
+              <button onClick={() => { setAddingRow(true); setEditingKey(null); }}
+                className="mt-3 text-xs px-3 py-1.5 rounded border"
+                style={{ borderColor: '#EF9F27', color: '#854F0B' }}>+ Add equipment row</button>
+            )}
           </div>
         )}
 
-        {/* Table 2: MED → valid QTYs */}
+        {/* ── Table 2: MED → valid QTYs ── */}
         {openTable === 'med' && (
           <div>
             <p className="text-xs mb-3" style={{ color: '#888780' }}>
-              For each medium, which quantity codes are valid. ∅ row covers points with no medium selected.
+              For each medium, which quantity codes are valid. ∅ row = no-medium points.
             </p>
             <table className="w-full text-sm">
               <thead>
                 <tr className="text-xs uppercase" style={{ color: '#888780' }}>
                   <th className="text-left pb-2 font-medium w-16">MED</th>
-                  <th className="text-left pb-2 font-medium w-36">Medium</th>
+                  <th className="text-left pb-2 font-medium w-40">Medium</th>
                   <th className="text-left pb-2 font-medium">Valid Quantities</th>
+                  <th className="w-16" />
                 </tr>
               </thead>
               <tbody>
-                {Object.entries(cfg.medQtys).map(([medCode, qtys]) => (
-                  <tr key={medCode} className="border-t" style={{ borderColor: '#F1EFE8' }}>
-                    <td className="py-2 pr-3 align-top">
-                      <span className="font-mono text-xs font-bold" style={{ color: '#2C2C2A' }}>
-                        {medCode === '' ? '∅' : medCode}
-                      </span>
-                    </td>
-                    <td className="py-2 pr-4 align-top text-xs" style={{ color: '#888780', whiteSpace: 'nowrap' }}>
-                      {medLabel(medCode)}
-                    </td>
-                    <td className="py-1.5 align-top">
-                      {qtys.map(q => <CodePill key={q} code={q} title={qtyLabel(q)} />)}
-                    </td>
-                  </tr>
-                ))}
+                {Object.entries(cfg.medQtys).map(([k, vals]) =>
+                  editingKey === ('med:' + k) ? (
+                    <tr key={k}><td colSpan={4} className="py-2">
+                      <RowEditor rowKey={k} values={vals}
+                        options={qty.map(q => q.code)}
+                        labelFn={qtyLabel}
+                        onSave={v => patchMedQtys(k, v)}
+                        onDelete={() => deleteMedQtysRow(k)} />
+                    </td></tr>
+                  ) : (
+                    <ReadRow key={k} rowKey={k} values={vals} labelFn={qtyLabel}
+                      keyLabel={medLabel(k)} onEdit={() => { setEditingKey('med:' + k); setAddingRow(false); }} />
+                  )
+                )}
               </tbody>
             </table>
+            {addingRow ? (
+              <AddRowForm
+                existingKeys={Object.keys(cfg.medQtys)}
+                placeholder="CW"
+                onAdd={key => { patchMedQtys(key, []); setAddingRow(false); setEditingKey('med:' + key); }}
+                onCancel={() => setAddingRow(false)} />
+            ) : (
+              <button onClick={() => { setAddingRow(true); setEditingKey(null); }}
+                className="mt-3 text-xs px-3 py-1.5 rounded border"
+                style={{ borderColor: '#EF9F27', color: '#854F0B' }}>+ Add medium row</button>
+            )}
           </div>
         )}
 
-        {/* Table 3: QTY → valid MODs */}
+        {/* ── Table 3: QTY → valid MODs ── */}
         {openTable === 'qty' && (
           <div>
             <p className="text-xs mb-3" style={{ color: '#888780' }}>
-              For each quantity, which modifier codes are valid. ∅ means "no modifier" is allowed.
+              For each quantity, which modifier codes are valid. ∅ = no modifier allowed.
             </p>
             <table className="w-full text-sm">
               <thead>
                 <tr className="text-xs uppercase" style={{ color: '#888780' }}>
                   <th className="text-left pb-2 font-medium w-20">QTY</th>
-                  <th className="text-left pb-2 font-medium w-40">Quantity</th>
+                  <th className="text-left pb-2 font-medium w-44">Quantity</th>
                   <th className="text-left pb-2 font-medium">Valid Modifiers</th>
+                  <th className="w-16" />
                 </tr>
               </thead>
               <tbody>
-                {Object.entries(cfg.qtyMods).map(([qtyCode, mods]) => (
-                  <tr key={qtyCode} className="border-t" style={{ borderColor: '#F1EFE8' }}>
-                    <td className="py-2 pr-3 align-top">
-                      <span className="font-mono text-xs font-bold" style={{ color: '#2C2C2A' }}>{qtyCode}</span>
-                    </td>
-                    <td className="py-2 pr-4 align-top text-xs" style={{ color: '#888780', whiteSpace: 'nowrap' }}>
-                      {qtyLabel(qtyCode)}
-                    </td>
-                    <td className="py-1.5 align-top">
-                      {mods.map(m => <CodePill key={m} code={m} title={modLabel(m)} />)}
-                    </td>
-                  </tr>
-                ))}
+                {Object.entries(cfg.qtyMods).map(([k, vals]) =>
+                  editingKey === ('qty:' + k) ? (
+                    <tr key={k}><td colSpan={4} className="py-2">
+                      <RowEditor rowKey={k} values={vals}
+                        options={['', ...mod.map(m => m.code)]}
+                        labelFn={modLabel}
+                        onSave={v => patchQtyMods(k, v)}
+                        onDelete={() => deleteQtyModsRow(k)} />
+                    </td></tr>
+                  ) : (
+                    <ReadRow key={k} rowKey={k} values={vals} labelFn={modLabel}
+                      keyLabel={qtyLabel(k)} onEdit={() => { setEditingKey('qty:' + k); setAddingRow(false); }} />
+                  )
+                )}
               </tbody>
             </table>
+            {addingRow ? (
+              <AddRowForm
+                existingKeys={Object.keys(cfg.qtyMods)}
+                placeholder="TMP"
+                onAdd={key => { patchQtyMods(key, ['']); setAddingRow(false); setEditingKey('qty:' + key); }}
+                onCancel={() => setAddingRow(false)} />
+            ) : (
+              <button onClick={() => { setAddingRow(true); setEditingKey(null); }}
+                className="mt-3 text-xs px-3 py-1.5 rounded border"
+                style={{ borderColor: '#EF9F27', color: '#854F0B' }}>+ Add quantity row</button>
+            )}
           </div>
         )}
       </div>
@@ -738,7 +916,7 @@ export default function DictionaryTab(props: Props) {
       <MedSection med={props.med} controllers={props.controllers} onUpdate={props.onUpdateMed} />
       <QtySection qty={props.qty} controllers={props.controllers} onUpdate={props.onUpdateQty} />
       <ModSection mod={props.mod} controllers={props.controllers} onUpdate={props.onUpdateMod} />
-      <SemanticConfigSection cfg={props.semanticConfig} equip={props.equip} med={props.med} qty={props.qty} mod={props.mod} />
+      <SemanticConfigSection cfg={props.semanticConfig} equip={props.equip} med={props.med} qty={props.qty} mod={props.mod} onUpdate={props.onUpdateSemanticConfig} />
     </div>
   );
 }

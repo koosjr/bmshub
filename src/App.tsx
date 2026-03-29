@@ -133,6 +133,10 @@ export default function App() {
     setMod(data);
     saveMod(data);
   }, []);
+  const updateSemanticConfig = useCallback((data: SemanticConfig) => {
+    setSemanticConfig(data);
+    saveSemanticConfig(data);
+  }, []);
   const updateControllers = useCallback((data: Controller[]) => {
     setControllers(data);
     saveControllers(data);
@@ -232,6 +236,7 @@ export default function App() {
             onUpdateMed={updateMed}
             onUpdateQty={updateQty}
             onUpdateMod={updateMod}
+            onUpdateSemanticConfig={updateSemanticConfig}
           />
         )}
         {loaded && activeTab === 'assemblies' && (

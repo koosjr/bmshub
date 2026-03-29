@@ -14,7 +14,7 @@ import {
 } from './storage';
 import {
   seedEquip, seedMed, seedQty, seedMod, seedSemanticConfig,
-  seedAssemblies, seedControllerModels, seedExpansionModules, seedProjects,
+  seedAssemblies, seedControllerModels, seedExpansionModules,
 } from './seedData';
 import DictionaryTab from './components/DictionaryTab';
 import AssembliesTab from './components/AssembliesTab';
@@ -40,80 +40,81 @@ export default function App() {
 
   // Load from localStorage on mount, seed if first run
   useEffect(() => {
-    if (isFirstRun()) {
-      const eq = seedEquip;
-      const me = seedMed;
-      const qt = seedQty;
-      const mo = seedMod;
-      const asm = seedAssemblies;
-      const ctrlModels = seedControllerModels;
-      const expMods = seedExpansionModules;
-      const projs = seedProjects;
-      saveEquip(eq);
-      saveMed(me);
-      saveQty(qt);
-      saveMod(mo);
-      saveSemanticConfig(seedSemanticConfig);
-      saveControllers([]);
-      saveAssemblies(asm);
-      saveControllerModels(ctrlModels);
-      saveExpansionModules(expMods);
-      saveProjects(projs);
-      setSeedVersion(CURRENT_SEED_VERSION);
-      setEquip(eq);
-      setMed(me);
-      setQty(qt);
-      setMod(mo);
-      setSemanticConfig(seedSemanticConfig);
-      setControllers([]);
-      setAssemblies(asm);
-      setControllerModels(ctrlModels);
-      setExpansionModules(expMods);
-      setProjects(projs);
-    } else {
-      setEquip(loadEquip());
-      setMed(loadMed());
-      setQty(loadQty());
-      setMod(loadMod());
-      // Refresh seed config/assemblies/hardware when version is stale
-      if (needsRulesRefresh()) {
-        const refreshedAsm = seedAssemblies;
-        const refreshedModels = seedControllerModels;
-        const refreshedExpMods = seedExpansionModules;
-        saveSemanticConfig(seedSemanticConfig);
-        setSemanticConfig(seedSemanticConfig);
-        // Only overwrite assemblies/hardware if none exist yet
-        const existingAsm = loadAssemblies();
-        if (existingAsm.length === 0) {
-          saveAssemblies(refreshedAsm);
-          setAssemblies(refreshedAsm);
-        } else {
-          setAssemblies(existingAsm);
+    async function init() {
+      // Try to fetch seed.json from the public folder
+      async function fetchSeed(): Promise<Record<string, unknown> | null> {
+        try {
+          const base = (import.meta as { env?: { BASE_URL?: string } }).env?.BASE_URL ?? '/';
+          const res = await fetch(`${base}seed.json`);
+          if (!res.ok) return null;
+          return await res.json();
+        } catch {
+          return null;
         }
-        // Hardware library is always replaced on version bump — it's seed data, not user data
-        saveControllerModels(refreshedModels);
-        setControllerModels(refreshedModels);
-        saveExpansionModules(refreshedExpMods);
-        setExpansionModules(refreshedExpMods);
+      }
+
+      // Apply non-user parts of a seed payload (dict + config + assemblies + hardware)
+      function applySeedPayload(data: Record<string, unknown>) {
+        if (data.equip)            { saveEquip(data.equip as EquipEntry[]);                     setEquip(data.equip as EquipEntry[]); }
+        if (data.med)              { saveMed(data.med as MedEntry[]);                           setMed(data.med as MedEntry[]); }
+        if (data.qty)              { saveQty(data.qty as QtyEntry[]);                           setQty(data.qty as QtyEntry[]); }
+        if (data.mod)              { saveMod(data.mod as ModEntry[]);                           setMod(data.mod as ModEntry[]); }
+        if (data.semanticConfig)   { saveSemanticConfig(data.semanticConfig as SemanticConfig); setSemanticConfig(data.semanticConfig as SemanticConfig); }
+        if (data.assemblies)       { saveAssemblies(data.assemblies as Assembly[]);             setAssemblies(data.assemblies as Assembly[]); }
+        if (data.controllerModels) { saveControllerModels(data.controllerModels as ControllerModel[]); setControllerModels(data.controllerModels as ControllerModel[]); }
+        if (data.expansionModules) { saveExpansionModules(data.expansionModules as ExpansionModule[]); setExpansionModules(data.expansionModules as ExpansionModule[]); }
+      }
+
+      // Hardcoded fallback (used only if seed.json is unreachable)
+      function applyHardcodedSeed() {
+        saveEquip(seedEquip);             setEquip(seedEquip);
+        saveMed(seedMed);                 setMed(seedMed);
+        saveQty(seedQty);                 setQty(seedQty);
+        saveMod(seedMod);                 setMod(seedMod);
+        saveSemanticConfig(seedSemanticConfig); setSemanticConfig(seedSemanticConfig);
+        saveAssemblies(seedAssemblies);   setAssemblies(seedAssemblies);
+        saveControllerModels(seedControllerModels); setControllerModels(seedControllerModels);
+        saveExpansionModules(seedExpansionModules); setExpansionModules(seedExpansionModules);
+      }
+
+      if (isFirstRun()) {
+        const seed = await fetchSeed();
+        if (seed) {
+          applySeedPayload(seed);
+        } else {
+          applyHardcodedSeed();
+        }
+        // Controllers and projects always start empty on first run
+        saveControllers([]);   setControllers([]);
+        saveProjects([]);      setProjects([]);
         setSeedVersion(CURRENT_SEED_VERSION);
       } else {
-        const storedCfg = loadSemanticConfig();
-        setSemanticConfig(storedCfg ?? seedSemanticConfig);
-        setAssemblies(loadAssemblies());
-        setControllerModels(loadControllerModels());
-        setExpansionModules(loadExpansionModules());
-      }
-      setControllers(loadControllers());
-      // Load projects (seed if none exist yet)
-      const existingProjects = loadProjects();
-      if (existingProjects.length === 0) {
-        saveProjects(seedProjects);
-        setProjects(seedProjects);
-      } else {
+        setEquip(loadEquip());
+        setMed(loadMed());
+        setQty(loadQty());
+        setMod(loadMod());
+        if (needsRulesRefresh()) {
+          // Re-apply seed dict + config + assemblies + hardware, preserving user controllers/projects
+          const seed = await fetchSeed();
+          if (seed) {
+            applySeedPayload(seed);
+          } else {
+            applyHardcodedSeed();
+          }
+          setSeedVersion(CURRENT_SEED_VERSION);
+        } else {
+          setSemanticConfig(loadSemanticConfig() ?? seedSemanticConfig);
+          setAssemblies(loadAssemblies());
+          setControllerModels(loadControllerModels());
+          setExpansionModules(loadExpansionModules());
+        }
+        setControllers(loadControllers());
+        const existingProjects = loadProjects();
         setProjects(existingProjects);
       }
+      setLoaded(true);
     }
-    setLoaded(true);
+    init();
   }, []);
 
   const updateEquip = useCallback((data: EquipEntry[]) => {

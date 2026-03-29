@@ -899,10 +899,35 @@ function ApplyAssemblyModal({
   onCancel: () => void;
 }) {
   const [selectedId, setSelectedId] = useState<string>(assemblies[0]?.id ?? '');
-  const [num, setNum] = useState('1');
 
   const selectedAssembly = assemblies.find(a => a.id === selectedId) ?? null;
   const isSys = selectedAssembly?.equipCode === 'SYS';
+
+  // Auto-pick the next number that causes zero conflicts with existing point names
+  function nextAvailableNum(assembly: Assembly): string {
+    for (let n = 1; n <= 99; n++) {
+      const candidate = String(n);
+      const hasConflict = assembly.points.some(pt => {
+        const name = assembly.equipCode + candidate + pt.med + pt.qty + pt.mod;
+        return existingNames.includes(name);
+      });
+      if (!hasConflict) return candidate;
+    }
+    return '1';
+  }
+
+  const [num, setNum] = useState<string>(() =>
+    selectedAssembly && !isSys ? nextAvailableNum(selectedAssembly) : '1'
+  );
+
+  // When assembly selection changes, update num to next available
+  function handleSelectAssembly(id: string) {
+    setSelectedId(id);
+    const asm = assemblies.find(a => a.id === id) ?? null;
+    if (asm && asm.equipCode !== 'SYS') {
+      setNum(nextAvailableNum(asm));
+    }
+  }
 
   function handleApply() {
     if (!selectedAssembly) return;
@@ -960,7 +985,7 @@ function ApplyAssemblyModal({
                 return (
                   <div
                     key={a.id}
-                    onClick={() => setSelectedId(a.id)}
+                    onClick={() => handleSelectAssembly(a.id)}
                     className="p-3 rounded-lg border cursor-pointer transition-colors"
                     style={selectedId === a.id
                       ? { borderColor: '#1D9E75', background: '#E1F5EE' }
@@ -996,16 +1021,23 @@ function ApplyAssemblyModal({
             <label className="text-xs font-medium block mb-1" style={{ color: '#888780' }}>
               NUM (equipment instance number)
             </label>
-            <select
-              className="border rounded px-2 py-1.5 text-sm font-mono"
-              style={{ borderColor: '#D3D1C7', width: '80px' }}
-              value={num}
-              onChange={e => setNum(e.target.value)}
-            >
-              {['1','2','3','4','5','6','7','8','9'].map(n => (
-                <option key={n} value={n}>{n}</option>
-              ))}
-            </select>
+            <div className="flex items-center gap-2">
+              <select
+                className="border rounded px-2 py-1.5 text-sm font-mono"
+                style={{ borderColor: '#D3D1C7', width: '80px' }}
+                value={num}
+                onChange={e => setNum(e.target.value)}
+              >
+                {['1','2','3','4','5','6','7','8','9'].map(n => (
+                  <option key={n} value={n}>{n}</option>
+                ))}
+              </select>
+              {parseInt(num) > 1 && (
+                <span className="text-xs" style={{ color: '#1D9E75' }}>
+                  ↑ auto-incremented — {selectedAssembly?.equipCode}{num}
+                </span>
+              )}
+            </div>
           </div>
         )}
         {selectedAssembly && isSys && (

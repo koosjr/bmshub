@@ -91,20 +91,11 @@ export default function App() {
         } else {
           setAssemblies(existingAsm);
         }
-        const existingModels = loadControllerModels();
-        if (existingModels.length === 0) {
-          saveControllerModels(refreshedModels);
-          setControllerModels(refreshedModels);
-        } else {
-          setControllerModels(existingModels);
-        }
-        const existingExpMods = loadExpansionModules();
-        if (existingExpMods.length === 0) {
-          saveExpansionModules(refreshedExpMods);
-          setExpansionModules(refreshedExpMods);
-        } else {
-          setExpansionModules(existingExpMods);
-        }
+        // Hardware library is always replaced on version bump — it's seed data, not user data
+        saveControllerModels(refreshedModels);
+        setControllerModels(refreshedModels);
+        saveExpansionModules(refreshedExpMods);
+        setExpansionModules(refreshedExpMods);
         setSeedVersion(CURRENT_SEED_VERSION);
       } else {
         const storedCfg = loadSemanticConfig();

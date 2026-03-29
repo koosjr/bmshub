@@ -142,142 +142,146 @@ export const seedMod: ModEntry[] = [
   { id: 'ac51130a-82e2-4343-81ac-be63d97f5b81', code: '3',   label: 'Step'              },
 ];
 
-// ─── SEED SEMANTIC CONFIG ──────────────────────────────────────────────────────────────────────────────
-// Allowlist-based filtering: define what IS valid rather than what is not.
-// Tier 1 — EQUIP → valid MED codes ('' = no-medium points like STS/FLT are allowed)
-// Tier 2 — MED   → valid QTY codes
-// Tier 3 — QTY   → valid MOD codes ('' = no modifier is also valid)
+// ─── SEMANTIC FILTER TABLES ───────────────────────────────────────────────────
+// Three independent lookup tables — edit each one separately.
+// Adding new equipment: add one line to seedEquipMeds only.
+// '' in a list means "no medium / no modifier" is also valid.
+
+// ── Table 1: QTY → valid MODs ─────────────────────────────────────────────────
+export const seedQtyMods: Record<string, string[]> = {
+  // Analogue measurements
+  TMP:  ['', 'SP', 'HI', 'LO', 'HL', 'LL', 'DP', 'FB', 'T', 'M', 'B', 'IN', 'OUT'],
+  STMP: ['', 'SP', 'HI', 'LO'],
+  RTMP: ['', 'SP', 'HI', 'LO'],
+  PRS:  ['', 'SP', 'HI', 'LO', 'HL', 'LL', 'DP', 'FB', 'IN', 'OUT'],
+  DPR:  ['', 'SP', 'HI', 'LO', 'DP'],
+  FLW:  ['', 'SP', 'HI', 'LO'],
+  LVL:  ['', 'SP', 'HI', 'LO', 'HL', 'LL'],
+  HUM:  ['', 'SP', 'HI', 'LO'],
+  CO2:  ['', 'SP', 'HI', 'LO'],
+  GLY:  [''],
+  SPD:  ['', 'SP', 'FB'],
+  // Switch / status — no modifier needed
+  FSW:  [''],
+  PSW:  ['', 'HL', 'LL'],
+  LSW:  ['', 'HL', 'LL'],
+  FD:   ['', '1', '2', '3'],
+  OHS:  [''],
+  SWT:  [''],
+  FIR:  [''],
+  STS:  [''],
+  FLT:  [''],
+  RUN:  [''],
+  ENB:  [''],
+  ALM:  [''],
+  ONO:  [''],
+  STG:  ['1', '2', '3'],
+  // Drive / actuator outputs
+  VSD:  ['', 'SP', 'FB'],
+  PCT:  ['', 'SP', 'FB'],
+  VLV:  ['', 'SP', 'FB'],
+  DMP:  ['', 'SP', 'FB'],
+  DMO:  [''],
+  // Electrical measurements
+  CUR:  ['', 'LN1', 'LN2', 'LN3'],
+  VLN:  ['', 'LN1', 'LN2', 'LN3'],
+  VPH:  ['', 'P12', 'P13', 'P23'],
+  PWA:  ['', 'HI', 'LO'],
+  PWF:  [''],
+  PWR:  [''],
+  KVA:  [''],
+};
+
+// ── Table 2: MED → valid QTYs ─────────────────────────────────────────────────
+export const seedMedQtys: Record<string, string[]> = {
+  // No medium — generic equipment-level status & control points
+  '':  ['STS', 'FLT', 'RUN', 'ALM', 'FIR', 'SWT', 'VSD', 'SPD', 'PCT', 'ENB', 'STG', 'OHS', 'ONO'],
+  // Air streams
+  FA:  ['STS', 'FLT', 'RUN', 'VSD', 'SPD', 'DPR', 'FSW', 'FD', 'TMP', 'HUM', 'CO2', 'PCT', 'ENB', 'FLW'],
+  SA:  ['TMP', 'DPR', 'HUM', 'CO2', 'FSW', 'FD', 'FLW', 'VSD', 'SPD', 'STS'],
+  RA:  ['TMP', 'HUM', 'CO2', 'DPR'],
+  OA:  ['TMP', 'HUM', 'DMP', 'DMO', 'DPR'],
+  EX:  ['STS', 'FLT', 'RUN', 'VSD', 'SPD', 'DPR', 'TMP', 'PCT', 'ENB', 'FLW'],
+  RM:  ['TMP', 'HUM', 'CO2'],
+  ZN:  ['TMP', 'HUM', 'CO2'],
+  // Hydronic circuits
+  CW:  ['TMP', 'STMP', 'RTMP', 'PRS', 'DPR', 'FSW', 'FLW', 'VLV', 'DMP', 'DMO', 'GLY'],
+  HW:  ['TMP', 'STMP', 'RTMP', 'PRS', 'DPR', 'FSW', 'FLW', 'VLV', 'DMP', 'DMO'],
+  CO:  ['TMP', 'STMP', 'RTMP', 'PRS', 'DPR', 'FSW', 'FLW', 'VLV', 'DMO'],
+  GY:  ['TMP', 'PRS', 'FSW', 'FLW', 'GLY'],
+  WA:  ['TMP', 'PRS', 'FSW', 'FLW', 'LVL', 'LSW', 'VLV'],
+  RW:  ['TMP', 'PRS', 'FSW', 'FLW'],
+  SW:  ['TMP', 'STMP', 'RTMP', 'PRS', 'FSW', 'FLW', 'SWT'],
+  // Refrigerant / HVAC
+  RF:  ['TMP', 'PRS', 'PSW', 'LVL', 'LSW', 'STS', 'FLT'],
+  EV:  ['TMP', 'PRS', 'VLV', 'DMO', 'STS'],
+  DF:  ['SWT', 'TMP', 'STS'],
+  CP:  ['TMP', 'PRS', 'PSW', 'STS', 'FLT', 'RUN', 'OHS'],
+  // Medical / lab gases — GSB only
+  MA:  ['PRS', 'PSW', 'FLW', 'FSW', 'ALM', 'LVL', 'LSW'],
+  OX:  ['PRS', 'PSW', 'FLW', 'FSW', 'ALM', 'LVL', 'LSW'],
+  NI:  ['PRS', 'PSW', 'FLW', 'FSW', 'ALM', 'LVL', 'LSW'],
+  NO:  ['PRS', 'PSW', 'FLW', 'FSW', 'ALM', 'LVL', 'LSW'],
+  AR:  ['PRS', 'PSW', 'FLW', 'FSW', 'ALM', 'LVL', 'LSW'],
+  // Electrical
+  EL:  ['CUR', 'PWA', 'PWF', 'PWR', 'KVA', 'VLN', 'VPH', 'STS', 'FLT', 'ALM', 'SWT'],
+  EN:  ['TMP', 'PRS', 'RUN', 'FLT', 'OHS', 'SPD'],
+  // Fuel / oil / liquids
+  FU:  ['LVL', 'LSW', 'FLW', 'FSW', 'TMP', 'PRS', 'ALM'],
+  OL:  ['TMP', 'PRS', 'LVL', 'LSW'],
+  // Interlock / alarm / emergency
+  AL:  ['STS', 'ALM'],
+  ES:  ['SWT', 'STS'],
+  IL:  ['SWT'],
+};
+
+// ── Table 3: EQUIP → valid MEDs ───────────────────────────────────────────────
+// To add new equipment: append one line here. Tables 1 & 2 handle the rest.
+export const seedEquipMeds: Record<string, string[]> = {
+  ACP: ['EL', 'AR', ''],
+  AHU: ['FA', 'SA', 'RA', 'OA', 'EX', 'CW', 'HW', 'SW', 'IL', ''],
+  AUT: ['SW', 'EL', ''],
+  BSC: ['FU', 'SW', 'EL', ''],
+  BSD: ['FU', 'OL', 'SW', 'EL', ''],
+  BSE: ['EL', 'SW', ''],
+  BSG: ['FU', 'SW', 'EL', ''],
+  BSR: ['EL', 'SW', ''],
+  BWC: ['FU', 'HW', 'EL', ''],
+  BWD: ['FU', 'OL', 'HW', 'EL', ''],
+  BWE: ['EL', 'HW', ''],
+  BWG: ['FU', 'HW', 'EL', ''],
+  BWR: ['EL', 'HW', ''],
+  CHR: ['CW', 'CO', 'EV', 'RF', 'EL', 'GY', ''],
+  CTW: ['CO', 'OA', ''],
+  CWP: ['CW', ''],
+  ECF: ['FA', 'SA', 'EX', ''],
+  EXF: ['EX', 'FA', ''],
+  FCU: ['CW', 'HW', 'SA', 'RA', 'ZN', 'EL', ''],
+  FMH: ['EX', 'FA', ''],
+  GEN: ['EL', 'FU', 'EN', 'OL', ''],
+  GSB: ['MA', 'OX', 'NI', 'NO', 'AR', 'FU', ''],
+  HEX: ['CW', 'HW', 'CO', 'GY', ''],
+  HWP: ['HW', ''],
+  ILH: ['HW', 'EL', ''],
+  LFC: ['CW', 'HW', 'SA', 'RA', ''],
+  MAU: ['FA', 'SA', 'OA', 'RA', 'CW', 'HW', ''],
+  PMP: ['CW', 'HW', 'WA', 'CO', 'GY', ''],
+  RCR: ['RF', 'CP', 'EL', 'OL', ''],
+  RFR: ['RF', 'CP', 'EL', 'OL', 'DF', ''],
+  SAF: ['FA', 'SA', ''],
+  SXF: ['EX', 'FA', ''],
+  SYS: ['CW', 'HW', 'CO', 'GY', 'EL', 'WA', ''],
+  TNK: ['CW', 'HW', 'WA', 'CO', 'FU', 'OL', ''],
+  VAC: ['AR', 'EL', ''],
+  VFD: ['EL', ''],
+  VRV: ['RF', 'SA', 'RA', 'ZN', ''],
+};
+
+// Combined config assembled from the three tables above
 export const seedSemanticConfig: SemanticConfig = {
-
-  // ── EQUIP → valid MEDs ───────────────────────────────────────────────────────────────────────────────────
-  equipMeds: {
-    ACP: ['EL', 'AR', ''],
-    AHU: ['FA', 'SA', 'RA', 'OA', 'EX', 'CW', 'HW', 'SW', 'IL', ''],
-    AUT: ['SW', 'EL', ''],
-    BSC: ['FU', 'SW', 'EL', ''],
-    BSD: ['FU', 'OL', 'SW', 'EL', ''],
-    BSE: ['EL', 'SW', ''],
-    BSG: ['FU', 'SW', 'EL', ''],
-    BSR: ['EL', 'SW', ''],
-    BWC: ['FU', 'HW', 'EL', ''],
-    BWD: ['FU', 'OL', 'HW', 'EL', ''],
-    BWE: ['EL', 'HW', ''],
-    BWG: ['FU', 'HW', 'EL', ''],
-    BWR: ['EL', 'HW', ''],
-    CHR: ['CW', 'CO', 'EV', 'RF', 'EL', 'GY', ''],
-    CTW: ['CO', 'OA', ''],
-    CWP: ['CW', ''],
-    ECF: ['FA', 'SA', 'EX', ''],
-    EXF: ['EX', 'FA', ''],
-    FCU: ['CW', 'HW', 'SA', 'RA', 'ZN', 'EL', ''],
-    FMH: ['EX', 'FA', ''],
-    GEN: ['EL', 'FU', 'EN', 'OL', ''],
-    GSB: ['MA', 'OX', 'NI', 'NO', 'AR', 'FU', ''],
-    HEX: ['CW', 'HW', 'CO', 'GY', ''],
-    HWP: ['HW', ''],
-    ILH: ['HW', 'EL', ''],
-    LFC: ['CW', 'HW', 'SA', 'RA', ''],
-    MAU: ['FA', 'SA', 'OA', 'RA', 'CW', 'HW', ''],
-    PMP: ['CW', 'HW', 'WA', 'CO', 'GY', ''],
-    RCR: ['RF', 'CP', 'EL', 'OL', ''],
-    RFR: ['RF', 'CP', 'EL', 'OL', 'DF', ''],
-    SAF: ['FA', 'SA', ''],
-    SXF: ['EX', 'FA', ''],
-    SYS: ['CW', 'HW', 'CO', 'GY', 'EL', 'WA', ''],
-    TNK: ['CW', 'HW', 'WA', 'CO', 'FU', 'OL', ''],
-    VAC: ['AR', 'EL', ''],
-    VFD: ['EL', ''],
-    VRV: ['RF', 'SA', 'RA', 'ZN', ''],
-  },
-
-  // ── MED → valid QTYs ─────────────────────────────────────────────────────────────────────────────────────
-  medQtys: {
-    // No medium — generic equipment-level control & status points
-    '':  ['STS', 'FLT', 'RUN', 'ALM', 'FIR', 'SWT', 'VSD', 'SPD', 'PCT', 'ENB', 'STG', 'OHS', 'ONO'],
-    // Air streams
-    FA:  ['STS', 'FLT', 'RUN', 'VSD', 'SPD', 'DPR', 'FSW', 'FD', 'TMP', 'HUM', 'CO2', 'PCT', 'ENB', 'FLW'],
-    SA:  ['TMP', 'DPR', 'HUM', 'CO2', 'FSW', 'FD', 'FLW', 'VSD', 'SPD', 'STS'],
-    RA:  ['TMP', 'HUM', 'CO2', 'DPR'],
-    OA:  ['TMP', 'HUM', 'DMP', 'DMO', 'DPR'],
-    EX:  ['STS', 'FLT', 'RUN', 'VSD', 'SPD', 'DPR', 'TMP', 'PCT', 'ENB', 'FLW'],
-    RM:  ['TMP', 'HUM', 'CO2'],
-    ZN:  ['TMP', 'HUM', 'CO2'],
-    // Hydronic circuits
-    CW:  ['TMP', 'STMP', 'RTMP', 'PRS', 'DPR', 'FSW', 'FLW', 'VLV', 'DMP', 'DMO', 'GLY'],
-    HW:  ['TMP', 'STMP', 'RTMP', 'PRS', 'DPR', 'FSW', 'FLW', 'VLV', 'DMP', 'DMO'],
-    CO:  ['TMP', 'STMP', 'RTMP', 'PRS', 'DPR', 'FSW', 'FLW', 'VLV', 'DMO'],
-    GY:  ['TMP', 'PRS', 'FSW', 'FLW', 'GLY'],
-    WA:  ['TMP', 'PRS', 'FSW', 'FLW', 'LVL', 'LSW', 'VLV'],
-    RW:  ['TMP', 'PRS', 'FSW', 'FLW'],
-    SW:  ['TMP', 'STMP', 'RTMP', 'PRS', 'FSW', 'FLW', 'SWT'],
-    // Refrigerant / HVAC
-    RF:  ['TMP', 'PRS', 'PSW', 'LVL', 'LSW', 'STS', 'FLT'],
-    EV:  ['TMP', 'PRS', 'VLV', 'DMO', 'STS'],
-    DF:  ['SWT', 'TMP', 'STS'],
-    CP:  ['TMP', 'PRS', 'PSW', 'STS', 'FLT', 'RUN', 'OHS'],
-    // Medical / lab gases
-    MA:  ['PRS', 'PSW', 'FLW', 'FSW', 'ALM', 'LVL', 'LSW'],
-    OX:  ['PRS', 'PSW', 'FLW', 'FSW', 'ALM', 'LVL', 'LSW'],
-    NI:  ['PRS', 'PSW', 'FLW', 'FSW', 'ALM', 'LVL', 'LSW'],
-    NO:  ['PRS', 'PSW', 'FLW', 'FSW', 'ALM', 'LVL', 'LSW'],
-    AR:  ['PRS', 'PSW', 'FLW', 'FSW', 'ALM', 'LVL', 'LSW'],
-    // Electrical
-    EL:  ['CUR', 'PWA', 'PWF', 'PWR', 'KVA', 'VLN', 'VPH', 'STS', 'FLT', 'ALM', 'SWT'],
-    EN:  ['TMP', 'PRS', 'RUN', 'FLT', 'OHS', 'SPD'],
-    // Liquids
-    FU:  ['LVL', 'LSW', 'FLW', 'FSW', 'TMP', 'PRS', 'ALM'],
-    OL:  ['TMP', 'PRS', 'LVL', 'LSW'],
-    // Interlock / alarm / emergency
-    AL:  ['STS', 'ALM'],
-    ES:  ['SWT', 'STS'],
-    IL:  ['SWT'],
-  },
-
-  // ── QTY → valid MODs ───────────────────────────────────────────────────────────────────────────────────
-  qtyMods: {
-    // Analogue measurements — setpoint, hi/lo alarm, limits, differential, feedback, position
-    TMP:  ['', 'SP', 'HI', 'LO', 'HL', 'LL', 'DP', 'FB', 'T', 'M', 'B', 'IN', 'OUT'],
-    STMP: ['', 'SP', 'HI', 'LO'],
-    RTMP: ['', 'SP', 'HI', 'LO'],
-    PRS:  ['', 'SP', 'HI', 'LO', 'HL', 'LL', 'DP', 'FB', 'IN', 'OUT'],
-    DPR:  ['', 'SP', 'HI', 'LO', 'DP'],
-    PSW:  ['', 'HL', 'LL'],
-    FLW:  ['', 'SP', 'HI', 'LO'],
-    LVL:  ['', 'SP', 'HI', 'LO', 'HL', 'LL'],
-    HUM:  ['', 'SP', 'HI', 'LO'],
-    CO2:  ['', 'SP', 'HI', 'LO'],
-    GLY:  [''],
-    SPD:  ['', 'SP', 'FB'],
-    // Digital switch points — no meaningful modifier
-    FSW:  [''],
-    LSW:  ['', 'HL', 'LL'],
-    FD:   ['', '1', '2', '3'],
-    OHS:  [''],
-    SWT:  [''],
-    FIR:  [''],
-    // Drive / actuator outputs
-    VSD:  ['', 'SP', 'FB'],
-    PCT:  ['', 'SP', 'FB'],
-    VLV:  ['', 'SP', 'FB'],
-    DMP:  ['', 'SP', 'FB'],
-    DMO:  [''],
-    // Status / control
-    STS:  [''],
-    FLT:  [''],
-    RUN:  [''],
-    ENB:  [''],
-    ALM:  [''],
-    ONO:  [''],
-    STG:  ['1', '2', '3'],
-    // Electrical
-    CUR:  ['', 'LN1', 'LN2', 'LN3'],
-    VLN:  ['', 'LN1', 'LN2', 'LN3'],
-    VPH:  ['', 'P12', 'P13', 'P23'],
-    PWA:  ['', 'HI', 'LO'],
-    PWF:  [''],
-    PWR:  [''],
-    KVA:  [''],
-  },
+  equipMeds: seedEquipMeds,
+  medQtys:   seedMedQtys,
+  qtyMods:   seedQtyMods,
 };
 
 // ─── SEED PROJECTS ────────────────────────────────────────────────────────────

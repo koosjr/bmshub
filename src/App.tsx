@@ -25,6 +25,7 @@ type Tab = 'dictionary' | 'assemblies' | 'builder' | 'export';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<Tab>('builder');
+  const [loaded, setLoaded] = useState(false);
 
   const [equip, setEquip] = useState<EquipEntry[]>([]);
   const [med, setMed] = useState<MedEntry[]>([]);
@@ -123,6 +124,7 @@ export default function App() {
         setProjects(existingProjects);
       }
     }
+    setLoaded(true);
   }, []);
 
   const updateEquip = useCallback((data: EquipEntry[]) => {
@@ -226,7 +228,12 @@ export default function App() {
 
       {/* Main content */}
       <main className="p-4">
-        {activeTab === 'dictionary' && (
+        {!loaded && (
+          <div className="flex items-center justify-center h-64">
+            <span style={{ color: '#888780' }} className="text-sm">Loading…</span>
+          </div>
+        )}
+        {loaded && activeTab === 'dictionary' && (
           <DictionaryTab
             equip={equip}
             med={med}
@@ -241,7 +248,7 @@ export default function App() {
             onUpdateRules={updateRules}
           />
         )}
-        {activeTab === 'assemblies' && (
+        {loaded && activeTab === 'assemblies' && (
           <AssembliesTab
             equip={equip}
             med={med}
@@ -256,7 +263,7 @@ export default function App() {
             onUpdateExpansionModules={updateExpansionModules}
           />
         )}
-        {activeTab === 'builder' && (
+        {loaded && activeTab === 'builder' && (
           <ControllerBuilderTab
             equip={equip}
             med={med}
@@ -272,7 +279,7 @@ export default function App() {
             onUpdateProjects={updateProjects}
           />
         )}
-        {activeTab === 'export' && (
+        {loaded && activeTab === 'export' && (
           <ExportTab
             controllers={controllers}
             equip={equip}

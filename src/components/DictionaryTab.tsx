@@ -634,8 +634,9 @@ function SemanticConfigSection({ cfg, equip, med, qty, mod, onUpdate }: {
     const [vals, setVals] = useState<string[]>(values);
     const available = options.filter(o => !vals.includes(o));
 
+    const NONE_SENTINEL = '__NONE__';
     function remove(v: string) { setVals(vs => vs.filter(x => x !== v)); }
-    function add(v: string)    { if (v && !vals.includes(v)) setVals(vs => [...vs, v]); }
+    function add(v: string)    { if (v !== '' && !vals.includes(v === NONE_SENTINEL ? '' : v)) setVals(vs => [...vs, v === NONE_SENTINEL ? '' : v]); }
 
     return (
       <div className="py-2 px-3 rounded-lg border" style={{ background: '#FAEEDA', borderColor: '#EF9F27' }}>
@@ -664,11 +665,13 @@ function SemanticConfigSection({ cfg, equip, med, qty, mod, onUpdate }: {
               className="border rounded px-2 py-1 text-xs font-mono"
               style={{ borderColor: '#D3D1C7' }}
               defaultValue=""
-              onChange={e => { add(e.target.value); e.target.value = ''; }}
+              onChange={e => { if (e.target.value) { add(e.target.value); e.target.value = ''; } }}
             >
               <option value="">+ add value…</option>
               {available.map(o => (
-                <option key={o} value={o}>{o === '' ? '∅ (none)' : `${o} — ${labelFn(o)}`}</option>
+                <option key={o === '' ? NONE_SENTINEL : o} value={o === '' ? NONE_SENTINEL : o}>
+                  {o === '' ? '∅ (none) — no medium' : `${o} — ${labelFn(o)}`}
+                </option>
               ))}
             </select>
           </div>

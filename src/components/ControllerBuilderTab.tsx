@@ -8,6 +8,7 @@ import {
 } from '../types';
 import { validateVariable, getValidMods, isMedAllowed, isQtyAllowed } from '../validation';
 import { generateDescription } from '../descriptionGen';
+import { exportProjectXlsx } from '../exportXlsx';
 
 interface Props {
   equip: EquipEntry[];
@@ -1553,11 +1554,25 @@ export default function ControllerBuilderTab({
     setSelectedId(first?.id ?? null);
   }
 
+  function handleExport() {
+    const activeProject = projects.find(p => p.id === activeProjectId);
+    const projectControllers = controllers.filter(c => c.projectId === activeProjectId);
+    exportProjectXlsx(
+      activeProject?.name ?? 'BMSHub Project',
+      projectControllers,
+      controllerModels,
+      expansionModules,
+      qty,
+      equip,
+      med,
+    );
+  }
+
   return (
     <div className="flex gap-4 h-full" style={{ minHeight: 'calc(100vh - 100px)' }}>
       {/* Left panel */}
       <div
-        className="flex-shrink-0 bg-white rounded-xl border p-4"
+        className="flex-shrink-0 bg-white rounded-xl border p-4 flex flex-col gap-3"
         style={{ width: '280px', borderColor: '#D3D1C7' }}
       >
         <ControllerList
@@ -1574,6 +1589,15 @@ export default function ControllerBuilderTab({
           onSelectProject={handleSelectProject}
           onAddProject={() => setShowNewProjectModal(true)}
         />
+        {controllers.filter(c => c.projectId === activeProjectId).length > 0 && (
+          <button
+            onClick={handleExport}
+            className="w-full text-sm py-2 rounded font-medium border"
+            style={{ borderColor: '#1D9E75', color: '#085041', background: '#E1F5EE' }}
+          >
+            ↓ Export to Excel
+          </button>
+        )}
       </div>
 
       {/* Right panel */}

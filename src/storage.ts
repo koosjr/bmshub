@@ -18,7 +18,7 @@ const KEYS = {
 } as const;
 
 // Bump this when seed rules change — triggers a rules refresh for existing users
-export const CURRENT_SEED_VERSION = 5;
+export const CURRENT_SEED_VERSION = 6;
 
 function load<T>(key: string): T[] {
   try {

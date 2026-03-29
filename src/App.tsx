@@ -226,13 +226,12 @@ export default function App() {
             med={med}
             qty={qty}
             mod={mod}
-            rules={[]}
+            semanticConfig={semanticConfig}
             controllers={controllers}
             onUpdateEquip={updateEquip}
             onUpdateMed={updateMed}
             onUpdateQty={updateQty}
             onUpdateMod={updateMod}
-            onUpdateRules={() => {}}
           />
         )}
         {loaded && activeTab === 'assemblies' && (

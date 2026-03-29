@@ -1,21 +1,18 @@
 import { useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import {
-  EquipEntry, MedEntry, QtyEntry, ModEntry, SemanticRule, Controller
-} from '../types';
+import { EquipEntry, MedEntry, QtyEntry, ModEntry, SemanticConfig, Controller } from '../types';
 
 interface Props {
   equip: EquipEntry[];
   med: MedEntry[];
   qty: QtyEntry[];
   mod: ModEntry[];
-  rules: SemanticRule[];
+  semanticConfig: SemanticConfig;
   controllers: Controller[];
   onUpdateEquip: (d: EquipEntry[]) => void;
   onUpdateMed:   (d: MedEntry[]) => void;
   onUpdateQty:   (d: QtyEntry[]) => void;
   onUpdateMod:   (d: ModEntry[]) => void;
-  onUpdateRules: (d: SemanticRule[]) => void;
 }
 
 type IOType = 'AI' | 'AO' | 'DI' | 'DO';
@@ -562,102 +559,172 @@ function ModSection({ mod, controllers, onUpdate }: {
   );
 }
 
-// ---- Semantic Rules Section ----
-function RulesSection({ rules, equip, med, qty, onUpdate }: {
-  rules: SemanticRule[];
+// ---- Semantic Config Section ----
+function SemanticConfigSection({ cfg, equip, med, qty, mod }: {
+  cfg: SemanticConfig;
   equip: EquipEntry[];
   med: MedEntry[];
   qty: QtyEntry[];
-  onUpdate: (d: SemanticRule[]) => void;
+  mod: ModEntry[];
 }) {
-  const [adding, setAdding] = useState(false);
-  const [form, setForm] = useState({ equip: '*', med: '*', qty: '*', reason: '' });
-  const [error, setError] = useState('');
+  const [openTable, setOpenTable] = useState<'equip' | 'med' | 'qty'>('equip');
 
-  function startAdd() { setForm({ equip: '*', med: '*', qty: '*', reason: '' }); setError(''); setAdding(true); }
-  function cancel() { setAdding(false); setError(''); }
+  function equipLabel(code: string) { return equip.find(e => e.code === code)?.label ?? code; }
+  function medLabel(code: string)   { return code === '' ? '(none)' : (med.find(m => m.code === code)?.label ?? code); }
+  function qtyLabel(code: string)   { return qty.find(q => q.code === code)?.label ?? code; }
+  function modLabel(code: string)   { return code === '' ? '(none)' : (mod.find(m => m.code === code)?.label ?? code); }
 
-  function save() {
-    if (!form.reason.trim()) { setError('Reason is required'); return; }
-    onUpdate([...rules, { id: uuidv4(), equip: form.equip, med: form.med, qty: form.qty, allowed: false, reason: form.reason.trim() }]);
-    cancel();
+  const tabStyle = (active: boolean) => ({
+    padding: '6px 14px',
+    borderRadius: '6px 6px 0 0',
+    fontWeight: active ? 700 : 400,
+    fontSize: '12px',
+    cursor: 'pointer',
+    border: '1px solid',
+    borderBottom: active ? '1px solid #fff' : '1px solid #D3D1C7',
+    background: active ? '#fff' : '#F1EFE8',
+    color: active ? '#2C2C2A' : '#888780',
+    marginRight: '4px',
+    marginBottom: '-1px',
+    position: 'relative' as const,
+    zIndex: active ? 1 : 0,
+  });
+
+  function CodePill({ code, title }: { code: string; title: string }) {
+    return (
+      <span
+        title={title}
+        className="inline-block font-mono text-xs px-1.5 py-0.5 rounded mr-1 mb-1"
+        style={{ background: code === '' ? '#F1EFE8' : '#E1F5EE', color: code === '' ? '#888780' : '#085041', border: '1px solid', borderColor: code === '' ? '#D3D1C7' : '#A8D5C4' }}
+      >
+        {code === '' ? '∅' : code}
+      </span>
+    );
   }
-
-  function del(r: SemanticRule) {
-    if (!confirm('Delete this semantic rule?')) return;
-    onUpdate(rules.filter(x => x.id !== r.id));
-  }
-
-  const equipOptions = [{ code: '*', label: 'Any (*)' }, ...equip];
-  const medOptions = [{ code: '*', label: 'Any (*)' }, { code: '', label: 'Absent (empty)' }, ...med];
-  const qtyOptions = [{ code: '*', label: 'Any (*)' }, ...qty];
 
   return (
-    <SectionCard title="Semantic Rules">
-      <p className="text-xs mb-3" style={{ color: '#888780' }}>
-        Rules that block specific EQUIP + MED + QTY combinations. All rules have allowed=false.
-        Use <code className="font-mono">*</code> for "any value", leave blank for "must be absent".
+    <SectionCard title="Semantic Filter Tables">
+      <p className="text-xs mb-4" style={{ color: '#888780' }}>
+        Three allowlist tables control what combinations are valid in the builder.
+        Each dropdown filters to only show valid options based on the previous selection.
       </p>
-      <table className="w-full text-sm mb-3">
-        <thead>
-          <tr style={{ color: '#888780' }} className="text-xs uppercase">
-            <th className="text-left pb-2 font-medium">EQUIP</th>
-            <th className="text-left pb-2 font-medium">MED</th>
-            <th className="text-left pb-2 font-medium">QTY</th>
-            <th className="text-left pb-2 font-medium">Reason</th>
-            <th className="text-left pb-2 font-medium">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {rules.map(r => (
-            <tr key={r.id} className="border-t" style={{ borderColor: '#F1EFE8' }}>
-              <td className="py-2 pr-3"><span className="font-mono text-xs font-bold">{r.equip}</span></td>
-              <td className="py-2 pr-3"><span className="font-mono text-xs font-bold">{r.med === '' ? '∅' : r.med}</span></td>
-              <td className="py-2 pr-3"><span className="font-mono text-xs font-bold">{r.qty}</span></td>
-              <td className="py-2 pr-3 text-xs" style={{ color: '#888780', maxWidth: '300px' }}>{r.reason}</td>
-              <td className="py-2">
-                <button onClick={() => del(r)} className="text-xs" style={{ color: '#E24B4A' }}>Delete</button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      {adding && (
-        <div className="p-3 rounded-lg mb-3 border" style={{ background: '#FAEEDA', borderColor: '#EF9F27' }}>
-          <div className="flex gap-3 flex-wrap items-end">
-            <div>
-              <label className="text-xs font-medium block mb-1" style={{ color: '#888780' }}>EQUIP</label>
-              <select className="border rounded px-2 py-1 text-sm font-mono" style={{ borderColor: '#D3D1C7' }}
-                value={form.equip} onChange={e => setForm(f => ({ ...f, equip: e.target.value }))}>
-                {equipOptions.map(o => <option key={o.code} value={o.code}>{o.code} — {o.label}</option>)}
-              </select>
-            </div>
-            <div>
-              <label className="text-xs font-medium block mb-1" style={{ color: '#888780' }}>MED</label>
-              <select className="border rounded px-2 py-1 text-sm font-mono" style={{ borderColor: '#D3D1C7' }}
-                value={form.med} onChange={e => setForm(f => ({ ...f, med: e.target.value }))}>
-                {medOptions.map(o => <option key={o.code + '_med'} value={o.code}>{o.code || '∅'} — {o.label}</option>)}
-              </select>
-            </div>
-            <div>
-              <label className="text-xs font-medium block mb-1" style={{ color: '#888780' }}>QTY</label>
-              <select className="border rounded px-2 py-1 text-sm font-mono" style={{ borderColor: '#D3D1C7' }}
-                value={form.qty} onChange={e => setForm(f => ({ ...f, qty: e.target.value }))}>
-                {qtyOptions.map(o => <option key={o.code} value={o.code}>{o.code} — {o.label}</option>)}
-              </select>
-            </div>
-            <div className="flex-1 min-w-48">
-              <label className="text-xs font-medium block mb-1" style={{ color: '#888780' }}>Reason</label>
-              <input className="border rounded px-2 py-1 text-sm w-full" style={{ borderColor: '#D3D1C7' }}
-                value={form.reason} onChange={e => setForm(f => ({ ...f, reason: e.target.value }))} />
-            </div>
-            <button onClick={save} className="px-3 py-1.5 rounded text-sm text-white" style={{ background: '#1D9E75' }}>Save</button>
-            <button onClick={cancel} className="px-3 py-1.5 rounded text-sm" style={{ background: '#D3D1C7', color: '#2C2C2A' }}>Cancel</button>
+
+      {/* Tab bar */}
+      <div style={{ borderBottom: '1px solid #D3D1C7', marginBottom: '0' }}>
+        <button style={tabStyle(openTable === 'equip')} onClick={() => setOpenTable('equip')}>
+          Table 1 — EQUIP → MED
+        </button>
+        <button style={tabStyle(openTable === 'med')} onClick={() => setOpenTable('med')}>
+          Table 2 — MED → QTY
+        </button>
+        <button style={tabStyle(openTable === 'qty')} onClick={() => setOpenTable('qty')}>
+          Table 3 — QTY → MOD
+        </button>
+      </div>
+
+      <div className="border rounded-b rounded-tr p-4" style={{ borderColor: '#D3D1C7', background: '#fff' }}>
+
+        {/* Table 1: EQUIP → valid MEDs */}
+        {openTable === 'equip' && (
+          <div>
+            <p className="text-xs mb-3" style={{ color: '#888780' }}>
+              For each equipment type, which media codes are valid. ∅ means "no medium" (status/fault points).
+            </p>
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="text-xs uppercase" style={{ color: '#888780' }}>
+                  <th className="text-left pb-2 font-medium w-24">EQUIP</th>
+                  <th className="text-left pb-2 font-medium" style={{ color: '#888780' }}>Equipment</th>
+                  <th className="text-left pb-2 font-medium">Valid Media</th>
+                </tr>
+              </thead>
+              <tbody>
+                {Object.entries(cfg.equipMeds).map(([equipCode, meds]) => (
+                  <tr key={equipCode} className="border-t" style={{ borderColor: '#F1EFE8' }}>
+                    <td className="py-2 pr-3 align-top">
+                      <span className="font-mono text-xs font-bold" style={{ color: '#2C2C2A' }}>{equipCode}</span>
+                    </td>
+                    <td className="py-2 pr-4 align-top text-xs" style={{ color: '#888780', whiteSpace: 'nowrap' }}>
+                      {equipLabel(equipCode)}
+                    </td>
+                    <td className="py-1.5 align-top">
+                      {meds.map(m => <CodePill key={m} code={m} title={medLabel(m)} />)}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
-          {error && <p className="text-xs mt-2" style={{ color: '#E24B4A' }}>{error}</p>}
-        </div>
-      )}
-      <button onClick={startAdd} className="text-sm px-3 py-1.5 rounded border" style={{ borderColor: '#EF9F27', color: '#854F0B' }}>+ Add Rule</button>
+        )}
+
+        {/* Table 2: MED → valid QTYs */}
+        {openTable === 'med' && (
+          <div>
+            <p className="text-xs mb-3" style={{ color: '#888780' }}>
+              For each medium, which quantity codes are valid. ∅ row covers points with no medium selected.
+            </p>
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="text-xs uppercase" style={{ color: '#888780' }}>
+                  <th className="text-left pb-2 font-medium w-16">MED</th>
+                  <th className="text-left pb-2 font-medium w-36">Medium</th>
+                  <th className="text-left pb-2 font-medium">Valid Quantities</th>
+                </tr>
+              </thead>
+              <tbody>
+                {Object.entries(cfg.medQtys).map(([medCode, qtys]) => (
+                  <tr key={medCode} className="border-t" style={{ borderColor: '#F1EFE8' }}>
+                    <td className="py-2 pr-3 align-top">
+                      <span className="font-mono text-xs font-bold" style={{ color: '#2C2C2A' }}>
+                        {medCode === '' ? '∅' : medCode}
+                      </span>
+                    </td>
+                    <td className="py-2 pr-4 align-top text-xs" style={{ color: '#888780', whiteSpace: 'nowrap' }}>
+                      {medLabel(medCode)}
+                    </td>
+                    <td className="py-1.5 align-top">
+                      {qtys.map(q => <CodePill key={q} code={q} title={qtyLabel(q)} />)}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+
+        {/* Table 3: QTY → valid MODs */}
+        {openTable === 'qty' && (
+          <div>
+            <p className="text-xs mb-3" style={{ color: '#888780' }}>
+              For each quantity, which modifier codes are valid. ∅ means "no modifier" is allowed.
+            </p>
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="text-xs uppercase" style={{ color: '#888780' }}>
+                  <th className="text-left pb-2 font-medium w-20">QTY</th>
+                  <th className="text-left pb-2 font-medium w-40">Quantity</th>
+                  <th className="text-left pb-2 font-medium">Valid Modifiers</th>
+                </tr>
+              </thead>
+              <tbody>
+                {Object.entries(cfg.qtyMods).map(([qtyCode, mods]) => (
+                  <tr key={qtyCode} className="border-t" style={{ borderColor: '#F1EFE8' }}>
+                    <td className="py-2 pr-3 align-top">
+                      <span className="font-mono text-xs font-bold" style={{ color: '#2C2C2A' }}>{qtyCode}</span>
+                    </td>
+                    <td className="py-2 pr-4 align-top text-xs" style={{ color: '#888780', whiteSpace: 'nowrap' }}>
+                      {qtyLabel(qtyCode)}
+                    </td>
+                    <td className="py-1.5 align-top">
+                      {mods.map(m => <CodePill key={m} code={m} title={modLabel(m)} />)}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
     </SectionCard>
   );
 }
@@ -671,7 +738,7 @@ export default function DictionaryTab(props: Props) {
       <MedSection med={props.med} controllers={props.controllers} onUpdate={props.onUpdateMed} />
       <QtySection qty={props.qty} controllers={props.controllers} onUpdate={props.onUpdateQty} />
       <ModSection mod={props.mod} controllers={props.controllers} onUpdate={props.onUpdateMod} />
-      <RulesSection rules={props.rules} equip={props.equip} med={props.med} qty={props.qty} onUpdate={props.onUpdateRules} />
+      <SemanticConfigSection cfg={props.semanticConfig} equip={props.equip} med={props.med} qty={props.qty} mod={props.mod} />
     </div>
   );
 }

@@ -1,5 +1,5 @@
 // C:\Dev\bmshub\src\simulatorExport.ts
-import { Controller, QtyEntry } from './types';
+import { Controller, QtyEntry, ControllerModel } from './types';
 
 export interface SimExportPoint {
   tag: string;
@@ -11,6 +11,7 @@ export interface SimExportDevice {
   id: string;
   name: string;
   description: string;
+  modbus_address_offset: number;   // 0 = no offset; -1 = Eliwell 1-based docs
   points: SimExportPoint[];
 }
 
@@ -37,6 +38,7 @@ export function exportForSimulator(
   qtyList: QtyEntry[],
   projectName: string,
   projectId: string | null = null,
+  controllerModels: ControllerModel[] = [],
 ): string {
   const devices: SimExportDevice[] = [];
 
@@ -54,10 +56,14 @@ export function exportForSimulator(
       ? `${ctrl.siteName} — ${ctrl.label}`
       : ctrl.label;
 
+    const model = controllerModels.find(m => m.id === ctrl.modelId);
+    const modbusOffset = model?.modbusAddressOffset ?? 0;
+
     devices.push({
       id: ctrl.id,
       name: deviceName,
       description: ctrl.label,
+      modbus_address_offset: modbusOffset,
       points,
     });
   }

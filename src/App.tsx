@@ -160,7 +160,7 @@ export default function App() {
 
   const handleExportForSimulator = useCallback((projectId: string) => {
     const project = projects.find(p => p.id === projectId);
-    return exportForSimulator(controllers, qty, project?.name ?? 'Project', projectId);
+    return exportForSimulator(controllers, qty, project?.name ?? 'Project', projectId, controllerModels);
   }, [controllers, qty, projects]);
 
   const handleImport = useCallback((json: string) => {

@@ -434,11 +434,19 @@ function ControllerModelModal({
   const [name, setName] = useState(model?.name ?? '');
   const [description, setDescription] = useState(model?.description ?? '');
   const [io, setIo] = useState<IOCount>(model?.io ?? { ai: 0, ao: 0, di: 0, do: 0 });
+  const [modbusOffset, setModbusOffset] = useState<number>(model?.modbusAddressOffset ?? 0);
   const [error, setError] = useState('');
 
   function handleSave() {
     if (!name.trim()) { setError('Name is required'); return; }
-    onSave({ id: model?.id ?? uuidv4(), name: name.trim(), description: description.trim(), io });
+    const saved: ControllerModel = {
+      id: model?.id ?? uuidv4(),
+      name: name.trim(),
+      description: description.trim(),
+      io,
+    };
+    if (modbusOffset !== 0) saved.modbusAddressOffset = modbusOffset;
+    onSave(saved);
   }
 
   return (
@@ -461,6 +469,20 @@ function ControllerModelModal({
               value={description} onChange={e => setDescription(e.target.value)} placeholder="Short description" />
           </div>
           <IOCountForm label="I/O Channels" io={io} onChange={setIo} />
+          <div>
+            <label className="text-xs font-medium block mb-1" style={{ color: '#888780' }}>
+              Modbus Address Offset
+            </label>
+            <div className="flex items-center gap-3">
+              <input type="number" className="border rounded px-3 py-2 text-sm font-mono w-24" style={{ borderColor: '#D3D1C7' }}
+                value={modbusOffset} onChange={e => setModbusOffset(parseInt(e.target.value) || 0)} />
+              <span className="text-xs" style={{ color: '#888780' }}>
+                {modbusOffset === -1 ? '−1 → Eliwell (docs are 1-based, polls 0-based)' :
+                 modbusOffset === 0  ? '0 → no offset (standard)' :
+                 `${modbusOffset > 0 ? '+' : ''}${modbusOffset} offset applied when polling`}
+              </span>
+            </div>
+          </div>
         </div>
         {error && <p className="px-6 pb-2 text-xs" style={{ color: '#E24B4A' }}>{error}</p>}
         <div className="px-6 py-4 border-t flex gap-2 justify-end" style={{ borderColor: '#D3D1C7' }}>

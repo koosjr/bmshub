@@ -95,6 +95,7 @@ export interface ControllerModel {
   name: string;          // e.g. "Eliwell 12600"
   description: string;
   io: IOCount;
+  modbusAddressOffset?: number;  // e.g. -1 for Eliwell (docs use 1-based, poll 0-based)
 }
 
 export interface ExpansionModule {

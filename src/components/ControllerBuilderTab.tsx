@@ -209,7 +209,7 @@ function NewProjectModal({ onConfirm, onCancel }: {
 function ControllerList({
   controllers, selectedId, onSelect, onAdd, onDelete,
   qtyList, controllerModels, expansionModules,
-  projects, activeProjectId, onSelectProject, onAddProject,
+  projects, activeProjectId, onSelectProject, onAddProject, onDeleteProject,
 }: {
   controllers: Controller[];
   selectedId: string | null;
@@ -223,6 +223,7 @@ function ControllerList({
   activeProjectId: string;
   onSelectProject: (id: string) => void;
   onAddProject: () => void;
+  onDeleteProject: () => void;
 }) {
   const filtered = controllers.filter(c => c.projectId === activeProjectId);
 
@@ -238,6 +239,14 @@ function ControllerList({
             style={{ borderColor: '#D3D1C7', color: '#888780' }}
             title="New project"
           >+ New</button>
+          {projects.length > 0 && (
+            <button
+              onClick={onDeleteProject}
+              className="text-xs px-2 py-0.5 rounded border"
+              style={{ borderColor: '#E24B4A', color: '#E24B4A' }}
+              title="Delete current project"
+            >Delete</button>
+          )}
         </div>
         <select
           className="border rounded px-2 py-1.5 text-sm w-full"
@@ -1579,6 +1588,28 @@ export default function ControllerBuilderTab({
     setShowNewProjectModal(false);
   }
 
+  function handleDeleteProject() {
+    const proj = projects.find(p => p.id === activeProjectId);
+    const ctrlCount = controllers.filter(c => c.projectId === activeProjectId).length;
+    const msg = ctrlCount > 0
+      ? `Delete project "${proj?.name}" and its ${ctrlCount} controller${ctrlCount !== 1 ? 's' : ''}? This cannot be undone.`
+      : `Delete project "${proj?.name}"? This cannot be undone.`;
+    if (!confirm(msg)) return;
+    const updatedControllers = controllers.filter(c => c.projectId !== activeProjectId);
+    const updatedProjects = projects.filter(p => p.id !== activeProjectId);
+    onUpdateControllers(updatedControllers);
+    onUpdateProjects(updatedProjects);
+    const next = updatedProjects[0];
+    if (next) {
+      setActiveProjectId(next.id);
+      const first = updatedControllers.find(c => c.projectId === next.id);
+      setSelectedId(first?.id ?? null);
+    } else {
+      setActiveProjectId('');
+      setSelectedId(null);
+    }
+  }
+
   function handleSelectProject(id: string) {
     setActiveProjectId(id);
     // Select first controller in the newly active project
@@ -1645,6 +1676,7 @@ export default function ControllerBuilderTab({
           activeProjectId={activeProjectId}
           onSelectProject={handleSelectProject}
           onAddProject={() => setShowNewProjectModal(true)}
+          onDeleteProject={handleDeleteProject}
         />
       </div>
 

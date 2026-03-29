@@ -39,7 +39,7 @@ function buildSheet1(
   const rows: (string | number)[][] = [];
 
   for (const ctrl of controllers) {
-    const dup = ctrl.duplicates ?? 1;
+    const dup = Number(ctrl.duplicates) || 1;
     const modelName = controllerModels.find(m => m.id === ctrl.modelId)?.name ?? '(no model)';
     const ctrlTitle = ctrl.siteName
       ? `${ctrl.label}  —  ${ctrl.siteName}`
@@ -109,7 +109,7 @@ function buildSheet2(
   const modelCount: Map<string, number> = new Map();
   for (const ctrl of controllers) {
     if (!ctrl.modelId) continue;
-    const dup = ctrl.duplicates ?? 1;
+    const dup = Number(ctrl.duplicates) || 1;
     modelCount.set(ctrl.modelId, (modelCount.get(ctrl.modelId) ?? 0) + dup);
   }
   for (const [id, count] of modelCount) {
@@ -123,7 +123,7 @@ function buildSheet2(
   // Expansion modules
   const expCount: Map<string, number> = new Map();
   for (const ctrl of controllers) {
-    const dup = ctrl.duplicates ?? 1;
+    const dup = Number(ctrl.duplicates) || 1;
     for (const exp of ctrl.expansions ?? []) {
       expCount.set(exp.moduleId, (expCount.get(exp.moduleId) ?? 0) + exp.quantity * dup);
     }
@@ -139,7 +139,7 @@ function buildSheet2(
   // Field devices — aggregate across all controllers
   const deviceTotals: Map<string, number> = new Map();
   for (const ctrl of controllers) {
-    const dup = ctrl.duplicates ?? 1;
+    const dup = Number(ctrl.duplicates) || 1;
     for (const v of ctrl.variables) {
       const io = ioTypeOf(v.qty, qtyList, v.ioOverride);
       if (io === 'AV' || io === 'BV') continue;
@@ -157,7 +157,7 @@ function buildSheet2(
   // IO totals — compute first, then push rows with correct values
   let ai = 0, ao = 0, di = 0, doCount = 0, av = 0;
   for (const ctrl of controllers) {
-    const dup = ctrl.duplicates ?? 1;
+    const dup = Number(ctrl.duplicates) || 1;
     for (const v of ctrl.variables) {
       const io = ioTypeOf(v.qty, qtyList, v.ioOverride);
       if (io === 'AI') ai += dup;

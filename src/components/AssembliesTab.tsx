@@ -1,17 +1,17 @@
 import { useState, useMemo } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import {
-  EquipEntry, MedEntry, QtyEntry, ModEntry, SemanticRule,
-  Assembly, AssemblyPoint, ControllerModel, ExpansionModule, IOCount,
+  EquipEntry, MedEntry, QtyEntry, ModEntry,
+  Assembly, AssemblyPoint, ControllerModel, ExpansionModule, IOCount, SemanticConfig,
 } from '../types';
-import { checkSemanticBlocked } from '../validation';
+import { isMedAllowed, isQtyAllowed, getValidMods } from '../validation';
 
 interface Props {
   equip: EquipEntry[];
   med: MedEntry[];
   qty: QtyEntry[];
   mod: ModEntry[];
-  rules: SemanticRule[];
+  semanticConfig: SemanticConfig;
   assemblies: Assembly[];
   controllerModels: ControllerModel[];
   expansionModules: ExpansionModule[];
@@ -28,24 +28,11 @@ const IO_COLORS: Record<string, { bg: string; text: string }> = {
 };
 
 
-function getModsForQty(qty: string, modList: ModEntry[]): ModEntry[] {
-  const stageMods = ['1', '2', '3'];
-  const posMods = ['T', 'M', 'B'];
-  const generalMods = ['SP', 'HI', 'LO', 'DP', 'FB'];
-  if (qty === 'STG') return modList.filter(m => stageMods.includes(m.code));
-  if (['TMP', 'STMP', 'RTMP', 'PRS', 'DPR', 'HUM'].includes(qty)) {
-    return modList.filter(m => [...posMods, ...generalMods].includes(m.code));
-  }
-  if (['VLV', 'DMP', 'VSD', 'PCT'].includes(qty)) {
-    return modList.filter(m => generalMods.includes(m.code));
-  }
-  return modList.filter(m => generalMods.includes(m.code));
-}
 
 // ---- Assembly Point Row editor ----
 function AssemblyPointRow({
   point, index, total,
-  equipCode, medList, qtyList, modList, rules,
+  equipCode, medList, qtyList, modList, semanticConfig,
   onUpdate, onDelete, onMoveUp, onMoveDown,
 }: {
   point: AssemblyPoint;
@@ -55,7 +42,7 @@ function AssemblyPointRow({
   medList: MedEntry[];
   qtyList: QtyEntry[];
   modList: ModEntry[];
-  rules: SemanticRule[];
+  semanticConfig: SemanticConfig;
   onUpdate: (p: AssemblyPoint) => void;
   onDelete: () => void;
   onMoveUp: () => void;
@@ -63,35 +50,39 @@ function AssemblyPointRow({
 }) {
   const suffix = point.med + point.qty + point.mod;
   const qtyEntry = qtyList.find(q => q.code === point.qty);
-  const availableMods = point.qty ? getModsForQty(point.qty, modList) : [];
 
-  // Filter MED: hide mediums that are semantically blocked for this EQUIP across all QTYs
+  // Filter MED: only show media allowed for this EQUIP
   const filteredMeds = useMemo(() =>
-    medList.filter(m => !checkSemanticBlocked(equipCode, m.code, '*', rules)),
-    [medList, equipCode, rules]
+    medList.filter(m => isMedAllowed(equipCode, m.code, semanticConfig)),
+    [medList, equipCode, semanticConfig]
   );
 
-  // QTY with semantic status for current EQUIP + MED
-  const qtyWithStatus = useMemo(() =>
-    qtyList.map(q => ({
-      qty: q,
-      blocked: checkSemanticBlocked(equipCode, point.med, q.code, rules),
-    })),
-    [qtyList, equipCode, point.med, rules]
+  // Filter QTY: only show QTYs allowed for the selected MED
+  const filteredQtys = useMemo(() =>
+    qtyList.filter(q => isQtyAllowed(point.med, q.code, semanticConfig)),
+    [qtyList, point.med, semanticConfig]
   );
+
+  // Filter MOD: use semanticConfig if defined, otherwise show all
+  const availableMods = useMemo(() => {
+    if (!point.qty) return [];
+    const valid = getValidMods(point.qty, semanticConfig);
+    return valid !== null
+      ? modList.filter(m => valid.includes(m.code))
+      : modList;
+  }, [point.qty, modList, semanticConfig]);
 
   function handleMedChange(code: string) {
-    // Clear QTY if it becomes blocked by the new MED selection
-    const qtyStillOk = !point.qty || !checkSemanticBlocked(equipCode, code, point.qty, rules);
+    // Clear QTY if it's no longer valid for the new MED
+    const qtyStillOk = !point.qty || isQtyAllowed(code, point.qty, semanticConfig);
     onUpdate({ ...point, med: code, qty: qtyStillOk ? point.qty : '', mod: qtyStillOk ? point.mod : '' });
   }
 
   function handleQtyChange(code: string) {
-    const mods = getModsForQty(code, modList);
-    onUpdate({ ...point, qty: code, mod: mods.some(m => m.code === point.mod) ? point.mod : '' });
+    const valid = getValidMods(code, semanticConfig);
+    const modOk = !point.mod || (valid === null || valid.includes(point.mod));
+    onUpdate({ ...point, qty: code, mod: modOk ? point.mod : '' });
   }
-
-  const medBlocked = point.med ? checkSemanticBlocked(equipCode, point.med, point.qty || '*', rules) : null;
 
   const baseIOType = qtyEntry?.ioType ?? null;
   const allowedOverride = baseIOType === 'AI' || baseIOType === 'AO' ? 'AV' : 'BV';
@@ -126,7 +117,7 @@ function AssemblyPointRow({
       {/* MED */}
       <select
         className="border rounded px-1.5 py-1 text-xs font-mono"
-        style={{ borderColor: medBlocked ? '#EF9F27' : '#D3D1C7', minWidth: '140px' }}
+        style={{ borderColor: '#D3D1C7', minWidth: '140px' }}
         value={point.med}
         onChange={e => handleMedChange(e.target.value)}
       >
@@ -144,10 +135,8 @@ function AssemblyPointRow({
         onChange={e => handleQtyChange(e.target.value)}
       >
         <option value="">— select QTY —</option>
-        {qtyWithStatus.map(({ qty: q, blocked }) => (
-          <option key={q.id} value={q.code} disabled={!!blocked} style={blocked ? { color: '#D3D1C7' } : {}}>
-            {blocked ? '⊘ ' : ''}{q.code} — {q.label}
-          </option>
+        {filteredQtys.map(q => (
+          <option key={q.id} value={q.code}>{q.code} — {q.label}</option>
         ))}
       </select>
 
@@ -216,7 +205,7 @@ function AssemblyPointRow({
 
 // ---- Assembly Edit Modal ----
 function AssemblyModal({
-  assembly, equipList, medList, qtyList, modList, rules,
+  assembly, equipList, medList, qtyList, modList, semanticConfig,
   onSave, onCancel,
 }: {
   assembly: Assembly | null;
@@ -224,7 +213,7 @@ function AssemblyModal({
   medList: MedEntry[];
   qtyList: QtyEntry[];
   modList: ModEntry[];
-  rules: SemanticRule[];
+  semanticConfig: SemanticConfig;
   onSave: (a: Assembly) => void;
   onCancel: () => void;
 }) {
@@ -365,7 +354,7 @@ function AssemblyModal({
                     medList={medList}
                     qtyList={qtyList}
                     modList={modList}
-                    rules={rules}
+                    semanticConfig={semanticConfig}
                     onUpdate={updated => updatePoint(i, updated)}
                     onDelete={() => deletePoint(i)}
                     onMoveUp={() => moveUp(i)}
@@ -538,7 +527,7 @@ function ExpansionModuleModal({
 
 // ---- Main AssembliesTab ----
 export default function AssembliesTab({
-  equip, med, qty, mod, rules,
+  equip, med, qty, mod, semanticConfig,
   assemblies, controllerModels, expansionModules,
   onUpdateAssemblies, onUpdateControllerModels, onUpdateExpansionModules,
 }: Props) {
@@ -825,7 +814,7 @@ export default function AssembliesTab({
           medList={med}
           qtyList={qty}
           modList={mod}
-          rules={rules}
+          semanticConfig={semanticConfig}
           onSave={handleSaveAssembly}
           onCancel={() => setShowAssemblyModal(false)}
         />

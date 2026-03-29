@@ -245,7 +245,7 @@ export default function App() {
             med={med}
             qty={qty}
             mod={mod}
-            rules={[]}
+            semanticConfig={semanticConfig}
             assemblies={assemblies}
             controllerModels={controllerModels}
             expansionModules={expansionModules}

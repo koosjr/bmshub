@@ -347,21 +347,17 @@ function VariableForm({
     }));
   }
 
-  // Available MEDs — grey out those not valid for selected EQUIP
-  const medWithStatus = useMemo(() => {
-    return medList.map(m => {
-      const blocked = !isMedAllowed(form.equip, m.code, semanticConfig);
-      return { med: m, blocked };
-    });
-  }, [medList, form.equip, semanticConfig]);
+  // Available MEDs — only those valid for selected EQUIP
+  const filteredMeds = useMemo(() =>
+    medList.filter(m => isMedAllowed(form.equip, m.code, semanticConfig)),
+    [medList, form.equip, semanticConfig]
+  );
 
-  // Available QTYs — grey out semantically blocked ones
-  const qtyWithStatus = useMemo(() => {
-    return qtyList.map(q => {
-      const blocked = !isQtyAllowed(form.med, q.code, semanticConfig);
-      return { qty: q, blocked };
-    });
-  }, [qtyList, form.med, semanticConfig]);
+  // Available QTYs — only those valid for selected MED
+  const filteredQtys = useMemo(() =>
+    qtyList.filter(q => isQtyAllowed(form.med, q.code, semanticConfig)),
+    [qtyList, form.med, semanticConfig]
+  );
 
   // Available MODs filtered by QTY
   const availableMods = useMemo(() => {
@@ -440,7 +436,6 @@ function VariableForm({
   }
 
   // Check if current MED is invalid for selected EQUIP (to show warning on MED)
-  const medBlocked = form.med ? !isMedAllowed(form.equip, form.med, semanticConfig) : false;
 
   // Structural errors only for display in form
   const structuralErrors = validationResult && !validationResult.valid
@@ -532,15 +527,13 @@ function VariableForm({
           </label>
           <select
             className="border rounded px-2 py-1.5 text-sm font-mono"
-            style={{ borderColor: medBlocked ? '#EF9F27' : '#D3D1C7', minWidth: '140px' }}
+            style={{ borderColor: '#D3D1C7', minWidth: '140px' }}
             value={form.med}
             onChange={e => setForm(f => ({ ...f, med: e.target.value, qty: '', mod: '' }))}
           >
             <option value="">— none —</option>
-            {medWithStatus.map(({ med: m, blocked }) => (
-              <option key={m.id} value={m.code} disabled={blocked} style={blocked ? { color: '#D3D1C7' } : {}}>
-                {blocked ? '\u2298 ' : ''}{m.code} — {m.label}
-              </option>
+            {filteredMeds.map(m => (
+              <option key={m.id} value={m.code}>{m.code} — {m.label}</option>
             ))}
           </select>
         </div>
@@ -555,15 +548,8 @@ function VariableForm({
             onChange={e => handleQtyChange(e.target.value)}
           >
             <option value="">— select —</option>
-            {qtyWithStatus.map(({ qty: q, blocked }) => (
-              <option
-                key={q.id}
-                value={q.code}
-                disabled={!!blocked}
-                style={blocked ? { color: '#D3D1C7' } : {}}
-              >
-                {blocked ? '⊘ ' : ''}{q.code} — {q.label}
-              </option>
+            {filteredQtys.map(q => (
+              <option key={q.id} value={q.code}>{q.code} — {q.label}</option>
             ))}
           </select>
         </div>

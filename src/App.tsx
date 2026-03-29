@@ -13,7 +13,7 @@ import {
   exportAll, importAll,
 } from './storage';
 import {
-  seedEquip, seedMed, seedQty, seedMod, seedSemanticConfig, buildSeedController,
+  seedEquip, seedMed, seedQty, seedMod, seedSemanticConfig,
   seedAssemblies, seedControllerModels, seedExpansionModules, seedProjects,
 } from './seedData';
 import DictionaryTab from './components/DictionaryTab';
@@ -45,7 +45,6 @@ export default function App() {
       const me = seedMed;
       const qt = seedQty;
       const mo = seedMod;
-      const ctrl = buildSeedController(eq, me, qt, mo);
       const asm = seedAssemblies;
       const ctrlModels = seedControllerModels;
       const expMods = seedExpansionModules;
@@ -55,7 +54,7 @@ export default function App() {
       saveQty(qt);
       saveMod(mo);
       saveSemanticConfig(seedSemanticConfig);
-      saveControllers([ctrl]);
+      saveControllers([]);
       saveAssemblies(asm);
       saveControllerModels(ctrlModels);
       saveExpansionModules(expMods);
@@ -66,7 +65,7 @@ export default function App() {
       setQty(qt);
       setMod(mo);
       setSemanticConfig(seedSemanticConfig);
-      setControllers([ctrl]);
+      setControllers([]);
       setAssemblies(asm);
       setControllerModels(ctrlModels);
       setExpansionModules(expMods);

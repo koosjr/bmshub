@@ -298,15 +298,7 @@ export const seedSemanticConfig: SemanticConfig = {
 };
 
 // ─── SEED PROJECTS ────────────────────────────────────────────────────────────
-export const seedProjects: Project[] = [
-  {
-    id: 'proj-pacofs',
-    name: 'PACOFS',
-    description: 'PACOFS K-Floor refurbishment',
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-];
+export const seedProjects: Project[] = [];
 
 // ─── HELPERS ──────────────────────────────────────────────────────────────────
 function makeVar(

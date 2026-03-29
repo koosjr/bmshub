@@ -41,6 +41,12 @@ export interface SemanticRule {
   reason: string;
 }
 
+export interface SemanticConfig {
+  equipMeds: Record<string, string[]>; // EQUIP code → valid MED codes ('' = no-med allowed)
+  medQtys:   Record<string, string[]>; // MED code   → valid QTY codes (key '' = no-medium QTYs)
+  qtyMods:   Record<string, string[]>; // QTY code   → valid MOD codes ('' = no-mod allowed)
+}
+
 export interface DeviceSupply {
   supply: boolean;        // tick box — are we supplying this device?
   deviceType: string;     // see rules in ControllerBuilderTab
@@ -131,7 +137,7 @@ export interface AppData {
   med: MedEntry[];
   qty: QtyEntry[];
   mod: ModEntry[];
-  rules: SemanticRule[];
+  semanticConfig: SemanticConfig;
   controllers: Controller[];
   assemblies: Assembly[];
   controllerModels: ControllerModel[];

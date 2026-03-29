@@ -1,5 +1,5 @@
 import {
-  EquipEntry, MedEntry, QtyEntry, ModEntry, SemanticRule, Controller,
+  EquipEntry, MedEntry, QtyEntry, ModEntry, SemanticConfig, Controller,
   Assembly, ControllerModel, ExpansionModule, Project,
 } from './types';
 
@@ -8,7 +8,7 @@ const KEYS = {
   med: 'bms_med',
   qty: 'bms_qty',
   mod: 'bms_mod',
-  rules: 'bms_rules',
+  semanticConfig: 'bms_semantic_config',
   controllers: 'bms_controllers',
   assemblies: 'bms_assemblies',
   controllerModels: 'bms_controller_models',
@@ -18,7 +18,7 @@ const KEYS = {
 } as const;
 
 // Bump this when seed rules change — triggers a rules refresh for existing users
-export const CURRENT_SEED_VERSION = 3;
+export const CURRENT_SEED_VERSION = 4;
 
 function load<T>(key: string): T[] {
   try {
@@ -38,7 +38,6 @@ export function loadEquip(): EquipEntry[]               { return load<EquipEntry
 export function loadMed(): MedEntry[]                    { return load<MedEntry>(KEYS.med); }
 export function loadQty(): QtyEntry[]                    { return load<QtyEntry>(KEYS.qty); }
 export function loadMod(): ModEntry[]                    { return load<ModEntry>(KEYS.mod); }
-export function loadRules(): SemanticRule[]              { return load<SemanticRule>(KEYS.rules); }
 export function loadControllers(): Controller[]          { return load<Controller>(KEYS.controllers); }
 export function loadAssemblies(): Assembly[]             { return load<Assembly>(KEYS.assemblies); }
 export function loadControllerModels(): ControllerModel[] { return load<ControllerModel>(KEYS.controllerModels); }
@@ -49,12 +48,25 @@ export function saveEquip(data: EquipEntry[]):               void { save(KEYS.eq
 export function saveMed(data: MedEntry[]):                    void { save(KEYS.med, data); }
 export function saveQty(data: QtyEntry[]):                    void { save(KEYS.qty, data); }
 export function saveMod(data: ModEntry[]):                    void { save(KEYS.mod, data); }
-export function saveRules(data: SemanticRule[]):              void { save(KEYS.rules, data); }
 export function saveControllers(data: Controller[]):          void { save(KEYS.controllers, data); }
 export function saveAssemblies(data: Assembly[]):             void { save(KEYS.assemblies, data); }
 export function saveControllerModels(data: ControllerModel[]): void { save(KEYS.controllerModels, data); }
 export function saveExpansionModules(data: ExpansionModule[]): void { save(KEYS.expansionModules, data); }
 export function saveProjects(data: Project[]):               void { save(KEYS.projects, data); }
+
+export function loadSemanticConfig(): SemanticConfig | null {
+  try {
+    const raw = localStorage.getItem(KEYS.semanticConfig);
+    if (!raw) return null;
+    return JSON.parse(raw) as SemanticConfig;
+  } catch {
+    return null;
+  }
+}
+
+export function saveSemanticConfig(data: SemanticConfig): void {
+  localStorage.setItem(KEYS.semanticConfig, JSON.stringify(data));
+}
 
 export function isFirstRun(): boolean {
   return localStorage.getItem(KEYS.equip) === null;
@@ -79,7 +91,7 @@ export function exportAll(): string {
     med: loadMed(),
     qty: loadQty(),
     mod: loadMod(),
-    rules: loadRules(),
+    semanticConfig: loadSemanticConfig(),
     controllers: loadControllers(),
     assemblies: loadAssemblies(),
     controllerModels: loadControllerModels(),
@@ -94,7 +106,7 @@ export function importAll(json: string): void {
   if (data.med)               saveMed(data.med);
   if (data.qty)               saveQty(data.qty);
   if (data.mod)               saveMod(data.mod);
-  if (data.rules)             saveRules(data.rules);
+  if (data.semanticConfig)    saveSemanticConfig(data.semanticConfig);
   if (data.controllers)       saveControllers(data.controllers);
   if (data.assemblies)        saveAssemblies(data.assemblies);
   if (data.controllerModels)  saveControllerModels(data.controllerModels);

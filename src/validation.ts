@@ -1,7 +1,56 @@
 import {
   ValidationResult, ValidationError,
-  SemanticRule, EquipEntry, MedEntry, QtyEntry, ModEntry
+  SemanticConfig, EquipEntry, MedEntry, QtyEntry, ModEntry
 } from './types';
+
+// ── Allowlist helpers ──────────────────────────────────────────────────────────
+
+/** Returns valid MED codes for an EQUIP, or null if unconstrained */
+export function getValidMeds(equip: string, cfg: SemanticConfig): string[] | null {
+  return cfg.equipMeds[equip] ?? null;
+}
+
+/** Returns valid QTY codes for a MED, or null if unconstrained */
+export function getValidQtys(med: string, cfg: SemanticConfig): string[] | null {
+  return cfg.medQtys[med] ?? null;
+}
+
+/** Returns valid MOD codes for a QTY, or null if unconstrained */
+export function getValidMods(qty: string, cfg: SemanticConfig): string[] | null {
+  return cfg.qtyMods[qty] ?? null;
+}
+
+/** True when MED is allowed for EQUIP */
+export function isMedAllowed(equip: string, med: string, cfg: SemanticConfig): boolean {
+  const valid = getValidMeds(equip, cfg);
+  return valid === null || valid.includes(med);
+}
+
+/** True when QTY is allowed for MED */
+export function isQtyAllowed(med: string, qty: string, cfg: SemanticConfig): boolean {
+  const valid = getValidQtys(med, cfg);
+  return valid === null || valid.includes(qty);
+}
+
+/** True when MOD is allowed for QTY */
+export function isModAllowed(qty: string, mod: string, cfg: SemanticConfig): boolean {
+  if (!mod) return true; // empty mod always structurally fine (validated elsewhere)
+  const valid = getValidMods(qty, cfg);
+  return valid === null || valid.includes(mod);
+}
+
+// ── Legacy compatibility stub ──────────────────────────────────────────────────
+// AssembliesTab still uses checkSemanticBlocked; return null (no rules = not blocked)
+export function checkSemanticBlocked(
+  _equip: string,
+  _med: string,
+  _qty: string,
+  _rules: unknown[]
+): null {
+  return null;
+}
+
+// ── Main validation ────────────────────────────────────────────────────────────
 
 export function validateVariable(
   equip: string,
@@ -10,7 +59,7 @@ export function validateVariable(
   qty: string,
   mod: string,
   existingNames: string[],
-  rules: SemanticRule[],
+  semanticConfig: SemanticConfig,
   equipList: EquipEntry[],
   medList: MedEntry[],
   qtyList: QtyEntry[],
@@ -114,38 +163,30 @@ export function validateVariable(
     });
   }
 
-  // Semantic rules — collect all matches, then report only the most specific one
-  // Specificity: fewer wildcards = more specific; ties go to first match
-  function ruleSpecificity(r: SemanticRule): number {
-    return (r.equip !== '*' ? 2 : 0) + (r.med !== '*' ? 1 : 0) + (r.qty !== '*' ? 2 : 0);
-  }
-
-  let bestMatch: SemanticRule | null = null;
-  let bestScore = -1;
-
-  for (const rule of rules) {
-    const equipMatch = rule.equip === '*' || rule.equip === equip;
-    const medMatch =
-      rule.med === '*' ||
-      (rule.med === '' && med === '') ||
-      rule.med === med;
-    const qtyMatch = rule.qty === '*' || rule.qty === qty;
-
-    if (equipMatch && medMatch && qtyMatch) {
-      const score = ruleSpecificity(rule);
-      if (score > bestScore) {
-        bestScore = score;
-        bestMatch = rule;
-      }
+  // Semantic checks — allowlist based
+  if (equip && qty) {
+    if (!isMedAllowed(equip, med, semanticConfig)) {
+      const valid = getValidMeds(equip, semanticConfig)!.filter(m => m !== '');
+      errors.push({
+        layer: 'semantic',
+        rule: `SEM:${equip}/MED`,
+        message: `${equip} does not use "${med}" medium. Valid media: ${valid.join(', ')}`,
+      });
+    } else if (!isQtyAllowed(med, qty, semanticConfig)) {
+      const medLabel = med || '(no medium)';
+      errors.push({
+        layer: 'semantic',
+        rule: `SEM:${med}/QTY`,
+        message: `${qty} is not valid for ${medLabel}`,
+      });
+    } else if (mod && !isModAllowed(qty, mod, semanticConfig)) {
+      const valid = getValidMods(qty, semanticConfig)!.filter(m => m !== '');
+      errors.push({
+        layer: 'semantic',
+        rule: `SEM:${qty}/MOD`,
+        message: `"${mod}" modifier is not valid for ${qty}. Valid: ${valid.join(', ') || 'none'}`,
+      });
     }
-  }
-
-  if (bestMatch) {
-    errors.push({
-      layer: 'semantic',
-      rule: `SEM:${bestMatch.equip}/${bestMatch.med}/${bestMatch.qty}`,
-      message: bestMatch.reason,
-    });
   }
 
   if (errors.length > 0) {
@@ -153,32 +194,4 @@ export function validateVariable(
   }
 
   return { valid: true, name, description: '' };
-}
-
-export function checkSemanticBlocked(
-  equip: string,
-  med: string,
-  qty: string,
-  rules: SemanticRule[]
-): SemanticRule | null {
-  let best: SemanticRule | null = null;
-  let bestScore = -1;
-
-  for (const rule of rules) {
-    const equipMatch = rule.equip === '*' || rule.equip === equip;
-    const medMatch =
-      rule.med === '*' ||
-      (rule.med === '' && med === '') ||
-      rule.med === med;
-    const qtyMatch = rule.qty === '*' || rule.qty === qty;
-
-    if (equipMatch && medMatch && qtyMatch) {
-      const score = (rule.equip !== '*' ? 2 : 0) + (rule.med !== '*' ? 1 : 0) + (rule.qty !== '*' ? 2 : 0);
-      if (score > bestScore) {
-        bestScore = score;
-        best = rule;
-      }
-    }
-  }
-  return best;
 }

@@ -1,19 +1,19 @@
 import { useState, useEffect, useCallback } from 'react';
 import {
-  EquipEntry, MedEntry, QtyEntry, ModEntry, SemanticRule, Controller,
+  EquipEntry, MedEntry, QtyEntry, ModEntry, SemanticConfig, Controller,
   Assembly, ControllerModel, ExpansionModule, Project,
 } from './types';
 import { exportForSimulator } from './simulatorExport';
 import {
-  loadEquip, loadMed, loadQty, loadMod, loadRules, loadControllers,
+  loadEquip, loadMed, loadQty, loadMod, loadSemanticConfig, loadControllers,
   loadAssemblies, loadControllerModels, loadExpansionModules, loadProjects,
-  saveEquip, saveMed, saveQty, saveMod, saveRules, saveControllers,
+  saveEquip, saveMed, saveQty, saveMod, saveSemanticConfig, saveControllers,
   saveAssemblies, saveControllerModels, saveExpansionModules, saveProjects,
   isFirstRun, needsRulesRefresh, setSeedVersion, CURRENT_SEED_VERSION,
   exportAll, importAll,
 } from './storage';
 import {
-  seedEquip, seedMed, seedQty, seedMod, seedRules, buildSeedController,
+  seedEquip, seedMed, seedQty, seedMod, seedSemanticConfig, buildSeedController,
   seedAssemblies, seedControllerModels, seedExpansionModules, seedProjects,
 } from './seedData';
 import DictionaryTab from './components/DictionaryTab';
@@ -31,7 +31,7 @@ export default function App() {
   const [med, setMed] = useState<MedEntry[]>([]);
   const [qty, setQty] = useState<QtyEntry[]>([]);
   const [mod, setMod] = useState<ModEntry[]>([]);
-  const [rules, setRules] = useState<SemanticRule[]>([]);
+  const [semanticConfig, setSemanticConfig] = useState<SemanticConfig>(seedSemanticConfig);
   const [controllers, setControllers] = useState<Controller[]>([]);
   const [assemblies, setAssemblies] = useState<Assembly[]>([]);
   const [controllerModels, setControllerModels] = useState<ControllerModel[]>([]);
@@ -45,7 +45,6 @@ export default function App() {
       const me = seedMed;
       const qt = seedQty;
       const mo = seedMod;
-      const ru = seedRules;
       const ctrl = buildSeedController(eq, me, qt, mo);
       const asm = seedAssemblies;
       const ctrlModels = seedControllerModels;
@@ -55,7 +54,7 @@ export default function App() {
       saveMed(me);
       saveQty(qt);
       saveMod(mo);
-      saveRules(ru);
+      saveSemanticConfig(seedSemanticConfig);
       saveControllers([ctrl]);
       saveAssemblies(asm);
       saveControllerModels(ctrlModels);
@@ -66,7 +65,7 @@ export default function App() {
       setMed(me);
       setQty(qt);
       setMod(mo);
-      setRules(ru);
+      setSemanticConfig(seedSemanticConfig);
       setControllers([ctrl]);
       setAssemblies(asm);
       setControllerModels(ctrlModels);
@@ -77,13 +76,13 @@ export default function App() {
       setMed(loadMed());
       setQty(loadQty());
       setMod(loadMod());
-      // Refresh seed rules/assemblies/hardware when version is stale
+      // Refresh seed config/assemblies/hardware when version is stale
       if (needsRulesRefresh()) {
-        const refreshedRules = seedRules;
         const refreshedAsm = seedAssemblies;
         const refreshedModels = seedControllerModels;
         const refreshedExpMods = seedExpansionModules;
-        saveRules(refreshedRules);
+        saveSemanticConfig(seedSemanticConfig);
+        setSemanticConfig(seedSemanticConfig);
         // Only overwrite assemblies/hardware if none exist yet
         const existingAsm = loadAssemblies();
         if (existingAsm.length === 0) {
@@ -107,9 +106,9 @@ export default function App() {
           setExpansionModules(existingExpMods);
         }
         setSeedVersion(CURRENT_SEED_VERSION);
-        setRules(refreshedRules);
       } else {
-        setRules(loadRules());
+        const storedCfg = loadSemanticConfig();
+        setSemanticConfig(storedCfg ?? seedSemanticConfig);
         setAssemblies(loadAssemblies());
         setControllerModels(loadControllerModels());
         setExpansionModules(loadExpansionModules());
@@ -143,10 +142,6 @@ export default function App() {
     setMod(data);
     saveMod(data);
   }, []);
-  const updateRules = useCallback((data: SemanticRule[]) => {
-    setRules(data);
-    saveRules(data);
-  }, []);
   const updateControllers = useCallback((data: Controller[]) => {
     setControllers(data);
     saveControllers(data);
@@ -179,7 +174,8 @@ export default function App() {
     setMed(loadMed());
     setQty(loadQty());
     setMod(loadMod());
-    setRules(loadRules());
+    const importedCfg = loadSemanticConfig();
+    setSemanticConfig(importedCfg ?? seedSemanticConfig);
     setControllers(loadControllers());
     setAssemblies(loadAssemblies());
     setControllerModels(loadControllerModels());
@@ -239,13 +235,13 @@ export default function App() {
             med={med}
             qty={qty}
             mod={mod}
-            rules={rules}
+            rules={[]}
             controllers={controllers}
             onUpdateEquip={updateEquip}
             onUpdateMed={updateMed}
             onUpdateQty={updateQty}
             onUpdateMod={updateMod}
-            onUpdateRules={updateRules}
+            onUpdateRules={() => {}}
           />
         )}
         {loaded && activeTab === 'assemblies' && (
@@ -254,7 +250,7 @@ export default function App() {
             med={med}
             qty={qty}
             mod={mod}
-            rules={rules}
+            rules={[]}
             assemblies={assemblies}
             controllerModels={controllerModels}
             expansionModules={expansionModules}
@@ -269,7 +265,7 @@ export default function App() {
             med={med}
             qty={qty}
             mod={mod}
-            rules={rules}
+            semanticConfig={semanticConfig}
             controllers={controllers}
             assemblies={assemblies}
             controllerModels={controllerModels}

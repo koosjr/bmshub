@@ -1,12 +1,12 @@
 import { useState, useMemo, useCallback } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import {
-  EquipEntry, MedEntry, QtyEntry, ModEntry, SemanticRule,
+  EquipEntry, MedEntry, QtyEntry, ModEntry, SemanticConfig,
   Controller, ControllerVariable, ValidationError,
   Assembly, ControllerModel, ExpansionModule, ControllerExpansion, IOCount,
   Project, DeviceSupply,
 } from '../types';
-import { validateVariable, checkSemanticBlocked } from '../validation';
+import { validateVariable, getValidMods, isMedAllowed, isQtyAllowed } from '../validation';
 import { generateDescription } from '../descriptionGen';
 
 interface Props {
@@ -14,7 +14,7 @@ interface Props {
   med: MedEntry[];
   qty: QtyEntry[];
   mod: ModEntry[];
-  rules: SemanticRule[];
+  semanticConfig: SemanticConfig;
   controllers: Controller[];
   assemblies: Assembly[];
   controllerModels: ControllerModel[];
@@ -69,21 +69,10 @@ function IOBadge({ type }: { type: string }) {
   );
 }
 
-function getModsForQty(qty: string, modList: ModEntry[]): ModEntry[] {
-  const stageMods = ['1', '2', '3'];
-  const posMods = ['T', 'M', 'B'];
-  const generalMods = ['SP', 'HI', 'LO', 'DP', 'FB'];
-
-  if (qty === 'STG') {
-    return modList.filter(m => stageMods.includes(m.code));
-  }
-  if (['TMP', 'STMP', 'RTMP', 'PRS', 'DPR', 'HUM'].includes(qty)) {
-    return modList.filter(m => [...posMods, ...generalMods].includes(m.code));
-  }
-  if (['VLV', 'DMP', 'VSD', 'PCT'].includes(qty)) {
-    return modList.filter(m => generalMods.includes(m.code));
-  }
-  return modList.filter(m => generalMods.includes(m.code));
+function getModsForQty(qty: string, modList: ModEntry[], semanticConfig: SemanticConfig): ModEntry[] {
+  const validCodes = getValidMods(qty, semanticConfig);
+  if (validCodes === null) return modList;
+  return modList.filter(m => validCodes.includes(m.code));
 }
 
 // Compute required physical IO from a variable list (AV/BV soft values are excluded)
@@ -331,14 +320,14 @@ interface FormState {
 }
 
 function VariableForm({
-  equipList, medList, qtyList, modList, rules,
+  equipList, medList, qtyList, modList, semanticConfig,
   existingNames, onAdd
 }: {
   equipList: EquipEntry[];
   medList: MedEntry[];
   qtyList: QtyEntry[];
   modList: ModEntry[];
-  rules: SemanticRule[];
+  semanticConfig: SemanticConfig;
   existingNames: string[];
   onAdd: (v: ControllerVariable) => void;
 }) {
@@ -358,23 +347,31 @@ function VariableForm({
     }));
   }
 
+  // Available MEDs — grey out those not valid for selected EQUIP
+  const medWithStatus = useMemo(() => {
+    return medList.map(m => {
+      const blocked = !isMedAllowed(form.equip, m.code, semanticConfig);
+      return { med: m, blocked };
+    });
+  }, [medList, form.equip, semanticConfig]);
+
   // Available QTYs — grey out semantically blocked ones
   const qtyWithStatus = useMemo(() => {
     return qtyList.map(q => {
-      const blocked = checkSemanticBlocked(form.equip, form.med, q.code, rules);
+      const blocked = !isQtyAllowed(form.med, q.code, semanticConfig);
       return { qty: q, blocked };
     });
-  }, [qtyList, form.equip, form.med, rules]);
+  }, [qtyList, form.med, semanticConfig]);
 
   // Available MODs filtered by QTY
   const availableMods = useMemo(() => {
     if (!form.qty) return [];
-    return getModsForQty(form.qty, modList);
-  }, [form.qty, modList]);
+    return getModsForQty(form.qty, modList, semanticConfig);
+  }, [form.qty, modList, semanticConfig]);
 
   // When QTY changes, clear MOD if not valid
   function handleQtyChange(code: string) {
-    const mods = getModsForQty(code, modList);
+    const mods = getModsForQty(code, modList, semanticConfig);
     const newBaseType = qtyList.find(q => q.code === code)?.ioType;
     const allowedOverride = (newBaseType === 'AI' || newBaseType === 'AO') ? 'AV' : 'BV';
     setForm(f => ({
@@ -398,13 +395,13 @@ function VariableForm({
       form.qty,
       form.mod,
       existingNames,
-      rules,
+      semanticConfig,
       equipList,
       medList,
       qtyList,
       modList
     );
-  }, [form, isSys, existingNames, rules, equipList, medList, qtyList, modList]);
+  }, [form, isSys, existingNames, semanticConfig, equipList, medList, qtyList, modList]);
 
   // Description
   const description = useMemo(() => {
@@ -442,13 +439,8 @@ function VariableForm({
     setForm(f => ({ ...f, qty: '', mod: '', ioOverride: null }));
   }
 
-  // Check if current MED is blocked with any QTY (to show warning on MED)
-  const medBlockedReason = form.med
-    ? (() => {
-        const r = checkSemanticBlocked(form.equip, form.med, form.qty || '*', rules);
-        return r?.reason ?? null;
-      })()
-    : null;
+  // Check if current MED is invalid for selected EQUIP (to show warning on MED)
+  const medBlocked = form.med ? !isMedAllowed(form.equip, form.med, semanticConfig) : false;
 
   // Structural errors only for display in form
   const structuralErrors = validationResult && !validationResult.valid
@@ -540,13 +532,15 @@ function VariableForm({
           </label>
           <select
             className="border rounded px-2 py-1.5 text-sm font-mono"
-            style={{ borderColor: medBlockedReason ? '#EF9F27' : '#D3D1C7', minWidth: '140px' }}
+            style={{ borderColor: medBlocked ? '#EF9F27' : '#D3D1C7', minWidth: '140px' }}
             value={form.med}
             onChange={e => setForm(f => ({ ...f, med: e.target.value, qty: '', mod: '' }))}
           >
             <option value="">— none —</option>
-            {medList.map(m => (
-              <option key={m.id} value={m.code}>{m.code} — {m.label}</option>
+            {medWithStatus.map(({ med: m, blocked }) => (
+              <option key={m.id} value={m.code} disabled={blocked} style={blocked ? { color: '#D3D1C7' } : {}}>
+                {blocked ? '\u2298 ' : ''}{m.code} — {m.label}
+              </option>
             ))}
           </select>
         </div>
@@ -903,7 +897,7 @@ function VariableList({
 function ApplyAssemblyModal({
   assemblies, equipList,
   equipList: allEquip,
-  medList, qtyList, modList, rules,
+  medList, qtyList, modList, semanticConfig,
   existingNames,
   onApply, onCancel,
 }: {
@@ -912,7 +906,7 @@ function ApplyAssemblyModal({
   medList: MedEntry[];
   qtyList: QtyEntry[];
   modList: ModEntry[];
-  rules: SemanticRule[];
+  semanticConfig: SemanticConfig;
   existingNames: string[];
   onApply: (vars: ControllerVariable[], skipped: { name: string; reason: string }[]) => void;
   onCancel: () => void;
@@ -934,7 +928,7 @@ function ApplyAssemblyModal({
     for (const pt of selectedAssembly.points) {
       const result = validateVariable(
         equip, effectiveNum, pt.med, pt.qty, pt.mod,
-        runningNames, rules, allEquip, medList, qtyList, modList
+        runningNames, semanticConfig, allEquip, medList, qtyList, modList
       );
       const varName = equip + effectiveNum + pt.med + pt.qty + pt.mod;
       if (result.valid) {
@@ -1281,7 +1275,7 @@ function HardwareIOPanel({
 
 // ---- Controller Detail (right panel) ----
 function ControllerDetail({
-  controller, equipList, medList, qtyList, modList, rules,
+  controller, equipList, medList, qtyList, modList, semanticConfig,
   assemblies, controllerModels, expansionModules,
   onUpdate
 }: {
@@ -1290,7 +1284,7 @@ function ControllerDetail({
   medList: MedEntry[];
   qtyList: QtyEntry[];
   modList: ModEntry[];
-  rules: SemanticRule[];
+  semanticConfig: SemanticConfig;
   assemblies: Assembly[];
   controllerModels: ControllerModel[];
   expansionModules: ExpansionModule[];
@@ -1412,7 +1406,7 @@ function ControllerDetail({
         medList={medList}
         qtyList={qtyList}
         modList={modList}
-        rules={rules}
+        semanticConfig={semanticConfig}
         existingNames={existingNames}
         onAdd={handleAdd}
       />
@@ -1442,7 +1436,7 @@ function ControllerDetail({
           medList={medList}
           qtyList={qtyList}
           modList={modList}
-          rules={rules}
+          semanticConfig={semanticConfig}
           existingNames={existingNames}
           onApply={handleApplyAssembly}
           onCancel={() => setShowAssemblyModal(false)}
@@ -1509,7 +1503,7 @@ function NewControllerModal({ onConfirm, onCancel }: {
 
 // ---- Main ----
 export default function ControllerBuilderTab({
-  equip, med, qty, mod, rules, controllers,
+  equip, med, qty, mod, semanticConfig, controllers,
   assemblies, controllerModels, expansionModules,
   projects, onUpdateControllers, onUpdateProjects,
 }: Props) {
@@ -1605,7 +1599,7 @@ export default function ControllerBuilderTab({
             medList={med}
             qtyList={qty}
             modList={mod}
-            rules={rules}
+            semanticConfig={semanticConfig}
             assemblies={assemblies}
             controllerModels={controllerModels}
             expansionModules={expansionModules}

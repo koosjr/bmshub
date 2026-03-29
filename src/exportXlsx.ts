@@ -62,9 +62,10 @@ function buildSheet1(
       }
     }
 
-    // Items: field devices — count per group, no multiplication
+    // Items: field devices — only ticked (supply = true), count per group
     const deviceTotals: Map<string, number> = new Map();
     for (const v of ctrl.variables) {
+      if (!v.device?.supply) continue;
       const io = ioTypeOf(v.qty, qtyList, v.ioOverride);
       if (io === 'AV' || io === 'BV') continue;
       const desc = deviceDesc(v, qtyList);
@@ -133,11 +134,12 @@ function buildSheet2(
 
   rows.push(['', '', '', '']);
 
-  // Field devices — aggregate across all controllers
+  // Field devices — only ticked (supply = true), aggregated across all controllers
   const deviceTotals: Map<string, number> = new Map();
   for (const ctrl of controllers) {
     const dup = Number(ctrl.duplicates) || 1;
     for (const v of ctrl.variables) {
+      if (!v.device?.supply) continue;
       const io = ioTypeOf(v.qty, qtyList, v.ioOverride);
       if (io === 'AV' || io === 'BV') continue;
       const desc = deviceDesc(v, qtyList);

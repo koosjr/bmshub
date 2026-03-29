@@ -154,15 +154,7 @@ function buildSheet2(
 
   rows.push(['', '', '', '']);
 
-  // IO totals summary at the bottom
-  rows.push(['', 'IO SUMMARY', '', '']);
-  rows.push(['', 'AI  Analogue Input',  '', 0]);
-  rows.push(['', 'AO  Analogue Output', '', 0]);
-  rows.push(['', 'DI  Digital Input',   '', 0]);
-  rows.push(['', 'DO  Digital Output',  '', 0]);
-  rows.push(['', 'AV  RS-485 / Network','', 0]);
-
-  // Compute IO totals
+  // IO totals — compute first, then push rows with correct values
   let ai = 0, ao = 0, di = 0, doCount = 0, av = 0;
   for (const ctrl of controllers) {
     const dup = ctrl.duplicates ?? 1;
@@ -175,13 +167,13 @@ function buildSheet2(
       else if (io === 'AV') av += dup;
     }
   }
-  // Fill IO rows (rows are at known relative positions from the push above)
-  const ioStart = rows.length - 5;
-  (rows[ioStart][3] as unknown) = ai;
-  (rows[ioStart + 1][3] as unknown) = ao;
-  (rows[ioStart + 2][3] as unknown) = di;
-  (rows[ioStart + 3][3] as unknown) = doCount;
-  (rows[ioStart + 4][3] as unknown) = av;
+
+  rows.push(['', 'IO SUMMARY', '', '']);
+  rows.push(['', 'AI  Analogue Input',   '', ai]);
+  rows.push(['', 'AO  Analogue Output',  '', ao]);
+  rows.push(['', 'DI  Digital Input',    '', di]);
+  rows.push(['', 'DO  Digital Output',   '', doCount]);
+  rows.push(['', 'AV  RS-485 / Network', '', av]);
 
   const ws = XLSX.utils.aoa_to_sheet(rows);
   ws['!cols'] = [

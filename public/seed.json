@@ -404,6 +404,16 @@
       "id": "4ee36581-1c0e-4e67-954d-d94d557774a9",
       "code": "FD",
       "label": "Dirty Filter"
+    },
+    {
+      "id": "80d51652-5fbd-4ade-801d-31b9b10aa54c",
+      "code": "SG",
+      "label": "Signal"
+    },
+    {
+      "id": "6a4ab70a-44da-4e67-8d0e-502094a27522",
+      "code": "HE",
+      "label": "Heater"
     }
   ],
   "qty": [
@@ -628,6 +638,12 @@
       "code": "TRP",
       "label": "Trip",
       "ioType": "DI"
+    },
+    {
+      "id": "38c9cd80-48cc-4655-bb86-b70c5c7f5f12",
+      "code": "FRQ",
+      "label": "Frequency - Hertz",
+      "ioType": "AI"
     }
   ],
   "mod": [
@@ -745,8 +761,7 @@
         "OL",
         "AL",
         "CP",
-        "OA",
-        ""
+        "OA"
       ],
       "AHU": [
         "FA",
@@ -772,7 +787,8 @@
         "EL",
         "WA",
         "ST",
-        ""
+        "AL",
+        "IL"
       ],
       "BSC": [
         "FU",
@@ -785,8 +801,7 @@
         "OA",
         "EX",
         "SA",
-        "ES",
-        ""
+        "ES"
       ],
       "BSD": [
         "FU",
@@ -800,8 +815,7 @@
         "OA",
         "EX",
         "ES",
-        "HW",
-        ""
+        "HW"
       ],
       "BSE": [
         "EL",
@@ -809,8 +823,7 @@
         "ST",
         "WA",
         "AL",
-        "ES",
-        ""
+        "ES"
       ],
       "BSG": [
         "FU",
@@ -818,8 +831,7 @@
         "EL",
         "ST",
         "WA",
-        "AR",
-        ""
+        "AR"
       ],
       "BSR": [
         "EL",
@@ -831,8 +843,7 @@
       "BWC": [
         "FU",
         "HW",
-        "EL",
-        ""
+        "EL"
       ],
       "BWD": [
         "FU",
@@ -843,13 +854,11 @@
         "AR",
         "OX",
         "SW",
-        "RW",
-        ""
+        "RW"
       ],
       "BWE": [
         "EL",
-        "HW",
-        ""
+        "HW"
       ],
       "BWG": [
         "FU",
@@ -859,13 +868,11 @@
         "RW",
         "ES",
         "WA",
-        "IL",
-        ""
+        "IL"
       ],
       "BWR": [
         "EL",
-        "HW",
-        ""
+        "HW"
       ],
       "CHR": [
         "CW",
@@ -894,15 +901,15 @@
         "WA",
         "SP",
         "ES",
-        "AL"
+        "AL",
+        "SG"
       ],
       "ECF": [
         "FA",
         "SA",
         "EX",
         "AL",
-        "IL",
-        ""
+        "IL"
       ],
       "EXF": [
         "EX",
@@ -921,15 +928,20 @@
         "FA",
         "IL",
         "AL",
-        "AR",
-        ""
+        "AR"
       ],
       "GEN": [
         "EL",
         "FU",
         "EN",
         "OL",
-        ""
+        "WA",
+        "AL",
+        "IL",
+        "SG",
+        "HE",
+        "FA",
+        "OA"
       ],
       "GSB": [
         "MA",
@@ -937,8 +949,7 @@
         "NI",
         "NO",
         "AR",
-        "FU",
-        ""
+        "FU"
       ],
       "HEX": [
         "CW",
@@ -955,7 +966,8 @@
         "RW",
         "SP",
         "ES",
-        "AL"
+        "AL",
+        "SG"
       ],
       "ILH": [
         "HW",
@@ -964,14 +976,17 @@
         "RW",
         "IL",
         "WA",
-        "AL"
+        "AL",
+        "HE"
       ],
       "LFC": [
-        "CW",
-        "HW",
         "SA",
         "RA",
-        ""
+        "AR",
+        "IL",
+        "AL",
+        "FA",
+        "FD"
       ],
       "MAU": [
         "FA",
@@ -991,34 +1006,32 @@
         "ES",
         "SP",
         "AU",
-        "MN"
+        "MN",
+        "SG",
+        "AL"
       ],
       "RCR": [
         "RF",
         "CP",
         "EL",
-        "OL",
-        ""
+        "OL"
       ],
       "RFR": [
         "RF",
         "CP",
         "EL",
         "OL",
-        "DF",
-        ""
+        "DF"
       ],
       "SAF": [
         "IL",
         "ES",
-        "AL",
-        ""
+        "AL"
       ],
       "SXF": [
         "IL",
         "AL",
-        "ES",
-        ""
+        "ES"
       ],
       "SYS": [
         "CW",
@@ -1026,8 +1039,7 @@
         "CO",
         "GY",
         "EL",
-        "WA",
-        ""
+        "WA"
       ],
       "TNK": [
         "CW",
@@ -1040,16 +1052,14 @@
       "VAC": [
         "AR",
         "EL",
-        "AL",
-        ""
+        "AL"
       ],
       "VFD": [
         "EL",
         "FA",
         "ES",
         "AL",
-        "IL",
-        ""
+        "IL"
       ],
       "VRV": [
         "RF",
@@ -1074,7 +1084,9 @@
         "AU",
         "MN",
         "IL",
-        ""
+        "AR",
+        "SG",
+        "AL"
       ]
     },
     "medQtys": {
@@ -1286,7 +1298,8 @@
         "VLN",
         "VPH",
         "FLT",
-        "ALM"
+        "ALM",
+        "FRQ"
       ],
       "EN": [
         "TMP",
@@ -1311,7 +1324,8 @@
         "TMP",
         "PRS",
         "LVL",
-        "LSW"
+        "LSW",
+        "PSW"
       ],
       "AL": [
         "FLT",
@@ -1349,6 +1363,18 @@
       ],
       "FD": [
         "SWT"
+      ],
+      "HE": [
+        "STG",
+        "ALM",
+        "ONO",
+        "TRP",
+        "FLT"
+      ],
+      "SG": [
+        "ONO",
+        "STS",
+        "PCT"
       ]
     },
     "qtyMods": {
@@ -1559,7 +1585,1036 @@
       ]
     }
   },
-  "controllers": [],
+  "controllers": [
+    {
+      "id": "c7da55d0-2b41-4443-a586-3946e905549a",
+      "siteName": "Basement",
+      "label": "AHU1",
+      "variables": [
+        {
+          "id": "d77dea6b-b9ef-4f51-a722-c97cf38616f5",
+          "equip": "AHU",
+          "num": "1",
+          "med": "SA",
+          "qty": "TMP",
+          "mod": "",
+          "name": "AHU1SATMP",
+          "description": "Air handling unit 1 — Supply air Temperature",
+          "ioOverride": null,
+          "device": {
+            "supply": true,
+            "deviceType": "Sensor",
+            "signalType": "0-10V",
+            "quantity": 1
+          }
+        },
+        {
+          "id": "510b7318-e808-4b09-bf8d-5751a25fe3b7",
+          "equip": "AHU",
+          "num": "1",
+          "med": "RA",
+          "qty": "TMP",
+          "mod": "",
+          "name": "AHU1RATMP",
+          "description": "Air handling unit 1 — Return air Temperature",
+          "ioOverride": null,
+          "device": {
+            "supply": true,
+            "deviceType": "Sensor",
+            "signalType": "0-10V",
+            "quantity": 1
+          }
+        },
+        {
+          "id": "9d975964-9f9f-4df6-8da9-e6db16de2293",
+          "equip": "AHU",
+          "num": "1",
+          "med": "OA",
+          "qty": "TMP",
+          "mod": "",
+          "name": "AHU1OATMP",
+          "description": "Air handling unit 1 — Outside air Temperature",
+          "ioOverride": null,
+          "device": {
+            "supply": true,
+            "deviceType": "Sensor",
+            "signalType": "0-10V",
+            "quantity": 1
+          }
+        },
+        {
+          "id": "5cffcc89-a63a-4841-b68e-6a1916ea5eb0",
+          "equip": "AHU",
+          "num": "1",
+          "med": "RA",
+          "qty": "CO2",
+          "mod": "",
+          "name": "AHU1RACO2",
+          "description": "Air handling unit 1 — Return air CO2 level (ppm)",
+          "ioOverride": null,
+          "device": {
+            "supply": true,
+            "deviceType": "Sensor",
+            "signalType": "0-10V",
+            "quantity": 1
+          }
+        },
+        {
+          "id": "d7a36902-a0b7-418f-8093-d33f52d9765e",
+          "equip": "AHU",
+          "num": "1",
+          "med": "FA",
+          "qty": "VSD",
+          "mod": "OUT",
+          "name": "AHU1FAVSDOUT",
+          "description": "Air handling unit 1 — Fan Drive speed ref Output",
+          "ioOverride": null,
+          "device": {
+            "supply": true,
+            "deviceType": "Actuator",
+            "signalType": "0-10V",
+            "quantity": 1
+          }
+        },
+        {
+          "id": "b9bd904d-f3dd-4a60-bb56-290071bf65f0",
+          "equip": "AHU",
+          "num": "1",
+          "med": "AR",
+          "qty": "FSW",
+          "mod": "",
+          "name": "AHU1ARFSW",
+          "description": "Air handling unit 1 — Air Flow switch",
+          "ioOverride": null,
+          "device": {
+            "supply": true,
+            "deviceType": "Switch",
+            "signalType": "",
+            "quantity": 1
+          }
+        },
+        {
+          "id": "3cd72024-2323-4e4f-ba68-0c8af68d7d0f",
+          "equip": "AHU",
+          "num": "1",
+          "med": "AU",
+          "qty": "SWT",
+          "mod": "",
+          "name": "AHU1AUSWT",
+          "description": "Air handling unit 1 — Auto Switch",
+          "ioOverride": null,
+          "device": {
+            "supply": true,
+            "deviceType": "Switch",
+            "signalType": "",
+            "quantity": 1
+          }
+        },
+        {
+          "id": "95dfbb84-b243-46b9-b904-36332c593db7",
+          "equip": "AHU",
+          "num": "1",
+          "med": "MN",
+          "qty": "SWT",
+          "mod": "",
+          "name": "AHU1MNSWT",
+          "description": "Air handling unit 1 — Manual Switch",
+          "ioOverride": null,
+          "device": {
+            "supply": true,
+            "deviceType": "Switch",
+            "signalType": "",
+            "quantity": 1
+          }
+        },
+        {
+          "id": "59c4c3e4-f6cd-4e5c-bff2-def3447fada7",
+          "equip": "AHU",
+          "num": "1",
+          "med": "FD",
+          "qty": "SWT",
+          "mod": "",
+          "name": "AHU1FDSWT",
+          "description": "Air handling unit 1 — Dirty Filter Switch",
+          "ioOverride": null,
+          "device": {
+            "supply": true,
+            "deviceType": "Switch",
+            "signalType": "",
+            "quantity": 1
+          }
+        },
+        {
+          "id": "af6ec866-b3ea-4911-817e-4a9249acef2c",
+          "equip": "AHU",
+          "num": "1",
+          "med": "IL",
+          "qty": "FIR",
+          "mod": "",
+          "name": "AHU1ILFIR",
+          "description": "Air handling unit 1 — Interlock - Hardwire Fire",
+          "ioOverride": null,
+          "device": {
+            "supply": true,
+            "deviceType": "Switch",
+            "signalType": "",
+            "quantity": 1
+          }
+        },
+        {
+          "id": "f2f9389a-6264-4026-9cb4-f44c6f7b4840",
+          "equip": "AHU",
+          "num": "1",
+          "med": "OA",
+          "qty": "DMP",
+          "mod": "",
+          "name": "AHU1OADMP",
+          "description": "Air handling unit 1 — Outside air Damper position",
+          "ioOverride": null,
+          "device": {
+            "supply": false,
+            "deviceType": "Sensor",
+            "signalType": "Passive",
+            "quantity": 1
+          }
+        },
+        {
+          "id": "57796a95-0abe-4a7a-bdc7-2b832101124f",
+          "equip": "AHU",
+          "num": "1",
+          "med": "OA",
+          "qty": "DMO",
+          "mod": "",
+          "name": "AHU1OADMO",
+          "description": "Air handling unit 1 — Outside air Damper Output",
+          "ioOverride": null,
+          "device": {
+            "supply": true,
+            "deviceType": "Actuator",
+            "signalType": "0-10V",
+            "quantity": 1
+          }
+        },
+        {
+          "id": "c3f22421-7ad0-4f91-a682-37c0178e1dea",
+          "equip": "AHU",
+          "num": "1",
+          "med": "AR",
+          "qty": "PRS",
+          "mod": "",
+          "name": "AHU1ARPRS",
+          "description": "Air handling unit 1 — Air Pressure Sensor",
+          "ioOverride": null,
+          "device": {
+            "supply": true,
+            "deviceType": "Sensor",
+            "signalType": "0-10V",
+            "quantity": 1
+          }
+        },
+        {
+          "id": "77a96e27-a373-4ac3-b228-02d36c2e6494",
+          "equip": "AHU",
+          "num": "1",
+          "med": "AR",
+          "qty": "PRS",
+          "mod": "SP",
+          "name": "AHU1ARPRSSP",
+          "description": "Air handling unit 1 — Air Pressure Sensor Setpoint",
+          "ioOverride": "AV"
+        },
+        {
+          "id": "b379d1c6-f0b8-48c9-96b5-929f44c33092",
+          "equip": "AHU",
+          "num": "1",
+          "med": "CW",
+          "qty": "VLV",
+          "mod": "OUT",
+          "name": "AHU1CWVLVOUT",
+          "description": "Air handling unit 1 — Chilled water Valve position Output",
+          "ioOverride": null,
+          "device": {
+            "supply": true,
+            "deviceType": "Valve",
+            "signalType": "0-10V",
+            "quantity": 1
+          }
+        },
+        {
+          "id": "da6c8480-40a3-4b44-943f-0ace59f38722",
+          "equip": "AHU",
+          "num": "1",
+          "med": "CW",
+          "qty": "VLV",
+          "mod": "FB",
+          "name": "AHU1CWVLVFB",
+          "description": "Air handling unit 1 — Chilled water Valve position Feedback / actual",
+          "ioOverride": null
+        },
+        {
+          "id": "f3cc3385-73f6-41c2-a7e7-638c12c2675e",
+          "equip": "AHU",
+          "num": "1",
+          "med": "HW",
+          "qty": "VLV",
+          "mod": "OUT",
+          "name": "AHU1HWVLVOUT",
+          "description": "Air handling unit 1 — Hot water Valve position Output",
+          "ioOverride": null,
+          "device": {
+            "supply": true,
+            "deviceType": "Valve",
+            "signalType": "0-10V",
+            "quantity": 1
+          }
+        },
+        {
+          "id": "a368e7ee-1820-4958-a4ee-fdce5fc9ce36",
+          "equip": "AHU",
+          "num": "1",
+          "med": "HW",
+          "qty": "VLV",
+          "mod": "FB",
+          "name": "AHU1HWVLVFB",
+          "description": "Air handling unit 1 — Hot water Valve position Feedback / actual",
+          "ioOverride": null
+        },
+        {
+          "id": "9786b9a6-4dfa-4152-a4ee-a95d241475cd",
+          "equip": "AHU",
+          "num": "1",
+          "med": "FA",
+          "qty": "FLT",
+          "mod": "",
+          "name": "AHU1FAFLT",
+          "description": "Air handling unit 1 — Fan Fault",
+          "ioOverride": null
+        },
+        {
+          "id": "78c8df21-c02c-4bb8-91c5-6d155f23e430",
+          "equip": "AHU",
+          "num": "1",
+          "med": "FA",
+          "qty": "STS",
+          "mod": "",
+          "name": "AHU1FASTS",
+          "description": "Air handling unit 1 — Fan Start Stop",
+          "ioOverride": null,
+          "device": {
+            "supply": true,
+            "deviceType": "Relay",
+            "signalType": "",
+            "quantity": 1
+          }
+        }
+      ],
+      "createdAt": "2026-03-29T17:54:53.033Z",
+      "updatedAt": "2026-03-29T17:56:35.022Z",
+      "projectId": "020b73cb-f9b9-40b4-a575-a6a531cd4f70",
+      "duplicates": 7,
+      "modelId": "eliwell-fa12600"
+    },
+    {
+      "id": "dda3ea10-ece8-4ca2-897b-267cf2aa1d05",
+      "siteName": "Plant Room",
+      "label": "Chillers",
+      "variables": [
+        {
+          "id": "84820b86-e3a6-45ed-a644-c1852ecdf914",
+          "equip": "CWP",
+          "num": "1",
+          "med": "SW",
+          "qty": "PRS",
+          "mod": "",
+          "name": "CWP1SWPRS",
+          "description": "Chilled water pump 1 — Supply Water Pressure Sensor",
+          "ioOverride": null
+        },
+        {
+          "id": "bbd2c34b-2057-4882-9a6a-78b66c6b4e78",
+          "equip": "CWP",
+          "num": "1",
+          "med": "RW",
+          "qty": "PRS",
+          "mod": "",
+          "name": "CWP1RWPRS",
+          "description": "Chilled water pump 1 — Return Water Pressure Sensor",
+          "ioOverride": null
+        },
+        {
+          "id": "9431ef90-6fd3-498a-a27d-0dfffe8c1987",
+          "equip": "CWP",
+          "num": "1",
+          "med": "WA",
+          "qty": "FSW",
+          "mod": "",
+          "name": "CWP1WAFSW",
+          "description": "Chilled water pump 1 — Water Flow switch",
+          "ioOverride": null
+        },
+        {
+          "id": "d14f31dd-f0be-4e57-b8af-a4191d81ba48",
+          "equip": "CWP",
+          "num": "1",
+          "med": "WA",
+          "qty": "PRS",
+          "mod": "SP",
+          "name": "CWP1WAPRSSP",
+          "description": "Chilled water pump 1 — Water Pressure Sensor Setpoint",
+          "ioOverride": "AV"
+        },
+        {
+          "id": "a631de8c-d980-414b-bc69-beaed17968e7",
+          "equip": "CWP",
+          "num": "1",
+          "med": "SP",
+          "qty": "VSD",
+          "mod": "OUT",
+          "name": "CWP1SPVSDOUT",
+          "description": "Chilled water pump 1 — Speed Drive speed ref Output",
+          "ioOverride": null
+        },
+        {
+          "id": "38f1aedb-674a-4722-a30e-67ae5935b20f",
+          "equip": "CWP",
+          "num": "1",
+          "med": "ES",
+          "qty": "SWT",
+          "mod": "",
+          "name": "CWP1ESSWT",
+          "description": "Chilled water pump 1 — Emergency Stop Switch",
+          "ioOverride": null
+        },
+        {
+          "id": "56a59fc3-91b0-43a0-bd0c-494f81215458",
+          "equip": "CWP",
+          "num": "1",
+          "med": "AL",
+          "qty": "FLT",
+          "mod": "",
+          "name": "CWP1ALFLT",
+          "description": "Chilled water pump 1 — Alarm Fault",
+          "ioOverride": null
+        },
+        {
+          "id": "a1fd203f-eae9-4e68-a4a3-c071fb846216",
+          "equip": "CWP",
+          "num": "2",
+          "med": "SW",
+          "qty": "PRS",
+          "mod": "",
+          "name": "CWP2SWPRS",
+          "description": "Chilled water pump 2 — Supply Water Pressure Sensor",
+          "ioOverride": null
+        },
+        {
+          "id": "f3cd2132-6ddc-4ea6-936a-af0a6d8d8f77",
+          "equip": "CWP",
+          "num": "2",
+          "med": "RW",
+          "qty": "PRS",
+          "mod": "",
+          "name": "CWP2RWPRS",
+          "description": "Chilled water pump 2 — Return Water Pressure Sensor",
+          "ioOverride": null
+        },
+        {
+          "id": "e7fa18ae-38dc-4ef8-951a-d1ce86c92697",
+          "equip": "CWP",
+          "num": "2",
+          "med": "WA",
+          "qty": "FSW",
+          "mod": "",
+          "name": "CWP2WAFSW",
+          "description": "Chilled water pump 2 — Water Flow switch",
+          "ioOverride": null
+        },
+        {
+          "id": "a732639a-e87a-43ca-9b45-ff04756fa33f",
+          "equip": "CWP",
+          "num": "2",
+          "med": "WA",
+          "qty": "PRS",
+          "mod": "SP",
+          "name": "CWP2WAPRSSP",
+          "description": "Chilled water pump 2 — Water Pressure Sensor Setpoint",
+          "ioOverride": "AV"
+        },
+        {
+          "id": "3e494725-e199-49e9-865a-9da63796b299",
+          "equip": "CWP",
+          "num": "2",
+          "med": "SP",
+          "qty": "VSD",
+          "mod": "OUT",
+          "name": "CWP2SPVSDOUT",
+          "description": "Chilled water pump 2 — Speed Drive speed ref Output",
+          "ioOverride": null
+        },
+        {
+          "id": "a479b321-4220-4710-b2b3-463e1d0ac0ad",
+          "equip": "CWP",
+          "num": "2",
+          "med": "ES",
+          "qty": "SWT",
+          "mod": "",
+          "name": "CWP2ESSWT",
+          "description": "Chilled water pump 2 — Emergency Stop Switch",
+          "ioOverride": null
+        },
+        {
+          "id": "ce43d657-a4e2-4aad-a342-53cae9bc557e",
+          "equip": "CWP",
+          "num": "2",
+          "med": "AL",
+          "qty": "FLT",
+          "mod": "",
+          "name": "CWP2ALFLT",
+          "description": "Chilled water pump 2 — Alarm Fault",
+          "ioOverride": null
+        },
+        {
+          "id": "6d1d1e7f-1866-4034-8717-06d2238d8a06",
+          "equip": "HWP",
+          "num": "1",
+          "med": "SW",
+          "qty": "PRS",
+          "mod": "",
+          "name": "HWP1SWPRS",
+          "description": "Hot water pump 1 — Supply Water Pressure Sensor",
+          "ioOverride": null
+        },
+        {
+          "id": "a0048b87-0856-4f0c-ad5e-053c8f0c5c64",
+          "equip": "HWP",
+          "num": "1",
+          "med": "RW",
+          "qty": "PRS",
+          "mod": "",
+          "name": "HWP1RWPRS",
+          "description": "Hot water pump 1 — Return Water Pressure Sensor",
+          "ioOverride": null
+        },
+        {
+          "id": "c4ac6f44-2799-490d-b341-7fcbbbd8ff27",
+          "equip": "HWP",
+          "num": "1",
+          "med": "WA",
+          "qty": "FSW",
+          "mod": "",
+          "name": "HWP1WAFSW",
+          "description": "Hot water pump 1 — Water Flow switch",
+          "ioOverride": null
+        },
+        {
+          "id": "36bc3ee1-2637-4bd2-99be-c90b8f3bce2b",
+          "equip": "HWP",
+          "num": "1",
+          "med": "WA",
+          "qty": "PRS",
+          "mod": "SP",
+          "name": "HWP1WAPRSSP",
+          "description": "Hot water pump 1 — Water Pressure Sensor Setpoint",
+          "ioOverride": "AV"
+        },
+        {
+          "id": "0f97b5e4-bb88-4db7-bd0f-e74a38499d78",
+          "equip": "HWP",
+          "num": "1",
+          "med": "SP",
+          "qty": "VSD",
+          "mod": "OUT",
+          "name": "HWP1SPVSDOUT",
+          "description": "Hot water pump 1 — Speed Drive speed ref Output",
+          "ioOverride": null
+        },
+        {
+          "id": "5f42cd0f-bbdd-428e-b0f4-998a88862d32",
+          "equip": "HWP",
+          "num": "1",
+          "med": "ES",
+          "qty": "SWT",
+          "mod": "",
+          "name": "HWP1ESSWT",
+          "description": "Hot water pump 1 — Emergency Stop Switch",
+          "ioOverride": null
+        },
+        {
+          "id": "d698e9b5-362d-4335-8bc7-30d043ff8121",
+          "equip": "HWP",
+          "num": "1",
+          "med": "AL",
+          "qty": "FLT",
+          "mod": "",
+          "name": "HWP1ALFLT",
+          "description": "Hot water pump 1 — Alarm Fault",
+          "ioOverride": null
+        },
+        {
+          "id": "620abfef-e236-4bc9-b3ef-3d4b75d0c4c8",
+          "equip": "HWP",
+          "num": "2",
+          "med": "SW",
+          "qty": "PRS",
+          "mod": "",
+          "name": "HWP2SWPRS",
+          "description": "Hot water pump 2 — Supply Water Pressure Sensor",
+          "ioOverride": null
+        },
+        {
+          "id": "39945e54-7e4b-41bb-ad6c-dadc09f0f166",
+          "equip": "HWP",
+          "num": "2",
+          "med": "RW",
+          "qty": "PRS",
+          "mod": "",
+          "name": "HWP2RWPRS",
+          "description": "Hot water pump 2 — Return Water Pressure Sensor",
+          "ioOverride": null
+        },
+        {
+          "id": "e4897e8c-3694-4c3a-8798-b6d096e16c1c",
+          "equip": "HWP",
+          "num": "2",
+          "med": "WA",
+          "qty": "FSW",
+          "mod": "",
+          "name": "HWP2WAFSW",
+          "description": "Hot water pump 2 — Water Flow switch",
+          "ioOverride": null
+        },
+        {
+          "id": "a9db79fa-0b29-407f-963b-3c33bc0b79a6",
+          "equip": "HWP",
+          "num": "2",
+          "med": "WA",
+          "qty": "PRS",
+          "mod": "SP",
+          "name": "HWP2WAPRSSP",
+          "description": "Hot water pump 2 — Water Pressure Sensor Setpoint",
+          "ioOverride": "AV"
+        },
+        {
+          "id": "17a2166a-778c-419b-8c47-aa12744cadec",
+          "equip": "HWP",
+          "num": "2",
+          "med": "SP",
+          "qty": "VSD",
+          "mod": "OUT",
+          "name": "HWP2SPVSDOUT",
+          "description": "Hot water pump 2 — Speed Drive speed ref Output",
+          "ioOverride": null
+        },
+        {
+          "id": "3cd1b225-d783-4e4b-991d-f23c9073a456",
+          "equip": "HWP",
+          "num": "2",
+          "med": "ES",
+          "qty": "SWT",
+          "mod": "",
+          "name": "HWP2ESSWT",
+          "description": "Hot water pump 2 — Emergency Stop Switch",
+          "ioOverride": null
+        },
+        {
+          "id": "429146df-f9f0-4f56-82bd-4284b4c8234f",
+          "equip": "HWP",
+          "num": "2",
+          "med": "AL",
+          "qty": "FLT",
+          "mod": "",
+          "name": "HWP2ALFLT",
+          "description": "Hot water pump 2 — Alarm Fault",
+          "ioOverride": null
+        },
+        {
+          "id": "fd21f1e9-bb9f-4d1d-950b-a28a95f24ee6",
+          "equip": "ILH",
+          "num": "1",
+          "med": "SW",
+          "qty": "TMP",
+          "mod": "",
+          "name": "ILH1SWTMP",
+          "description": "Inline electric heater 1 — Supply Water Temperature",
+          "ioOverride": null
+        },
+        {
+          "id": "07bf7613-1812-441c-906c-5db907be652f",
+          "equip": "ILH",
+          "num": "1",
+          "med": "RW",
+          "qty": "TMP",
+          "mod": "",
+          "name": "ILH1RWTMP",
+          "description": "Inline electric heater 1 — Return Water Temperature",
+          "ioOverride": null
+        },
+        {
+          "id": "8311ef75-98a9-452f-87a7-a6eef47accb7",
+          "equip": "ILH",
+          "num": "1",
+          "med": "HE",
+          "qty": "STG",
+          "mod": "1",
+          "name": "ILH1HESTG1",
+          "description": "Inline electric heater 1 — Heater Stage output Step",
+          "ioOverride": null
+        },
+        {
+          "id": "43794306-5119-4e42-a10c-531e51ac7f95",
+          "equip": "ILH",
+          "num": "1",
+          "med": "HE",
+          "qty": "STG",
+          "mod": "2",
+          "name": "ILH1HESTG2",
+          "description": "Inline electric heater 1 — Heater Stage output Step",
+          "ioOverride": null
+        },
+        {
+          "id": "9f2c3607-231e-4b94-93b3-36436bdebdca",
+          "equip": "ILH",
+          "num": "1",
+          "med": "HE",
+          "qty": "STG",
+          "mod": "3",
+          "name": "ILH1HESTG3",
+          "description": "Inline electric heater 1 — Heater Stage output Step",
+          "ioOverride": null
+        },
+        {
+          "id": "9594fe27-1259-42ed-a4fe-8cae1505a5cb",
+          "equip": "ILH",
+          "num": "1",
+          "med": "IL",
+          "qty": "OHS",
+          "mod": "",
+          "name": "ILH1ILOHS",
+          "description": "Inline electric heater 1 — Interlock - Hardwire Overheat Stat",
+          "ioOverride": null
+        },
+        {
+          "id": "6f96d9f1-fd85-4087-a1f6-0b0264130556",
+          "equip": "ILH",
+          "num": "1",
+          "med": "SW",
+          "qty": "TMP",
+          "mod": "SP",
+          "name": "ILH1SWTMPSP",
+          "description": "Inline electric heater 1 — Supply Water Temperature Setpoint",
+          "ioOverride": "AV"
+        },
+        {
+          "id": "951f7a5a-cf67-458d-9669-1fe8499ba932",
+          "equip": "ILH",
+          "num": "2",
+          "med": "SW",
+          "qty": "TMP",
+          "mod": "",
+          "name": "ILH2SWTMP",
+          "description": "Inline electric heater 2 — Supply Water Temperature",
+          "ioOverride": null
+        },
+        {
+          "id": "0cc12355-37eb-4869-8ee9-8574978821d3",
+          "equip": "ILH",
+          "num": "2",
+          "med": "RW",
+          "qty": "TMP",
+          "mod": "",
+          "name": "ILH2RWTMP",
+          "description": "Inline electric heater 2 — Return Water Temperature",
+          "ioOverride": null
+        },
+        {
+          "id": "b6dda3e9-393e-4adb-88b1-be09d9a57411",
+          "equip": "ILH",
+          "num": "2",
+          "med": "HE",
+          "qty": "STG",
+          "mod": "1",
+          "name": "ILH2HESTG1",
+          "description": "Inline electric heater 2 — Heater Stage output Step",
+          "ioOverride": null
+        },
+        {
+          "id": "c0a22536-4fc5-411e-aff9-dc16217e23a8",
+          "equip": "ILH",
+          "num": "2",
+          "med": "HE",
+          "qty": "STG",
+          "mod": "2",
+          "name": "ILH2HESTG2",
+          "description": "Inline electric heater 2 — Heater Stage output Step",
+          "ioOverride": null
+        },
+        {
+          "id": "67b4b130-2fcf-4707-b15f-d16bb7ead821",
+          "equip": "ILH",
+          "num": "2",
+          "med": "HE",
+          "qty": "STG",
+          "mod": "3",
+          "name": "ILH2HESTG3",
+          "description": "Inline electric heater 2 — Heater Stage output Step",
+          "ioOverride": null
+        },
+        {
+          "id": "6c31db84-f6c0-476b-91d7-0e68271df339",
+          "equip": "ILH",
+          "num": "2",
+          "med": "IL",
+          "qty": "OHS",
+          "mod": "",
+          "name": "ILH2ILOHS",
+          "description": "Inline electric heater 2 — Interlock - Hardwire Overheat Stat",
+          "ioOverride": null
+        },
+        {
+          "id": "5083e4da-bde2-4995-a09c-479aeaf34ef2",
+          "equip": "ILH",
+          "num": "2",
+          "med": "SW",
+          "qty": "TMP",
+          "mod": "SP",
+          "name": "ILH2SWTMPSP",
+          "description": "Inline electric heater 2 — Supply Water Temperature Setpoint",
+          "ioOverride": "AV"
+        },
+        {
+          "id": "f290ded6-21a0-45f6-a252-9d57f35ba625",
+          "equip": "TNK",
+          "num": "1",
+          "med": "WA",
+          "qty": "TMP",
+          "mod": "T",
+          "name": "TNK1WATMPT",
+          "description": "Storage tank 1 — Water Temperature Top position",
+          "ioOverride": null
+        },
+        {
+          "id": "de8157fc-6b90-4cad-91fc-30b67fbefdae",
+          "equip": "TNK",
+          "num": "1",
+          "med": "WA",
+          "qty": "TMP",
+          "mod": "M",
+          "name": "TNK1WATMPM",
+          "description": "Storage tank 1 — Water Temperature Middle position",
+          "ioOverride": null
+        },
+        {
+          "id": "2b1e4169-8066-4cfe-96ed-c54f0025ef25",
+          "equip": "TNK",
+          "num": "1",
+          "med": "WA",
+          "qty": "TMP",
+          "mod": "B",
+          "name": "TNK1WATMPB",
+          "description": "Storage tank 1 — Water Temperature Bottom position",
+          "ioOverride": null
+        },
+        {
+          "id": "50547cac-9eb0-48c6-a9c6-7297380e29f5",
+          "equip": "TNK",
+          "num": "1",
+          "med": "WA",
+          "qty": "VLV",
+          "mod": "OUT",
+          "name": "TNK1WAVLVOUT",
+          "description": "Storage tank 1 — Water Valve position Output",
+          "ioOverride": null
+        }
+      ],
+      "createdAt": "2026-03-29T17:57:37.271Z",
+      "updatedAt": "2026-03-29T18:00:01.948Z",
+      "projectId": "020b73cb-f9b9-40b4-a575-a6a531cd4f70",
+      "duplicates": 1,
+      "modelId": "eliwell-fa12600",
+      "expansions": [
+        {
+          "moduleId": "eve-10200",
+          "quantity": 1
+        }
+      ]
+    },
+    {
+      "id": "7f98d33e-1afa-4d7c-9a97-499d93084750",
+      "siteName": "Plant Room",
+      "label": "Generator",
+      "variables": [
+        {
+          "id": "ef237094-4074-4fe1-ad38-0fd0147397d7",
+          "equip": "GEN",
+          "num": "1",
+          "med": "WA",
+          "qty": "TMP",
+          "mod": "",
+          "name": "GEN1WATMP",
+          "description": "Generator 1 — Water Temperature",
+          "ioOverride": "AV"
+        },
+        {
+          "id": "89e0730d-5b33-4944-a122-8a903f44a386",
+          "equip": "GEN",
+          "num": "1",
+          "med": "EN",
+          "qty": "SPD",
+          "mod": "",
+          "name": "GEN1ENSPD",
+          "description": "Generator 1 — Engine Speed feedback",
+          "ioOverride": "AV"
+        },
+        {
+          "id": "106fe5f0-7d0e-4a2a-96ce-e5992cb0160e",
+          "equip": "GEN",
+          "num": "1",
+          "med": "OL",
+          "qty": "PRS",
+          "mod": "",
+          "name": "GEN1OLPRS",
+          "description": "Generator 1 — Oil Pressure Sensor",
+          "ioOverride": "AV"
+        },
+        {
+          "id": "5d9e728a-1483-4a0d-8ad4-8f54d804db5a",
+          "equip": "GEN",
+          "num": "1",
+          "med": "FU",
+          "qty": "LVL",
+          "mod": "",
+          "name": "GEN1FULVL",
+          "description": "Generator 1 — Fuel Level Sensor",
+          "ioOverride": "AV"
+        },
+        {
+          "id": "bee03157-5ef3-4317-8778-04ef5d11047b",
+          "equip": "GEN",
+          "num": "1",
+          "med": "EL",
+          "qty": "VLN",
+          "mod": "LN1",
+          "name": "GEN1ELVLNLN1",
+          "description": "Generator 1 — Electric Voltage Line Line L1",
+          "ioOverride": "AV"
+        },
+        {
+          "id": "488abbc9-0a89-4422-a3d2-e7e98b9c8c5e",
+          "equip": "GEN",
+          "num": "1",
+          "med": "EL",
+          "qty": "VLN",
+          "mod": "LN2",
+          "name": "GEN1ELVLNLN2",
+          "description": "Generator 1 — Electric Voltage Line Line L2",
+          "ioOverride": "AV"
+        },
+        {
+          "id": "d1b41554-0363-424f-b42f-b676f1738231",
+          "equip": "GEN",
+          "num": "1",
+          "med": "EL",
+          "qty": "VLN",
+          "mod": "LN3",
+          "name": "GEN1ELVLNLN3",
+          "description": "Generator 1 — Electric Voltage Line Line L3",
+          "ioOverride": "AV"
+        },
+        {
+          "id": "4a5d5366-adad-40e0-bc8a-ffddfe13700f",
+          "equip": "GEN",
+          "num": "1",
+          "med": "EL",
+          "qty": "CUR",
+          "mod": "LN1",
+          "name": "GEN1ELCURLN1",
+          "description": "Generator 1 — Electric Current Line L1",
+          "ioOverride": "AV"
+        },
+        {
+          "id": "e317ea03-ff11-4568-a24d-30f5b40f4625",
+          "equip": "GEN",
+          "num": "1",
+          "med": "EL",
+          "qty": "CUR",
+          "mod": "LN2",
+          "name": "GEN1ELCURLN2",
+          "description": "Generator 1 — Electric Current Line L2",
+          "ioOverride": "AV"
+        },
+        {
+          "id": "34ba9447-6706-4780-a61b-f5520f2c8a7e",
+          "equip": "GEN",
+          "num": "1",
+          "med": "EL",
+          "qty": "CUR",
+          "mod": "LN3",
+          "name": "GEN1ELCURLN3",
+          "description": "Generator 1 — Electric Current Line L3",
+          "ioOverride": "AV"
+        },
+        {
+          "id": "b629d278-152e-411b-8b54-9b880886ceab",
+          "equip": "GEN",
+          "num": "1",
+          "med": "OL",
+          "qty": "TMP",
+          "mod": "",
+          "name": "GEN1OLTMP",
+          "description": "Generator 1 — Oil Temperature",
+          "ioOverride": "AV"
+        },
+        {
+          "id": "1437b218-afd5-49e0-bf5b-64ae32facd4f",
+          "equip": "GEN",
+          "num": "1",
+          "med": "EL",
+          "qty": "FRQ",
+          "mod": "",
+          "name": "GEN1ELFRQ",
+          "description": "Generator 1 — Electric Frequency - Hertz",
+          "ioOverride": "AV"
+        },
+        {
+          "id": "cef951d3-9c76-436a-b17c-12fec07d0d59",
+          "equip": "GEN",
+          "num": "1",
+          "med": "OL",
+          "qty": "PSW",
+          "mod": "",
+          "name": "GEN1OLPSW",
+          "description": "Generator 1 — Oil Pressure Switch",
+          "ioOverride": null
+        },
+        {
+          "id": "586c5c72-a76c-4540-8313-69b8596a798e",
+          "equip": "GEN",
+          "num": "1",
+          "med": "WA",
+          "qty": "LSW",
+          "mod": "",
+          "name": "GEN1WALSW",
+          "description": "Generator 1 — Water Level Switch",
+          "ioOverride": null
+        },
+        {
+          "id": "eb2c5d23-30c1-4a90-a029-6da27cff9512",
+          "equip": "GEN",
+          "num": "1",
+          "med": "OA",
+          "qty": "TMP",
+          "mod": "",
+          "name": "GEN1OATMP",
+          "description": "Generator 1 — Outside air Temperature",
+          "ioOverride": null
+        }
+      ],
+      "createdAt": "2026-03-29T18:00:32.255Z",
+      "updatedAt": "2026-03-29T18:00:41.082Z",
+      "projectId": "020b73cb-f9b9-40b4-a575-a6a531cd4f70",
+      "duplicates": 4
+    }
+  ],
   "assemblies": [
     {
       "id": "5c6f969d-cc45-4814-8140-d570e44efca4",
@@ -1567,19 +2622,6 @@
       "equipCode": "CWP",
       "description": "Chilled Water Pump with VSD",
       "points": [
-        {
-          "id": "990edb18-b94a-4605-9e26-00cacc31d23d",
-          "med": "SW",
-          "qty": "TMP",
-          "mod": "",
-          "ioOverride": null
-        },
-        {
-          "id": "bb8ea2be-37c9-4eae-b9db-da302766d212",
-          "med": "RW",
-          "qty": "TMP",
-          "mod": ""
-        },
         {
           "id": "86eef824-49ea-4f16-ba17-033e173d95c4",
           "med": "SW",
@@ -1631,19 +2673,6 @@
       "equipCode": "HWP",
       "description": "Hot Water Pump with VSD",
       "points": [
-        {
-          "id": "990edb18-b94a-4605-9e26-00cacc31d23d",
-          "med": "SW",
-          "qty": "TMP",
-          "mod": "",
-          "ioOverride": "AV"
-        },
-        {
-          "id": "bb8ea2be-37c9-4eae-b9db-da302766d212",
-          "med": "RW",
-          "qty": "TMP",
-          "mod": ""
-        },
         {
           "id": "86eef824-49ea-4f16-ba17-033e173d95c4",
           "med": "SW",
@@ -1716,14 +2745,8 @@
         },
         {
           "id": "1d867a67-7338-47c1-a586-4effa94a1e0f",
-          "med": "",
-          "qty": "FLT",
-          "mod": ""
-        },
-        {
-          "id": "31eaade7-d111-4cb2-abd2-86d827996b10",
-          "med": "",
-          "qty": "STS",
+          "med": "AL",
+          "qty": "TRP",
           "mod": ""
         },
         {
@@ -1733,9 +2756,9 @@
           "mod": ""
         },
         {
-          "id": "ebf2b880-4219-4934-916c-6cf665aa25c9",
-          "med": "AL",
-          "qty": "TRP",
+          "id": "607a404f-e09e-4cbe-adf4-d351b77620bc",
+          "med": "SG",
+          "qty": "STS",
           "mod": ""
         }
       ]
@@ -1747,34 +2770,9 @@
       "description": "Hot Water Pump",
       "points": [
         {
-          "id": "990edb18-b94a-4605-9e26-00cacc31d23d",
-          "med": "SW",
-          "qty": "TMP",
-          "mod": "",
-          "ioOverride": null
-        },
-        {
-          "id": "bb8ea2be-37c9-4eae-b9db-da302766d212",
-          "med": "RW",
-          "qty": "TMP",
-          "mod": ""
-        },
-        {
           "id": "402871c3-b3cc-492f-bfdd-115328a619a5",
           "med": "WA",
           "qty": "FSW",
-          "mod": ""
-        },
-        {
-          "id": "1d867a67-7338-47c1-a586-4effa94a1e0f",
-          "med": "",
-          "qty": "FLT",
-          "mod": ""
-        },
-        {
-          "id": "31eaade7-d111-4cb2-abd2-86d827996b10",
-          "med": "",
-          "qty": "STS",
           "mod": ""
         },
         {
@@ -1788,6 +2786,12 @@
           "med": "AL",
           "qty": "TRP",
           "mod": ""
+        },
+        {
+          "id": "0a298f73-550f-4dee-a65d-e02d980ea022",
+          "med": "SG",
+          "qty": "STS",
+          "mod": ""
         }
       ]
     },
@@ -1798,33 +2802,14 @@
       "description": "Water Pump",
       "points": [
         {
-          "id": "990edb18-b94a-4605-9e26-00cacc31d23d",
-          "med": "SW",
-          "qty": "TMP",
-          "mod": "",
-          "ioOverride": null
-        },
-        {
-          "id": "bb8ea2be-37c9-4eae-b9db-da302766d212",
-          "med": "RW",
-          "qty": "TMP",
-          "mod": ""
-        },
-        {
           "id": "402871c3-b3cc-492f-bfdd-115328a619a5",
           "med": "WA",
           "qty": "FSW",
           "mod": ""
         },
         {
-          "id": "1d867a67-7338-47c1-a586-4effa94a1e0f",
-          "med": "",
-          "qty": "FLT",
-          "mod": ""
-        },
-        {
           "id": "31eaade7-d111-4cb2-abd2-86d827996b10",
-          "med": "",
+          "med": "SG",
           "qty": "STS",
           "mod": ""
         },
@@ -1832,6 +2817,12 @@
           "id": "f2edf4db-d18f-4378-9fbe-e296e51f0477",
           "med": "ES",
           "qty": "SWT",
+          "mod": ""
+        },
+        {
+          "id": "f328a863-86a5-4b39-9826-bee886734939",
+          "med": "AL",
+          "qty": "TRP",
           "mod": ""
         }
       ]
@@ -1961,6 +2952,206 @@
           "id": "6d7f0aa5-a811-4d50-b60c-9e0885af6007",
           "med": "FA",
           "qty": "STS",
+          "mod": ""
+        }
+      ]
+    },
+    {
+      "id": "da3255a4-0959-404d-9d08-f5a08c4a723e",
+      "name": "Humidifier",
+      "equipCode": "HUM",
+      "description": "Humidifier - Electrode",
+      "points": [
+        {
+          "id": "316c92ae-7d50-420d-a53e-c8ccf0a4373e",
+          "med": "RA",
+          "qty": "HUM",
+          "mod": ""
+        },
+        {
+          "id": "63fe288e-4120-4286-a09a-1d88b7e4edd0",
+          "med": "RA",
+          "qty": "HUM",
+          "mod": "SP",
+          "ioOverride": "AV"
+        },
+        {
+          "id": "49a3659a-d6c1-49ba-b37a-d31b5e821ce3",
+          "med": "AR",
+          "qty": "FSW",
+          "mod": ""
+        },
+        {
+          "id": "59e7331a-d762-4afe-ad43-4163e597ba32",
+          "med": "AL",
+          "qty": "FLT",
+          "mod": ""
+        },
+        {
+          "id": "7a6fa3aa-67c1-4e8c-98c1-54e6692905a2",
+          "med": "SG",
+          "qty": "PCT",
+          "mod": "OUT"
+        }
+      ]
+    },
+    {
+      "id": "79e9f4e2-f7ea-4da6-bed5-387360bf1113",
+      "name": "Inline Heater - 3 Step",
+      "equipCode": "ILH",
+      "description": "Inline Heater - Electric, 3 Steps",
+      "points": [
+        {
+          "id": "6a967bae-82f5-4696-b4b9-1adda081eca4",
+          "med": "SW",
+          "qty": "TMP",
+          "mod": ""
+        },
+        {
+          "id": "40ab62ff-2d29-4ce1-b936-8c04a1a7bb97",
+          "med": "RW",
+          "qty": "TMP",
+          "mod": ""
+        },
+        {
+          "id": "1b913e4f-8f02-4f11-a8a5-2c4b7462d502",
+          "med": "HE",
+          "qty": "STG",
+          "mod": "1"
+        },
+        {
+          "id": "9abfc80c-f46e-4399-9b8e-8da5cd810c31",
+          "med": "HE",
+          "qty": "STG",
+          "mod": "2"
+        },
+        {
+          "id": "eb79c769-342c-46dd-aa53-be235718a06e",
+          "med": "HE",
+          "qty": "STG",
+          "mod": "3"
+        },
+        {
+          "id": "1faad8b1-3218-479f-8c1d-5888cb1cd185",
+          "med": "IL",
+          "qty": "OHS",
+          "mod": ""
+        },
+        {
+          "id": "184e8308-a399-4fed-880d-88653e33bb62",
+          "med": "SW",
+          "qty": "TMP",
+          "mod": "SP",
+          "ioOverride": "AV"
+        }
+      ]
+    },
+    {
+      "id": "22ed24bb-4c75-4f3e-bf82-4e8b66b04b61",
+      "name": "Generator",
+      "equipCode": "GEN",
+      "description": "Generator",
+      "points": [
+        {
+          "id": "eabe19fc-b57b-4a72-b1c1-f214948430c6",
+          "med": "WA",
+          "qty": "TMP",
+          "mod": "",
+          "ioOverride": "AV"
+        },
+        {
+          "id": "02f1e243-fd6a-40a2-9e8f-947b1e095658",
+          "med": "EN",
+          "qty": "SPD",
+          "mod": "",
+          "ioOverride": "AV"
+        },
+        {
+          "id": "2de5493c-af49-4a22-addc-223a41a52da0",
+          "med": "OL",
+          "qty": "PRS",
+          "mod": "",
+          "ioOverride": "AV"
+        },
+        {
+          "id": "3378064e-c0a3-4072-b548-df3726e3f46b",
+          "med": "FU",
+          "qty": "LVL",
+          "mod": "",
+          "ioOverride": "AV"
+        },
+        {
+          "id": "2a1e5bc6-f99b-48f7-ac58-5810ba246186",
+          "med": "EL",
+          "qty": "VLN",
+          "mod": "LN1",
+          "ioOverride": "AV"
+        },
+        {
+          "id": "d922188a-450b-4630-ac1f-5c4716203004",
+          "med": "EL",
+          "qty": "VLN",
+          "mod": "LN2",
+          "ioOverride": "AV"
+        },
+        {
+          "id": "2320a9e2-c4f6-4a11-b3d9-b7c1dd43fbb7",
+          "med": "EL",
+          "qty": "VLN",
+          "mod": "LN3",
+          "ioOverride": "AV"
+        },
+        {
+          "id": "deecfd85-f766-4435-a721-50f275b7f36f",
+          "med": "EL",
+          "qty": "CUR",
+          "mod": "LN1",
+          "ioOverride": "AV"
+        },
+        {
+          "id": "17178af2-2476-4f4a-851f-9c71ec42c8d1",
+          "med": "EL",
+          "qty": "CUR",
+          "mod": "LN2",
+          "ioOverride": "AV"
+        },
+        {
+          "id": "3083f83c-7e93-4fbb-8646-3b40977ee807",
+          "med": "EL",
+          "qty": "CUR",
+          "mod": "LN3",
+          "ioOverride": "AV"
+        },
+        {
+          "id": "a55c3bdd-341c-41e3-b8cd-723409610004",
+          "med": "OL",
+          "qty": "TMP",
+          "mod": "",
+          "ioOverride": "AV"
+        },
+        {
+          "id": "e8844cb2-e56f-4aa6-a355-e65781f8265b",
+          "med": "EL",
+          "qty": "FRQ",
+          "mod": "",
+          "ioOverride": "AV"
+        },
+        {
+          "id": "edb09dad-9fff-4875-b5e7-c435cbddb062",
+          "med": "OL",
+          "qty": "PSW",
+          "mod": ""
+        },
+        {
+          "id": "da83d615-01f8-48c0-9037-0ff1cbc2d468",
+          "med": "WA",
+          "qty": "LSW",
+          "mod": ""
+        },
+        {
+          "id": "4c00b0f7-c9fa-4b21-9e6d-22f30d86acaa",
+          "med": "OA",
+          "qty": "TMP",
           "mod": ""
         }
       ]
@@ -2157,5 +3348,13 @@
       }
     }
   ],
-  "projects": []
+  "projects": [
+    {
+      "id": "020b73cb-f9b9-40b4-a575-a6a531cd4f70",
+      "name": "Example",
+      "description": "",
+      "createdAt": "2026-03-29T17:54:40.058Z",
+      "updatedAt": "2026-03-29T17:54:40.058Z"
+    }
+  ]
 }

@@ -45,9 +45,7 @@ function buildSheet1(
       ? `${ctrl.label}  —  ${ctrl.siteName}`
       : ctrl.label;
 
-    // Controller heading (show ×N if duplicated so engineers know to copy this group)
-    const heading = dup > 1 ? `${ctrlTitle}  (× ${dup} in project)` : ctrlTitle;
-    rows.push([heading, '', '', '']);
+    rows.push([ctrlTitle, '', '', '']);
     rows.push(['Item No', 'Item', 'Unit', 'No']);
 
     let item = 1;

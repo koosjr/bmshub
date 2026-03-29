@@ -690,7 +690,7 @@ function SemanticConfigSection({ cfg, equip, med, qty, mod, onUpdate }: {
     rowKey: string; values: string[]; labelFn: (c: string) => string; keyLabel: string; onEdit: () => void;
   }) {
     return (
-      <tr className="border-t group" style={{ borderColor: '#F1EFE8' }}>
+      <tr className="border-t" style={{ borderColor: '#F1EFE8' }}>
         <td className="py-2 pr-3 align-top">
           <span className="font-mono text-xs font-bold" style={{ color: '#2C2C2A' }}>{rowKey === '' ? '∅' : rowKey}</span>
         </td>
@@ -706,8 +706,8 @@ function SemanticConfigSection({ cfg, equip, med, qty, mod, onUpdate }: {
         </td>
         <td className="py-2 pl-2 align-top">
           <button onClick={onEdit}
-            className="text-xs px-2 py-0.5 rounded border opacity-0 group-hover:opacity-100 transition-opacity"
-            style={{ borderColor: '#D3D1C7', color: '#888780' }}>Edit</button>
+            className="text-xs px-2 py-0.5 rounded border"
+            style={{ borderColor: '#D3D1C7', color: '#888780', background: '#F1EFE8' }}>Edit</button>
         </td>
       </tr>
     );

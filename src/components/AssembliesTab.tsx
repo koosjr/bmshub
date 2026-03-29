@@ -541,6 +541,10 @@ export default function AssembliesTab({
   const [showModuleModal, setShowModuleModal] = useState(false);
   const [moduleIsNew, setModuleIsNew] = useState(false);
 
+  // Clone state
+  const [cloningAssembly, setCloningAssembly] = useState<Assembly | null>(null);
+  const [cloneEquip, setCloneEquip] = useState('');
+
   // Assembly CRUD
   function openNewAssembly() {
     setEditingAssembly(null);
@@ -563,6 +567,21 @@ export default function AssembliesTab({
   function handleDeleteAssembly(id: string) {
     if (!confirm('Delete this assembly?')) return;
     onUpdateAssemblies(assemblies.filter(a => a.id !== id));
+  }
+  function openClone(a: Assembly) {
+    setCloningAssembly(a);
+    setCloneEquip(a.equipCode);
+  }
+  function handleConfirmClone() {
+    if (!cloningAssembly || !cloneEquip) return;
+    const clone: Assembly = {
+      ...cloningAssembly,
+      id: uuidv4(),
+      equipCode: cloneEquip,
+      name: cloningAssembly.name + ' (copy)',
+    };
+    onUpdateAssemblies([...assemblies, clone]);
+    setCloningAssembly(null);
   }
 
   // Controller Model CRUD
@@ -671,6 +690,11 @@ export default function AssembliesTab({
                             className="text-xs px-2 py-1 rounded border"
                             style={{ borderColor: '#D3D1C7', color: '#888780' }}
                           >Edit</button>
+                          <button
+                            onClick={() => openClone(a)}
+                            className="text-xs px-2 py-1 rounded border"
+                            style={{ borderColor: '#1D9E75', color: '#085041' }}
+                          >Clone</button>
                           <button
                             onClick={() => handleDeleteAssembly(a.id)}
                             className="text-xs px-2 py-1 rounded border"
@@ -805,6 +829,38 @@ export default function AssembliesTab({
           </div>
         </div>
       </div>
+
+      {/* Clone modal */}
+      {cloningAssembly && (
+        <div className="fixed inset-0 flex items-center justify-center z-50 p-4" style={{ background: 'rgba(0,0,0,0.5)' }}>
+          <div className="bg-white rounded-xl shadow-xl p-6 w-full" style={{ maxWidth: '420px' }}>
+            <h3 className="font-bold text-base mb-1" style={{ color: '#2C2C2A' }}>Clone Assembly</h3>
+            <p className="text-xs mb-4" style={{ color: '#888780' }}>
+              Cloning <strong>{cloningAssembly.name}</strong>. All points will be copied. Select the target equipment type:
+            </p>
+            <select
+              className="w-full border rounded px-3 py-2 text-sm font-mono mb-5"
+              style={{ borderColor: '#D3D1C7' }}
+              value={cloneEquip}
+              onChange={e => setCloneEquip(e.target.value)}
+            >
+              {equip.map(e => (
+                <option key={e.id} value={e.code}>{e.code} — {e.label}</option>
+              ))}
+            </select>
+            <div className="flex gap-2 justify-end">
+              <button onClick={() => setCloningAssembly(null)}
+                className="px-4 py-2 rounded text-sm" style={{ background: '#D3D1C7', color: '#2C2C2A' }}>
+                Cancel
+              </button>
+              <button onClick={handleConfirmClone}
+                className="px-4 py-2 rounded text-sm text-white" style={{ background: '#1D9E75' }}>
+                Clone
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Modals */}
       {showAssemblyModal && (

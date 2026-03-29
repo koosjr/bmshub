@@ -4,7 +4,7 @@ import { Controller, QtyEntry } from './types';
 export interface SimExportPoint {
   tag: string;
   description: string;
-  io_type: 'AI' | 'AO' | 'DI' | 'DO';
+  io_type: 'AI' | 'AO' | 'DI' | 'DO' | 'AV' | 'BV';
 }
 
 export interface SimExportDevice {
@@ -24,8 +24,9 @@ export interface SimulatorExportFile {
 function resolveIOType(
   variable: Controller['variables'][number],
   qtyList: QtyEntry[],
-): 'AI' | 'AO' | 'DI' | 'DO' | null {
-  if (variable.ioOverride === 'AV' || variable.ioOverride === 'BV') return null; // software only
+): 'AI' | 'AO' | 'DI' | 'DO' | 'AV' | 'BV' | null {
+  if (variable.ioOverride === 'AV') return 'AV';
+  if (variable.ioOverride === 'BV') return 'BV';
   const ioType = qtyList.find(q => q.code === variable.qty)?.ioType;
   if (!ioType || !['AI', 'AO', 'DI', 'DO'].includes(ioType)) return null;
   return ioType as 'AI' | 'AO' | 'DI' | 'DO';
@@ -44,7 +45,7 @@ export function exportForSimulator(
     const points: SimExportPoint[] = [];
     for (const v of ctrl.variables) {
       const io = resolveIOType(v, qtyList);
-      if (!io) continue; // skip AV/BV soft points
+      if (!io) continue; // skip unrecognised io types
       points.push({ tag: v.name, description: v.description, io_type: io });
     }
     if (points.length === 0) continue;

@@ -606,6 +606,22 @@ function SemanticConfigSection({ cfg, equip, med, qty, mod, onUpdate }: {
     onUpdate({ ...cfg, qtyMods: next });
   }
 
+  // Merged rows — every dict item appears, even if absent from config (defaults to [])
+  const equipRows = [
+    ...equip.map(e => e.code),
+    ...Object.keys(cfg.equipMeds).filter(k => !equip.find(e => e.code === k)),
+  ].map(k => [k, cfg.equipMeds[k] ?? []] as [string, string[]]);
+
+  const medRows = [
+    ...med.map(m => m.code),
+    ...Object.keys(cfg.medQtys).filter(k => !med.find(m => m.code === k)),
+  ].map(k => [k, cfg.medQtys[k] ?? []] as [string, string[]]);
+
+  const qtyRows = [
+    ...qty.map(q => q.code),
+    ...Object.keys(cfg.qtyMods).filter(k => !qty.find(q => q.code === k)),
+  ].map(k => [k, cfg.qtyMods[k] ?? []] as [string, string[]]);
+
   const tabStyle = (active: boolean) => ({
     padding: '6px 14px',
     borderRadius: '6px 6px 0 0',
@@ -784,7 +800,7 @@ function SemanticConfigSection({ cfg, equip, med, qty, mod, onUpdate }: {
                 </tr>
               </thead>
               <tbody>
-                {Object.entries(cfg.equipMeds).map(([k, vals]) =>
+                {equipRows.map(([k, vals]) =>
                   editingKey === k ? (
                     <tr key={k}><td colSpan={4} className="py-2">
                       <RowEditor rowKey={k} values={vals}
@@ -830,7 +846,7 @@ function SemanticConfigSection({ cfg, equip, med, qty, mod, onUpdate }: {
                 </tr>
               </thead>
               <tbody>
-                {Object.entries(cfg.medQtys).map(([k, vals]) =>
+                {medRows.map(([k, vals]) =>
                   editingKey === ('med:' + k) ? (
                     <tr key={k}><td colSpan={4} className="py-2">
                       <RowEditor rowKey={k} values={vals}
@@ -876,7 +892,7 @@ function SemanticConfigSection({ cfg, equip, med, qty, mod, onUpdate }: {
                 </tr>
               </thead>
               <tbody>
-                {Object.entries(cfg.qtyMods).map(([k, vals]) =>
+                {qtyRows.map(([k, vals]) =>
                   editingKey === ('qty:' + k) ? (
                     <tr key={k}><td colSpan={4} className="py-2">
                       <RowEditor rowKey={k} values={vals}

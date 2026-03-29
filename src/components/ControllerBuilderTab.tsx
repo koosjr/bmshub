@@ -1368,7 +1368,7 @@ function ControllerDetail({
         {editingMeta ? (
           <div className="flex gap-3 flex-wrap items-end flex-1">
             <div>
-              <label className="text-xs font-medium block mb-1" style={{ color: '#888780' }}>Site Name</label>
+              <label className="text-xs font-medium block mb-1" style={{ color: '#888780' }}>Area</label>
               <input className="border rounded px-2 py-1 text-sm" style={{ borderColor: '#D3D1C7' }}
                 value={metaForm.siteName} onChange={e => setMetaForm(f => ({ ...f, siteName: e.target.value }))} />
             </div>
@@ -1479,7 +1479,7 @@ function NewControllerModal({ onConfirm, onCancel }: {
   const [error, setError] = useState('');
 
   function submit() {
-    if (!siteName.trim()) { setError('Site name is required'); return; }
+    if (!siteName.trim()) { setError('Area is required'); return; }
     if (!label.trim()) { setError('Controller label is required'); return; }
     onConfirm(siteName.trim(), label.trim(), duplicates);
   }
@@ -1490,9 +1490,9 @@ function NewControllerModal({ onConfirm, onCancel }: {
         <h2 className="font-bold text-lg mb-4" style={{ color: '#2C2C2A' }}>New Controller</h2>
         <div className="space-y-3 mb-4">
           <div>
-            <label className="text-xs font-medium block mb-1" style={{ color: '#888780' }}>Site Name</label>
+            <label className="text-xs font-medium block mb-1" style={{ color: '#888780' }}>Area</label>
             <input className="border rounded px-3 py-2 text-sm w-full" style={{ borderColor: '#D3D1C7' }}
-              value={siteName} onChange={e => setSiteName(e.target.value)} placeholder="e.g. PACOFS" />
+              value={siteName} onChange={e => setSiteName(e.target.value)} placeholder="e.g. K-Floor Plant Room" />
           </div>
           <div>
             <label className="text-xs font-medium block mb-1" style={{ color: '#888780' }}>Controller Label</label>

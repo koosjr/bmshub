@@ -1,6 +1,602 @@
 import { v4 as uuidv4 } from 'uuid';
-import { EquipEntry, MedEntry, QtyEntry, ModEntry, SemanticRule, Controller, Assembly, ControllerModel, ExpansionModule, Project } from './types';
+import type { EquipEntry, MedEntry, QtyEntry, ModEntry, SemanticRule, Controller, Assembly, ControllerModel, ExpansionModule, Project } from './types';
 
+// ─── EQUIP — sorted alphabetically by code ───────────────────────────────────
+export const seedEquip: EquipEntry[] = [
+  { id: '0fd350da-b152-490e-8862-6c60cb3b5fc5', code: 'AHU', label: 'Air handling unit',     takesNum: true  },
+  { id: '14d53dc6-722b-4a4c-9da9-c4363e57045d', code: 'BLR', label: 'Boiler',                 takesNum: true  },
+  { id: 'ffecd11c-1c23-43ed-86e9-8deb00244674', code: 'CHR', label: 'Chiller',                takesNum: true  },
+  { id: '804946da-0859-4dd8-a0d1-c2db782c31a5', code: 'CTW', label: 'Cooling tower',          takesNum: true  },
+  { id: '7db64dc2-fe58-4328-b511-ee05e5765fa0', code: 'CWP', label: 'Chilled water pump',     takesNum: true  },
+  { id: '952bfc34-373e-4324-92ef-9154b8829473', code: 'EXF', label: 'Exhaust fan',            takesNum: true  },
+  { id: 'b441efe2-0993-432d-a03c-1302718410bf', code: 'FCU', label: 'Fan coil unit',          takesNum: true  },
+  { id: 'f7571760-0ba2-40cc-af28-01e7afcbddc3', code: 'GEN', label: 'Generator',              takesNum: true  },
+  { id: 'c7d1d3a6-11c3-404c-bee9-74a97d04554a', code: 'HEX', label: 'Heat exchanger',         takesNum: true  },
+  { id: 'bbf1098e-20ad-4e99-9f0c-96cae8a44a17', code: 'HWP', label: 'Hot water pump',         takesNum: true  },
+  { id: 'a15d75a9-332e-4575-b1ef-94a4f69c2228', code: 'ILH', label: 'Inline electric heater', takesNum: true  },
+  { id: '8811f9f1-d521-41f5-b3a3-66d79bd5b564', code: 'MAU', label: 'Make-up air unit',       takesNum: true  },
+  { id: '0609f184-dd00-4a0f-90a0-aec86ba5799e', code: 'PMP', label: 'General pump',           takesNum: true  },
+  { id: '3a4b43dc-e5c6-42ec-854d-5988d62117e7', code: 'SYS', label: 'System / circuit level', takesNum: false },
+  { id: '00cdd2b8-beeb-476d-b0a4-14a7150ffe57', code: 'TNK', label: 'Storage tank',           takesNum: true  },
+  { id: 'a7e2a0c8-6eb1-49bc-acec-0f513cfa5f08', code: 'VRV', label: 'VRV / VRF system',       takesNum: true  },
+];
+
+// ─── MED — sorted alphabetically by code ─────────────────────────────────────
+export const seedMed: MedEntry[] = [
+  { id: 'a688a2ba-849e-47e1-adf7-20424636f3b5', code: 'CO', label: 'Condenser water' },
+  { id: '831429e2-12cb-4249-b697-97faed740c44', code: 'CW', label: 'Chilled water'   },
+  { id: '3a8ec03a-056d-4c89-8de5-2a8cf267e88a', code: 'EX', label: 'Exhaust air'     },
+  { id: 'a3d1e068-9361-4217-9dce-f55f9a989d41', code: 'FA', label: 'Fan'             },
+  { id: '99e1801e-effd-419c-9165-c20278e08f85', code: 'GY', label: 'Glycol circuit'  },
+  { id: 'a9aff777-a38f-409e-bce2-eb72c509e850', code: 'HW', label: 'Hot water'       },
+  { id: 'd7b592d3-ded9-4308-9301-948bd13a0df4', code: 'MA', label: 'Mixed air'       },
+  { id: '0b11f32c-08a9-4211-b32b-a8e73dac205e', code: 'OA', label: 'Outside air'     },
+  { id: '237a49fa-1ab5-4ce0-b143-68d3c6e7a27a', code: 'RA', label: 'Return air'      },
+  { id: '080af221-41db-4b24-8022-00d3cf1a3149', code: 'RF', label: 'Refrigerant'     },
+  { id: '72f15e8e-f3dc-45f3-8f65-7a93e0325b23', code: 'SA', label: 'Supply air'      },
+  { id: '5e3650fd-51c4-4283-a702-a891a1eab450', code: 'ZN', label: 'Zone / room'     },
+];
+
+// ─── QTY — sorted alphabetically by code ─────────────────────────────────────
+export const seedQty: QtyEntry[] = [
+  { id: '24ebb834-4966-4977-a6c2-5f3a441dd8e4', code: 'ALM',  label: 'Alarm output',          ioType: 'DO' },
+  { id: '86ffc8b8-721c-47c2-9f20-0697eb34d84c', code: 'CO2',  label: 'CO2 level (ppm)',       ioType: 'AI' },
+  { id: '9d1e5269-b816-42d1-badb-ac6682faa668', code: 'DMP',  label: 'Damper position',       ioType: 'AO' },
+  { id: 'df1e33d6-77fb-4ad3-8eaf-48a5a1ce30c8', code: 'DPR',  label: 'Differential pressure', ioType: 'AI' },
+  { id: 'd99fbe62-257a-461b-9f38-eff6f52eaf48', code: 'ENB',  label: 'Enable command',        ioType: 'DO' },
+  { id: 'b1f2d38d-6000-4a7f-a8ef-eefa777e8f52', code: 'FLT',  label: 'Fault',                 ioType: 'DI' },
+  { id: 'a5cdcc41-0880-41df-b899-0de860b5a344', code: 'FLW',  label: 'Flow rate',             ioType: 'AI' },
+  { id: '850054e9-9ea7-4276-8cf5-5527fc48c46c', code: 'FSW',  label: 'Flow switch',           ioType: 'DI' },
+  { id: '3eb0b9bf-7067-4540-85bf-92b34fb930b9', code: 'GLY',  label: 'Glycol concentration',  ioType: 'AI' },
+  { id: 'bdb0b0c2-d8fa-4449-bab2-24ee194adc99', code: 'HUM',  label: 'Humidity',              ioType: 'AI' },
+  { id: 'd44025f8-c580-4ddc-ae5c-c2dff5b3976f', code: 'PCT',  label: 'Percentage output',     ioType: 'AO' },
+  { id: '929f1c0d-06d5-461a-815f-f0741004d9ee', code: 'PRS',  label: 'Pressure',              ioType: 'AI' },
+  { id: '140bbe9d-c923-466f-919c-49ddc8513723', code: 'PWR',  label: 'Power / energy',        ioType: 'AI' },
+  { id: '98cec28d-f83b-4dbc-b5a2-89d49b3bb6a4', code: 'RUN',  label: 'Running status',        ioType: 'DI' },
+  { id: '914fba2d-66b3-48e2-ae8a-f30b31e48ae8', code: 'RTMP', label: 'Return temperature',    ioType: 'AI' },
+  { id: '314681c3-7cc5-43ef-b093-6337c205c1c2', code: 'SPD',  label: 'Speed feedback',        ioType: 'AI' },
+  { id: '00da8ae0-7feb-49b1-b717-8dc0558022a6', code: 'STG',  label: 'Stage output',          ioType: 'DO' },
+  { id: 'c46a182d-2a28-4f33-a883-5dcaa23cfc13', code: 'STMP', label: 'Supply temperature',    ioType: 'AI' },
+  { id: '08948d63-e05b-43b0-bf14-aef78a8d0412', code: 'TMP',  label: 'Temperature',           ioType: 'AI' },
+  { id: 'b075a5a8-8e67-4a35-a942-2bbddce2111e', code: 'VLV',  label: 'Valve position',        ioType: 'AO' },
+  { id: '4da6259a-9b6d-493a-bf5f-6e63b164309c', code: 'VOC',  label: 'VOC index',             ioType: 'AI' },
+  { id: 'ef3dea2c-bdac-4a64-8d55-2db349848b92', code: 'VSD',  label: 'Drive speed ref',       ioType: 'AO' },
+];
+
+// ─── MOD — alphabetic first, numeric codes (1,2,3) at the end ─────────────────
+export const seedMod: ModEntry[] = [
+  { id: '16fb6e84-1ef1-41d7-8f18-09820a13d2af', code: 'B',  label: 'Bottom position'    },
+  { id: '600ca38d-ff0e-4c26-8353-4a57e0d1a02b', code: 'DP', label: 'Differential'       },
+  { id: '4f599aff-5662-420a-a362-cdab7b692a03', code: 'FB', label: 'Feedback / actual'  },
+  { id: '9d80ff4c-8962-4483-a377-e03e03ae6eb9', code: 'HI', label: 'High limit'         },
+  { id: 'ed64eafc-d328-472d-8e2c-62421b5ca31d', code: 'LO', label: 'Low limit'          },
+  { id: '4496785a-2d30-4fcc-b51a-8f5b62d240d0', code: 'M',  label: 'Middle position'    },
+  { id: 'abe6deab-7a39-4ded-94be-2b714c2d6249', code: 'SP', label: 'Setpoint'           },
+  { id: '22d9fa60-4995-464c-a3dd-0e41c80b0132', code: 'T',  label: 'Top position'       },
+  { id: '98816dfd-f442-49bd-96e0-79fa2fc347f2', code: '1',  label: 'Stage / instance 1' },
+  { id: 'afb77289-7faa-4e65-94a7-2ea3cc05fbd4', code: '2',  label: 'Stage / instance 2' },
+  { id: '99b59356-0e64-489c-8574-98517915cb08', code: '3',  label: 'Stage / instance 3' },
+];
+
+// ─── RULES — comprehensive semantic validation ────────────────────────────────
+//
+// Strategy per equip:
+//   1. BLOCK invalid media (equip + bad_med + qty:"*")
+//   2. BLOCK invalid qty   (equip + med:"*"  + bad_qty)
+//   3. ALLOW valid media catch-alls (equip + good_med + qty:"*", allowed:true)
+//        — NOTE: SemanticRule.allowed is typed as `false` in types.ts so only
+//          blocking rules are expressed here; the valid-media catch-alls are
+//          represented by the absence of a blocking rule for that combination.
+//
+// All media codes: CO, CW, EX, FA, GY, HW, MA, OA, RA, RF, SA, ZN
+// All qty codes:   ALM, CO2, DMP, DPR, ENB, FLT, FLW, FSW, GLY, HUM,
+//                  PCT, PRS, PWR, RUN, RTMP, SPD, STG, STMP, TMP, VLV, VOC, VSD
+
+export const seedRules: SemanticRule[] = [
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // AHU — Air handling unit
+  // Valid media : SA, RA, OA, MA, EX, CW, HW, ZN, FA
+  // Invalid media: CO, GY, RF
+  // Valid qty   : TMP, HUM, PRS, DPR, CO2, VOC, FLW, FSW, VLV, DMP, VSD, RUN, ENB, FLT, PCT, SPD, STG, ALM, STMP, RTMP, PWR
+  // Invalid qty : GLY, RTMP (invalid), STMP (invalid for AHU, already in valid list)
+  //   — actually GLY is the only global qty not in AHU valid list
+  // ══════════════════════════════════════════════════════════════════════════
+
+  // AHU — block invalid media
+  { id: 'ahu-co-any',  equip: 'AHU', med: 'CO', qty: '*', allowed: false, reason: 'AHUs have no condenser water circuit. CO medium belongs on CHR, CTW, or CWP.' },
+  { id: 'ahu-gy-any',  equip: 'AHU', med: 'GY', qty: '*', allowed: false, reason: 'AHUs do not use glycol circuits directly. Use HEX or SYS for glycol points.' },
+  { id: 'ahu-rf-any',  equip: 'AHU', med: 'RF', qty: '*', allowed: false, reason: 'AHUs have no refrigerant circuit. Refrigerant belongs on CHR or VRV.' },
+
+  // AHU — block invalid qty
+  { id: 'ahu-any-gly', equip: 'AHU', med: '*', qty: 'GLY', allowed: false, reason: 'AHUs do not measure glycol concentration. GLY belongs on SYS or HEX for glycol circuits.' },
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // FCU — Fan coil unit
+  // Valid media : SA, RA, ZN, CW, HW, FA
+  // Invalid media: OA, MA, EX, CO, GY, RF
+  // Valid qty   : TMP, HUM, CO2, VLV, DMP, VSD, RUN, ENB, FLT, PCT, SPD, STG, ALM
+  // Invalid qty : PRS, DPR, FLW, FSW, PWR, VOC, GLY, STMP, RTMP
+  // ══════════════════════════════════════════════════════════════════════════
+
+  // FCU — block invalid media
+  { id: 'fcu-oa-any',  equip: 'FCU', med: 'OA', qty: '*', allowed: false, reason: 'FCUs do not handle outside air directly. OA medium belongs on AHU or MAU.' },
+  { id: 'fcu-ma-any',  equip: 'FCU', med: 'MA', qty: '*', allowed: false, reason: 'FCUs have no mixed air plenum. MA medium belongs on AHU.' },
+  { id: 'fcu-ex-any',  equip: 'FCU', med: 'EX', qty: '*', allowed: false, reason: 'FCUs have no exhaust air duct. EX medium belongs on AHU or EXF.' },
+  { id: 'fcu-co-any',  equip: 'FCU', med: 'CO', qty: '*', allowed: false, reason: 'FCUs have no condenser water circuit. CO medium belongs on CHR or CTW.' },
+  { id: 'fcu-gy-any',  equip: 'FCU', med: 'GY', qty: '*', allowed: false, reason: 'FCUs do not use glycol circuits. GY medium belongs on HEX or SYS.' },
+  { id: 'fcu-rf-any',  equip: 'FCU', med: 'RF', qty: '*', allowed: false, reason: 'FCUs have no refrigerant circuit. Refrigerant belongs on CHR or VRV.' },
+
+  // FCU — block invalid qty
+  { id: 'fcu-any-prs',  equip: 'FCU', med: '*', qty: 'PRS',  allowed: false, reason: 'FCUs do not measure static pressure. PRS belongs on AHU duct or SYS.' },
+  { id: 'fcu-any-dpr',  equip: 'FCU', med: '*', qty: 'DPR',  allowed: false, reason: 'FCUs do not measure differential pressure. DPR belongs on AHU or SYS.' },
+  { id: 'fcu-any-flw',  equip: 'FCU', med: '*', qty: 'FLW',  allowed: false, reason: 'FCUs do not have flow meters. FLW belongs on SYS or CHR.' },
+  { id: 'fcu-any-fsw',  equip: 'FCU', med: '*', qty: 'FSW',  allowed: false, reason: 'FCUs do not have flow switches. FSW belongs on CHR, CWP, or HWP.' },
+  { id: 'fcu-any-pwr',  equip: 'FCU', med: '*', qty: 'PWR',  allowed: false, reason: 'FCUs do not have power metering. PWR belongs on GEN or SYS.' },
+  { id: 'fcu-any-voc',  equip: 'FCU', med: '*', qty: 'VOC',  allowed: false, reason: 'FCU controllers do not typically measure VOC. Place VOC sensor on AHU or SYS.' },
+  { id: 'fcu-any-gly',  equip: 'FCU', med: '*', qty: 'GLY',  allowed: false, reason: 'FCUs do not measure glycol concentration. GLY belongs on SYS or HEX.' },
+  { id: 'fcu-any-stmp', equip: 'FCU', med: '*', qty: 'STMP', allowed: false, reason: 'STMP (supply temperature) is an AHU-level quantity. Use TMP with SA medium on FCU instead.' },
+  { id: 'fcu-any-rtmp', equip: 'FCU', med: '*', qty: 'RTMP', allowed: false, reason: 'RTMP (return temperature) is an AHU-level quantity. Use TMP with RA medium on FCU instead.' },
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // MAU — Make-up air unit
+  // Valid media : SA, OA, FA, CW, HW
+  // Invalid media: RA, MA, EX, ZN, CO, GY, RF
+  // Valid qty   : TMP, HUM, PRS, DPR, CO2, FLW, FSW, VLV, DMP, VSD, RUN, ENB, FLT, PCT, SPD, ALM
+  // Invalid qty : VOC, STG, PWR, GLY, STMP, RTMP
+  // ══════════════════════════════════════════════════════════════════════════
+
+  // MAU — block invalid media
+  { id: 'mau-ra-any',  equip: 'MAU', med: 'RA', qty: '*', allowed: false, reason: 'MAUs supply only fresh outside air and have no return air path. RA medium belongs on AHU.' },
+  { id: 'mau-ma-any',  equip: 'MAU', med: 'MA', qty: '*', allowed: false, reason: 'MAUs have no mixing box. MA medium belongs on AHU.' },
+  { id: 'mau-ex-any',  equip: 'MAU', med: 'EX', qty: '*', allowed: false, reason: 'MAUs have no exhaust air duct. EX medium belongs on AHU or EXF.' },
+  { id: 'mau-zn-any',  equip: 'MAU', med: 'ZN', qty: '*', allowed: false, reason: 'MAUs do not serve individual zones directly. Zone sensors belong on AHU, FCU, or room controllers.' },
+  { id: 'mau-co-any',  equip: 'MAU', med: 'CO', qty: '*', allowed: false, reason: 'MAUs have no condenser water circuit. CO medium belongs on CHR or CTW.' },
+  { id: 'mau-gy-any',  equip: 'MAU', med: 'GY', qty: '*', allowed: false, reason: 'MAUs do not use glycol circuits. GY medium belongs on HEX or SYS.' },
+  { id: 'mau-rf-any',  equip: 'MAU', med: 'RF', qty: '*', allowed: false, reason: 'MAUs have no refrigerant circuit. Refrigerant belongs on CHR or VRV.' },
+
+  // MAU — block invalid qty
+  { id: 'mau-any-voc',  equip: 'MAU', med: '*', qty: 'VOC',  allowed: false, reason: 'MAUs treat outside air supply; VOC measurement is a zone-level concern, use AHU or SYS.' },
+  { id: 'mau-any-stg',  equip: 'MAU', med: '*', qty: 'STG',  allowed: false, reason: 'MAUs have no staged output — use VSD for variable speed or ENB for on/off.' },
+  { id: 'mau-any-pwr',  equip: 'MAU', med: '*', qty: 'PWR',  allowed: false, reason: 'MAUs do not typically have power metering. PWR belongs on GEN or SYS.' },
+  { id: 'mau-any-gly',  equip: 'MAU', med: '*', qty: 'GLY',  allowed: false, reason: 'MAUs do not measure glycol concentration. GLY belongs on SYS or HEX.' },
+  { id: 'mau-any-stmp', equip: 'MAU', med: '*', qty: 'STMP', allowed: false, reason: 'STMP is an AHU-level shorthand. On MAU use TMP with SA medium for supply temperature.' },
+  { id: 'mau-any-rtmp', equip: 'MAU', med: '*', qty: 'RTMP', allowed: false, reason: 'RTMP is an AHU-level shorthand. MAUs have no return air — use TMP with OA medium instead.' },
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // EXF — Exhaust fan
+  // Valid media : EX, FA
+  // Invalid media: SA, RA, OA, MA, ZN, CW, HW, CO, GY, RF
+  // Valid qty   : RUN, ENB, FLT, VSD, SPD, DMP, ALM, PRS, DPR
+  // Invalid qty : TMP, HUM, CO2, VOC, FLW, FSW, VLV, STG, PCT, GLY, PWR, STMP, RTMP
+  // ══════════════════════════════════════════════════════════════════════════
+
+  // EXF — block invalid media
+  { id: 'exf-sa-any',  equip: 'EXF', med: 'SA', qty: '*', allowed: false, reason: 'Exhaust fans handle exhaust air only, not supply air. SA medium belongs on AHU or MAU.' },
+  { id: 'exf-ra-any',  equip: 'EXF', med: 'RA', qty: '*', allowed: false, reason: 'Exhaust fans handle exhaust air only, not return air. RA medium belongs on AHU.' },
+  { id: 'exf-oa-any',  equip: 'EXF', med: 'OA', qty: '*', allowed: false, reason: 'Exhaust fans handle exhaust air only, not outside air. OA medium belongs on AHU or MAU.' },
+  { id: 'exf-ma-any',  equip: 'EXF', med: 'MA', qty: '*', allowed: false, reason: 'Exhaust fans have no mixing box. MA medium belongs on AHU.' },
+  { id: 'exf-zn-any',  equip: 'EXF', med: 'ZN', qty: '*', allowed: false, reason: 'Exhaust fans do not sense zones. Zone sensors belong on AHU, FCU, or room controllers.' },
+  { id: 'exf-cw-any',  equip: 'EXF', med: 'CW', qty: '*', allowed: false, reason: 'Exhaust fans have no chilled water coil. CW medium belongs on AHU, FCU, or CWP.' },
+  { id: 'exf-hw-any',  equip: 'EXF', med: 'HW', qty: '*', allowed: false, reason: 'Exhaust fans have no hot water coil. HW medium belongs on AHU, FCU, or HWP.' },
+  { id: 'exf-co-any',  equip: 'EXF', med: 'CO', qty: '*', allowed: false, reason: 'Exhaust fans have no condenser water circuit. CO medium belongs on CHR or CTW.' },
+  { id: 'exf-gy-any',  equip: 'EXF', med: 'GY', qty: '*', allowed: false, reason: 'Exhaust fans have no glycol circuit. GY medium belongs on HEX or SYS.' },
+  { id: 'exf-rf-any',  equip: 'EXF', med: 'RF', qty: '*', allowed: false, reason: 'Exhaust fans have no refrigerant circuit. Refrigerant belongs on CHR or VRV.' },
+
+  // EXF — block invalid qty
+  { id: 'exf-any-tmp',  equip: 'EXF', med: '*', qty: 'TMP',  allowed: false, reason: 'Exhaust fans do not measure temperature. Place TMP sensors on AHU or SYS.' },
+  { id: 'exf-any-hum',  equip: 'EXF', med: '*', qty: 'HUM',  allowed: false, reason: 'Exhaust fans do not measure humidity. Place HUM sensors on AHU or SYS.' },
+  { id: 'exf-any-co2',  equip: 'EXF', med: '*', qty: 'CO2',  allowed: false, reason: 'Exhaust fans do not measure CO2. Place CO2 sensors on AHU or SYS.' },
+  { id: 'exf-any-voc',  equip: 'EXF', med: '*', qty: 'VOC',  allowed: false, reason: 'Exhaust fans do not measure VOC. Place VOC sensors on AHU or SYS.' },
+  { id: 'exf-any-flw',  equip: 'EXF', med: '*', qty: 'FLW',  allowed: false, reason: 'Exhaust fans do not have flow meters. FLW belongs on AHU or SYS.' },
+  { id: 'exf-any-fsw',  equip: 'EXF', med: '*', qty: 'FSW',  allowed: false, reason: 'Exhaust fans do not have flow switches. FSW belongs on pipework systems.' },
+  { id: 'exf-any-vlv',  equip: 'EXF', med: '*', qty: 'VLV',  allowed: false, reason: 'Exhaust fans have no valves. VLV belongs on coil or pipe valve actuators.' },
+  { id: 'exf-any-stg',  equip: 'EXF', med: '*', qty: 'STG',  allowed: false, reason: 'Exhaust fans have no staged outputs. Use VSD for variable speed or ENB for on/off.' },
+  { id: 'exf-any-pct',  equip: 'EXF', med: '*', qty: 'PCT',  allowed: false, reason: 'Use VSD for fan speed reference on exhaust fans, not PCT.' },
+  { id: 'exf-any-gly',  equip: 'EXF', med: '*', qty: 'GLY',  allowed: false, reason: 'Exhaust fans have no glycol circuit. GLY belongs on SYS or HEX.' },
+  { id: 'exf-any-pwr',  equip: 'EXF', med: '*', qty: 'PWR',  allowed: false, reason: 'Exhaust fans do not typically have power metering. PWR belongs on GEN or SYS.' },
+  { id: 'exf-any-stmp', equip: 'EXF', med: '*', qty: 'STMP', allowed: false, reason: 'STMP is not applicable to exhaust fans.' },
+  { id: 'exf-any-rtmp', equip: 'EXF', med: '*', qty: 'RTMP', allowed: false, reason: 'RTMP is not applicable to exhaust fans.' },
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // CHR — Chiller
+  // Valid media : CW, CO, RF
+  // Invalid media: SA, RA, OA, MA, EX, ZN, HW, GY, FA
+  // Valid qty   : TMP, PRS, DPR, FLW, FSW, VLV, RUN, ENB, FLT, PWR, ALM, STMP, RTMP, PCT
+  // Invalid qty : HUM, CO2, VOC, DMP, VSD, STG, SPD, GLY
+  // ══════════════════════════════════════════════════════════════════════════
+
+  // CHR — block invalid media
+  { id: 'chr-sa-any',  equip: 'CHR', med: 'SA', qty: '*', allowed: false, reason: 'Chillers have no air-side medium. SA medium belongs on AHU or FCU.' },
+  { id: 'chr-ra-any',  equip: 'CHR', med: 'RA', qty: '*', allowed: false, reason: 'Chillers have no air-side medium. RA medium belongs on AHU or FCU.' },
+  { id: 'chr-oa-any',  equip: 'CHR', med: 'OA', qty: '*', allowed: false, reason: 'Chillers have no outside air connection. OA medium belongs on AHU or MAU.' },
+  { id: 'chr-ma-any',  equip: 'CHR', med: 'MA', qty: '*', allowed: false, reason: 'Chillers have no mixed air plenum. MA medium belongs on AHU.' },
+  { id: 'chr-ex-any',  equip: 'CHR', med: 'EX', qty: '*', allowed: false, reason: 'Chillers have no exhaust air medium. EX medium belongs on AHU or EXF.' },
+  { id: 'chr-zn-any',  equip: 'CHR', med: 'ZN', qty: '*', allowed: false, reason: 'Chillers do not sense zones. Zone sensors belong on AHU, FCU, or room controllers.' },
+  { id: 'chr-hw-any',  equip: 'CHR', med: 'HW', qty: '*', allowed: false, reason: 'Chillers have no hot water circuit. HW medium belongs on BLR, HWP, or ILH.' },
+  { id: 'chr-gy-any',  equip: 'CHR', med: 'GY', qty: '*', allowed: false, reason: 'Chillers do not use glycol circuits directly. Use HEX or SYS for glycol points.' },
+  { id: 'chr-fa-any',  equip: 'CHR', med: 'FA', qty: '*', allowed: false, reason: 'Chiller fan points should use RF or CO medium, not the FA medium.' },
+
+  // CHR — block invalid qty
+  { id: 'chr-any-hum',  equip: 'CHR', med: '*', qty: 'HUM',  allowed: false, reason: 'Chillers do not measure humidity. HUM belongs on AHU or SYS.' },
+  { id: 'chr-any-co2',  equip: 'CHR', med: '*', qty: 'CO2',  allowed: false, reason: 'Chillers do not measure CO2. CO2 belongs on AHU or SYS.' },
+  { id: 'chr-any-voc',  equip: 'CHR', med: '*', qty: 'VOC',  allowed: false, reason: 'Chillers do not measure VOC. VOC belongs on AHU or SYS.' },
+  { id: 'chr-any-dmp',  equip: 'CHR', med: '*', qty: 'DMP',  allowed: false, reason: 'Chillers have no dampers. DMP belongs on AHU or FCU.' },
+  { id: 'chr-any-vsd',  equip: 'CHR', med: '*', qty: 'VSD',  allowed: false, reason: 'Chillers do not expose a VSD speed reference point directly. Use PCT for capacity or SPD for compressor speed.' },
+  { id: 'chr-any-stg',  equip: 'CHR', med: '*', qty: 'STG',  allowed: false, reason: 'Chiller staging is handled at SYS level. Use PCT for chiller loading percentage.' },
+  { id: 'chr-any-spd',  equip: 'CHR', med: '*', qty: 'SPD',  allowed: false, reason: 'Chiller compressor speed is an internal quantity. Use PCT for capacity percentage.' },
+  { id: 'chr-any-gly',  equip: 'CHR', med: '*', qty: 'GLY',  allowed: false, reason: 'Chillers do not measure glycol concentration. GLY belongs on SYS or HEX for glycol circuits.' },
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // CTW — Cooling tower
+  // Valid media : CO, FA
+  // Invalid media: SA, RA, OA, MA, EX, ZN, CW, HW, GY, RF
+  // Valid qty   : TMP, FLW, FSW, VLV, VSD, RUN, ENB, FLT, SPD, ALM, DMP, PCT
+  // Invalid qty : HUM, PRS, DPR, CO2, VOC, STG, PWR, GLY, STMP, RTMP
+  // ══════════════════════════════════════════════════════════════════════════
+
+  // CTW — block invalid media
+  { id: 'ctw-sa-any',  equip: 'CTW', med: 'SA', qty: '*', allowed: false, reason: 'Cooling towers have no supply air duct. SA medium belongs on AHU or FCU.' },
+  { id: 'ctw-ra-any',  equip: 'CTW', med: 'RA', qty: '*', allowed: false, reason: 'Cooling towers have no return air duct. RA medium belongs on AHU or FCU.' },
+  { id: 'ctw-oa-any',  equip: 'CTW', med: 'OA', qty: '*', allowed: false, reason: 'Cooling towers do not have an outside air connection. OA medium belongs on AHU or MAU.' },
+  { id: 'ctw-ma-any',  equip: 'CTW', med: 'MA', qty: '*', allowed: false, reason: 'Cooling towers have no mixed air plenum. MA medium belongs on AHU.' },
+  { id: 'ctw-ex-any',  equip: 'CTW', med: 'EX', qty: '*', allowed: false, reason: 'Cooling tower exhaust is represented by the FA medium, not EX.' },
+  { id: 'ctw-zn-any',  equip: 'CTW', med: 'ZN', qty: '*', allowed: false, reason: 'Cooling towers do not sense zones. Zone sensors belong on AHU, FCU, or room controllers.' },
+  { id: 'ctw-cw-any',  equip: 'CTW', med: 'CW', qty: '*', allowed: false, reason: 'Cooling towers carry condenser water (CO), not chilled water (CW). Use CO medium.' },
+  { id: 'ctw-hw-any',  equip: 'CTW', med: 'HW', qty: '*', allowed: false, reason: 'Cooling towers have no hot water circuit. HW medium belongs on BLR, HWP, or ILH.' },
+  { id: 'ctw-gy-any',  equip: 'CTW', med: 'GY', qty: '*', allowed: false, reason: 'Cooling towers do not use glycol circuits. GY medium belongs on HEX or SYS.' },
+  { id: 'ctw-rf-any',  equip: 'CTW', med: 'RF', qty: '*', allowed: false, reason: 'Cooling towers have no refrigerant circuit. Refrigerant belongs on CHR or VRV.' },
+
+  // CTW — block invalid qty
+  { id: 'ctw-any-hum',  equip: 'CTW', med: '*', qty: 'HUM',  allowed: false, reason: 'Cooling towers do not measure humidity in BMS points. HUM belongs on AHU or SYS.' },
+  { id: 'ctw-any-prs',  equip: 'CTW', med: '*', qty: 'PRS',  allowed: false, reason: 'Cooling towers do not measure static pressure. PRS belongs on CHR or SYS.' },
+  { id: 'ctw-any-dpr',  equip: 'CTW', med: '*', qty: 'DPR',  allowed: false, reason: 'Cooling towers do not measure differential pressure. DPR belongs on CWP or SYS.' },
+  { id: 'ctw-any-co2',  equip: 'CTW', med: '*', qty: 'CO2',  allowed: false, reason: 'Cooling towers do not measure CO2. CO2 belongs on AHU or SYS.' },
+  { id: 'ctw-any-voc',  equip: 'CTW', med: '*', qty: 'VOC',  allowed: false, reason: 'Cooling towers do not measure VOC. VOC belongs on AHU or SYS.' },
+  { id: 'ctw-any-stg',  equip: 'CTW', med: '*', qty: 'STG',  allowed: false, reason: 'Cooling towers have no staged outputs. Use VSD for variable speed or ENB for on/off.' },
+  { id: 'ctw-any-pwr',  equip: 'CTW', med: '*', qty: 'PWR',  allowed: false, reason: 'Cooling towers do not typically have power metering. PWR belongs on GEN or SYS.' },
+  { id: 'ctw-any-gly',  equip: 'CTW', med: '*', qty: 'GLY',  allowed: false, reason: 'Cooling towers do not measure glycol concentration. GLY belongs on SYS or HEX.' },
+  { id: 'ctw-any-stmp', equip: 'CTW', med: '*', qty: 'STMP', allowed: false, reason: 'STMP is an air-side shorthand. On CTW use TMP with CO medium for water temperature.' },
+  { id: 'ctw-any-rtmp', equip: 'CTW', med: '*', qty: 'RTMP', allowed: false, reason: 'RTMP is an air-side shorthand. On CTW use TMP with CO medium for water temperature.' },
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // CWP — Chilled water pump
+  // Valid media : CW
+  // Invalid media: SA, RA, OA, MA, EX, ZN, HW, CO, GY, FA, RF
+  // Valid qty   : RUN, ENB, FLT, VSD, SPD, FSW, PRS, DPR, FLW, PWR, ALM, PCT
+  // Invalid qty : TMP, HUM, CO2, VOC, VLV, DMP, STG, GLY, STMP, RTMP
+  // ══════════════════════════════════════════════════════════════════════════
+
+  // CWP — block invalid media
+  { id: 'cwp-sa-any',  equip: 'CWP', med: 'SA', qty: '*', allowed: false, reason: 'CHW pumps have no air medium. Supply air points belong on AHU or FCU.' },
+  { id: 'cwp-ra-any',  equip: 'CWP', med: 'RA', qty: '*', allowed: false, reason: 'CHW pumps have no air medium.' },
+  { id: 'cwp-oa-any',  equip: 'CWP', med: 'OA', qty: '*', allowed: false, reason: 'CHW pumps have no air medium.' },
+  { id: 'cwp-ma-any',  equip: 'CWP', med: 'MA', qty: '*', allowed: false, reason: 'CHW pumps have no mixed air medium.' },
+  { id: 'cwp-ex-any',  equip: 'CWP', med: 'EX', qty: '*', allowed: false, reason: 'CHW pumps have no exhaust air medium.' },
+  { id: 'cwp-zn-any',  equip: 'CWP', med: 'ZN', qty: '*', allowed: false, reason: 'CHW pumps do not sense zones. Zone points belong on AHU, FCU, or room controllers.' },
+  { id: 'cwp-hw-any',  equip: 'CWP', med: 'HW', qty: '*', allowed: false, reason: 'CHW pumps carry chilled water, not hot water. Use HWP for hot water circuits.' },
+  { id: 'cwp-co-any',  equip: 'CWP', med: 'CO', qty: '*', allowed: false, reason: 'CHW pumps have no condenser water circuit. Use CTW or CHR for condenser points.' },
+  { id: 'cwp-gy-any',  equip: 'CWP', med: 'GY', qty: '*', allowed: false, reason: 'CHW pumps do not circulate glycol. GY medium belongs on HEX or SYS.' },
+  { id: 'cwp-fa-any',  equip: 'CWP', med: 'FA', qty: '*', allowed: false, reason: 'CHW pumps have no fan medium. Pumps are not fans.' },
+  { id: 'cwp-rf-any',  equip: 'CWP', med: 'RF', qty: '*', allowed: false, reason: 'CHW pumps have no refrigerant circuit — refrigerant is inside the chiller.' },
+
+  // CWP — block invalid qty
+  { id: 'cwp-any-tmp',  equip: 'CWP', med: '*', qty: 'TMP',  allowed: false, reason: 'Pumps do not measure water temperature. Temperature belongs on SYS (header sensor) or CHR.' },
+  { id: 'cwp-any-hum',  equip: 'CWP', med: '*', qty: 'HUM',  allowed: false, reason: 'Pumps do not measure humidity.' },
+  { id: 'cwp-any-co2',  equip: 'CWP', med: '*', qty: 'CO2',  allowed: false, reason: 'Pumps do not measure CO2.' },
+  { id: 'cwp-any-voc',  equip: 'CWP', med: '*', qty: 'VOC',  allowed: false, reason: 'Pumps do not measure VOC.' },
+  { id: 'cwp-any-vlv',  equip: 'CWP', med: '*', qty: 'VLV',  allowed: false, reason: 'Pumps do not have valve outputs — valves are separate actuators on the pipework.' },
+  { id: 'cwp-any-dmp',  equip: 'CWP', med: '*', qty: 'DMP',  allowed: false, reason: 'Pumps have no dampers.' },
+  { id: 'cwp-any-stg',  equip: 'CWP', med: '*', qty: 'STG',  allowed: false, reason: 'Pumps have no staged outputs — use VSD for variable speed or ENB for on/off.' },
+  { id: 'cwp-any-gly',  equip: 'CWP', med: '*', qty: 'GLY',  allowed: false, reason: 'Pumps do not measure glycol concentration. GLY belongs on SYS or HEX.' },
+  { id: 'cwp-any-stmp', equip: 'CWP', med: '*', qty: 'STMP', allowed: false, reason: 'STMP is an air-side shorthand and not applicable to pumps.' },
+  { id: 'cwp-any-rtmp', equip: 'CWP', med: '*', qty: 'RTMP', allowed: false, reason: 'RTMP is an air-side shorthand and not applicable to pumps.' },
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // HWP — Hot water pump
+  // Valid media : HW
+  // Invalid media: SA, RA, OA, MA, EX, ZN, CW, CO, GY, FA, RF
+  // Valid qty   : RUN, ENB, FLT, VSD, SPD, FSW, PRS, DPR, FLW, PWR, ALM, PCT
+  // Invalid qty : TMP, HUM, CO2, VOC, VLV, DMP, STG, GLY, STMP, RTMP
+  // ══════════════════════════════════════════════════════════════════════════
+
+  // HWP — block invalid media
+  { id: 'hwp-sa-any',  equip: 'HWP', med: 'SA', qty: '*', allowed: false, reason: 'HW pumps have no air medium. Supply air points belong on AHU or FCU.' },
+  { id: 'hwp-ra-any',  equip: 'HWP', med: 'RA', qty: '*', allowed: false, reason: 'HW pumps have no air medium.' },
+  { id: 'hwp-oa-any',  equip: 'HWP', med: 'OA', qty: '*', allowed: false, reason: 'HW pumps have no outside air medium.' },
+  { id: 'hwp-ma-any',  equip: 'HWP', med: 'MA', qty: '*', allowed: false, reason: 'HW pumps have no mixed air medium.' },
+  { id: 'hwp-ex-any',  equip: 'HWP', med: 'EX', qty: '*', allowed: false, reason: 'HW pumps have no exhaust air medium.' },
+  { id: 'hwp-zn-any',  equip: 'HWP', med: 'ZN', qty: '*', allowed: false, reason: 'HW pumps do not sense zones. Zone points belong on AHU, FCU, or room controllers.' },
+  { id: 'hwp-cw-any',  equip: 'HWP', med: 'CW', qty: '*', allowed: false, reason: 'HW pumps carry hot water, not chilled water. Use CWP for chilled water circuits.' },
+  { id: 'hwp-co-any',  equip: 'HWP', med: 'CO', qty: '*', allowed: false, reason: 'HW pumps have no condenser water circuit. Use CTW or CHR for condenser points.' },
+  { id: 'hwp-gy-any',  equip: 'HWP', med: 'GY', qty: '*', allowed: false, reason: 'HW pumps do not circulate glycol. GY medium belongs on HEX or SYS.' },
+  { id: 'hwp-fa-any',  equip: 'HWP', med: 'FA', qty: '*', allowed: false, reason: 'HW pumps have no fan medium. Pumps are not fans.' },
+  { id: 'hwp-rf-any',  equip: 'HWP', med: 'RF', qty: '*', allowed: false, reason: 'HW pumps have no refrigerant circuit.' },
+
+  // HWP — block invalid qty
+  { id: 'hwp-any-tmp',  equip: 'HWP', med: '*', qty: 'TMP',  allowed: false, reason: 'Pumps do not measure water temperature. Temperature belongs on SYS (header sensor) or BLR.' },
+  { id: 'hwp-any-hum',  equip: 'HWP', med: '*', qty: 'HUM',  allowed: false, reason: 'Pumps do not measure humidity.' },
+  { id: 'hwp-any-co2',  equip: 'HWP', med: '*', qty: 'CO2',  allowed: false, reason: 'Pumps do not measure CO2.' },
+  { id: 'hwp-any-voc',  equip: 'HWP', med: '*', qty: 'VOC',  allowed: false, reason: 'Pumps do not measure VOC.' },
+  { id: 'hwp-any-vlv',  equip: 'HWP', med: '*', qty: 'VLV',  allowed: false, reason: 'Pumps do not have valve outputs — valves are separate actuators on the pipework.' },
+  { id: 'hwp-any-dmp',  equip: 'HWP', med: '*', qty: 'DMP',  allowed: false, reason: 'Pumps have no dampers.' },
+  { id: 'hwp-any-stg',  equip: 'HWP', med: '*', qty: 'STG',  allowed: false, reason: 'Pumps have no staged outputs — use VSD for variable speed or ENB for on/off.' },
+  { id: 'hwp-any-gly',  equip: 'HWP', med: '*', qty: 'GLY',  allowed: false, reason: 'Pumps do not measure glycol concentration. GLY belongs on SYS or HEX.' },
+  { id: 'hwp-any-stmp', equip: 'HWP', med: '*', qty: 'STMP', allowed: false, reason: 'STMP is an air-side shorthand and not applicable to pumps.' },
+  { id: 'hwp-any-rtmp', equip: 'HWP', med: '*', qty: 'RTMP', allowed: false, reason: 'RTMP is an air-side shorthand and not applicable to pumps.' },
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // ILH — Inline electric heater
+  // Valid media : SA, HW
+  // Invalid media: RA, OA, MA, EX, ZN, CW, CO, GY, FA, RF
+  // Valid qty   : TMP, RUN, ENB, FLT, STG, ALM, STMP, RTMP
+  // Invalid qty : HUM, PRS, DPR, CO2, VOC, FLW, FSW, VLV, DMP, VSD, SPD, PCT, GLY, PWR
+  // ══════════════════════════════════════════════════════════════════════════
+
+  // ILH — block invalid media
+  { id: 'ilh-ra-any',  equip: 'ILH', med: 'RA', qty: '*', allowed: false, reason: 'Inline heaters are in the supply air stream, not return air. RA medium belongs on AHU.' },
+  { id: 'ilh-oa-any',  equip: 'ILH', med: 'OA', qty: '*', allowed: false, reason: 'Inline heaters are in the supply air stream, not outside air. OA medium belongs on AHU or MAU.' },
+  { id: 'ilh-ma-any',  equip: 'ILH', med: 'MA', qty: '*', allowed: false, reason: 'Inline heaters have no mixed air section. MA medium belongs on AHU.' },
+  { id: 'ilh-ex-any',  equip: 'ILH', med: 'EX', qty: '*', allowed: false, reason: 'Inline heaters are not in the exhaust stream. EX medium belongs on AHU or EXF.' },
+  { id: 'ilh-zn-any',  equip: 'ILH', med: 'ZN', qty: '*', allowed: false, reason: 'Inline heaters do not sense zones. Zone sensors belong on AHU, FCU, or room controllers.' },
+  { id: 'ilh-cw-any',  equip: 'ILH', med: 'CW', qty: '*', allowed: false, reason: 'Inline electric heaters have no chilled water coil. CW medium belongs on AHU or FCU.' },
+  { id: 'ilh-co-any',  equip: 'ILH', med: 'CO', qty: '*', allowed: false, reason: 'Inline heaters have no condenser water circuit. CO medium belongs on CHR or CTW.' },
+  { id: 'ilh-gy-any',  equip: 'ILH', med: 'GY', qty: '*', allowed: false, reason: 'Inline heaters have no glycol circuit. GY medium belongs on HEX or SYS.' },
+  { id: 'ilh-fa-any',  equip: 'ILH', med: 'FA', qty: '*', allowed: false, reason: 'Inline heaters have no fan. FA medium belongs on AHU, FCU, or EXF.' },
+  { id: 'ilh-rf-any',  equip: 'ILH', med: 'RF', qty: '*', allowed: false, reason: 'Inline heaters have no refrigerant circuit. Refrigerant belongs on CHR or VRV.' },
+
+  // ILH — block invalid qty
+  { id: 'ilh-any-hum',  equip: 'ILH', med: '*', qty: 'HUM',  allowed: false, reason: 'Inline heaters do not measure humidity. HUM belongs on AHU or SYS.' },
+  { id: 'ilh-any-prs',  equip: 'ILH', med: '*', qty: 'PRS',  allowed: false, reason: 'Inline heaters do not measure static pressure. PRS belongs on AHU duct or SYS.' },
+  { id: 'ilh-any-dpr',  equip: 'ILH', med: '*', qty: 'DPR',  allowed: false, reason: 'Inline heaters do not measure differential pressure. DPR belongs on AHU or SYS.' },
+  { id: 'ilh-any-co2',  equip: 'ILH', med: '*', qty: 'CO2',  allowed: false, reason: 'Inline heaters do not measure CO2. CO2 belongs on AHU or SYS.' },
+  { id: 'ilh-any-voc',  equip: 'ILH', med: '*', qty: 'VOC',  allowed: false, reason: 'Inline heaters do not measure VOC. VOC belongs on AHU or SYS.' },
+  { id: 'ilh-any-flw',  equip: 'ILH', med: '*', qty: 'FLW',  allowed: false, reason: 'Inline heaters do not have flow meters. FLW belongs on SYS or HWP.' },
+  { id: 'ilh-any-fsw',  equip: 'ILH', med: '*', qty: 'FSW',  allowed: false, reason: 'Inline heaters do not have flow switches. FSW belongs on pipework systems.' },
+  { id: 'ilh-any-vlv',  equip: 'ILH', med: '*', qty: 'VLV',  allowed: false, reason: 'Inline electric heaters have no valve. VLV belongs on coil or pipe valve actuators.' },
+  { id: 'ilh-any-dmp',  equip: 'ILH', med: '*', qty: 'DMP',  allowed: false, reason: 'Inline heaters have no damper. DMP belongs on AHU or FCU.' },
+  { id: 'ilh-any-vsd',  equip: 'ILH', med: '*', qty: 'VSD',  allowed: false, reason: 'Inline electric heaters have no VSD. Use STG for staged heating outputs.' },
+  { id: 'ilh-any-spd',  equip: 'ILH', med: '*', qty: 'SPD',  allowed: false, reason: 'Inline heaters have no speed feedback. SPD belongs on fan or pump equipment.' },
+  { id: 'ilh-any-pct',  equip: 'ILH', med: '*', qty: 'PCT',  allowed: false, reason: 'Inline electric heaters use STG for staged control, not PCT.' },
+  { id: 'ilh-any-gly',  equip: 'ILH', med: '*', qty: 'GLY',  allowed: false, reason: 'Inline heaters do not measure glycol concentration. GLY belongs on SYS or HEX.' },
+  { id: 'ilh-any-pwr',  equip: 'ILH', med: '*', qty: 'PWR',  allowed: false, reason: 'Inline electric heater power draw is not typically a BMS point. PWR belongs on GEN or SYS.' },
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // BLR — Boiler
+  // Valid media : HW, GY
+  // Invalid media: SA, RA, OA, MA, EX, ZN, CW, CO, FA, RF
+  // Valid qty   : TMP, PRS, FLW, FSW, RUN, ENB, FLT, ALM, STMP, RTMP, PWR
+  // Invalid qty : HUM, DPR, CO2, VOC, VLV, DMP, VSD, STG, SPD, PCT, GLY
+  // ══════════════════════════════════════════════════════════════════════════
+
+  // BLR — block invalid media
+  { id: 'blr-sa-any',  equip: 'BLR', med: 'SA', qty: '*', allowed: false, reason: 'Boilers have no supply air medium. SA medium belongs on AHU or FCU.' },
+  { id: 'blr-ra-any',  equip: 'BLR', med: 'RA', qty: '*', allowed: false, reason: 'Boilers have no return air medium. RA medium belongs on AHU or FCU.' },
+  { id: 'blr-oa-any',  equip: 'BLR', med: 'OA', qty: '*', allowed: false, reason: 'Boilers have no outside air medium for BMS points. OA medium belongs on AHU or MAU.' },
+  { id: 'blr-ma-any',  equip: 'BLR', med: 'MA', qty: '*', allowed: false, reason: 'Boilers have no mixed air medium. MA medium belongs on AHU.' },
+  { id: 'blr-ex-any',  equip: 'BLR', med: 'EX', qty: '*', allowed: false, reason: 'Boiler flue gas is not represented as EX medium in BMS. EX belongs on AHU or EXF.' },
+  { id: 'blr-zn-any',  equip: 'BLR', med: 'ZN', qty: '*', allowed: false, reason: 'Boilers do not sense zones. Zone sensors belong on AHU, FCU, or room controllers.' },
+  { id: 'blr-cw-any',  equip: 'BLR', med: 'CW', qty: '*', allowed: false, reason: 'Boilers have no chilled water circuit. CW medium belongs on CHR or CWP.' },
+  { id: 'blr-co-any',  equip: 'BLR', med: 'CO', qty: '*', allowed: false, reason: 'Boilers have no condenser water circuit. CO medium belongs on CHR or CTW.' },
+  { id: 'blr-fa-any',  equip: 'BLR', med: 'FA', qty: '*', allowed: false, reason: 'Boiler burner fan points use HW or GY medium, not FA.' },
+  { id: 'blr-rf-any',  equip: 'BLR', med: 'RF', qty: '*', allowed: false, reason: 'Boilers have no refrigerant circuit. Refrigerant belongs on CHR or VRV.' },
+
+  // BLR — block invalid qty
+  { id: 'blr-any-hum',  equip: 'BLR', med: '*', qty: 'HUM',  allowed: false, reason: 'Boilers do not measure humidity. HUM belongs on AHU or SYS.' },
+  { id: 'blr-any-dpr',  equip: 'BLR', med: '*', qty: 'DPR',  allowed: false, reason: 'Boilers do not measure differential pressure. DPR belongs on HWP or SYS.' },
+  { id: 'blr-any-co2',  equip: 'BLR', med: '*', qty: 'CO2',  allowed: false, reason: 'Boilers do not measure CO2 as a BMS point. CO2 belongs on AHU or SYS.' },
+  { id: 'blr-any-voc',  equip: 'BLR', med: '*', qty: 'VOC',  allowed: false, reason: 'Boilers do not measure VOC. VOC belongs on AHU or SYS.' },
+  { id: 'blr-any-vlv',  equip: 'BLR', med: '*', qty: 'VLV',  allowed: false, reason: 'Boiler valve actuators are separate devices on the pipework, not boiler points.' },
+  { id: 'blr-any-dmp',  equip: 'BLR', med: '*', qty: 'DMP',  allowed: false, reason: 'Boilers have no damper outputs. DMP belongs on AHU or FCU.' },
+  { id: 'blr-any-vsd',  equip: 'BLR', med: '*', qty: 'VSD',  allowed: false, reason: 'Boilers have no VSD. Use STG for burner stages.' },
+  { id: 'blr-any-stg',  equip: 'BLR', med: '*', qty: 'STG',  allowed: false, reason: 'Boiler staging is typically handled internally. Use PWR for energy monitoring or RUN for status.' },
+  { id: 'blr-any-spd',  equip: 'BLR', med: '*', qty: 'SPD',  allowed: false, reason: 'Boilers have no speed feedback. SPD belongs on fan or pump equipment.' },
+  { id: 'blr-any-pct',  equip: 'BLR', med: '*', qty: 'PCT',  allowed: false, reason: 'Boilers do not expose a percentage output to BMS. Use STMP/RTMP for temperature monitoring.' },
+  { id: 'blr-any-gly',  equip: 'BLR', med: '*', qty: 'GLY',  allowed: false, reason: 'Boilers do not measure glycol concentration. GLY belongs on SYS or HEX.' },
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // HEX — Heat exchanger
+  // Valid media : CW, HW, CO, GY
+  // Invalid media: SA, RA, OA, MA, EX, ZN, FA, RF
+  // Valid qty   : TMP, PRS, FLW, FSW, VLV, ALM, STMP, RTMP
+  // Invalid qty : HUM, DPR, CO2, VOC, DMP, VSD, RUN, ENB, FLT, STG, SPD, PCT, GLY, PWR
+  // ══════════════════════════════════════════════════════════════════════════
+
+  // HEX — block invalid media
+  { id: 'hex-sa-any',  equip: 'HEX', med: 'SA', qty: '*', allowed: false, reason: 'Heat exchangers (plate/shell) have no air-side medium for BMS. SA medium belongs on AHU or FCU.' },
+  { id: 'hex-ra-any',  equip: 'HEX', med: 'RA', qty: '*', allowed: false, reason: 'Heat exchangers have no return air medium. RA medium belongs on AHU or FCU.' },
+  { id: 'hex-oa-any',  equip: 'HEX', med: 'OA', qty: '*', allowed: false, reason: 'Heat exchangers have no outside air connection. OA medium belongs on AHU or MAU.' },
+  { id: 'hex-ma-any',  equip: 'HEX', med: 'MA', qty: '*', allowed: false, reason: 'Heat exchangers have no mixed air plenum. MA medium belongs on AHU.' },
+  { id: 'hex-ex-any',  equip: 'HEX', med: 'EX', qty: '*', allowed: false, reason: 'Heat exchangers have no exhaust air stream. EX medium belongs on AHU or EXF.' },
+  { id: 'hex-zn-any',  equip: 'HEX', med: 'ZN', qty: '*', allowed: false, reason: 'Heat exchangers do not sense zones. Zone sensors belong on AHU, FCU, or room controllers.' },
+  { id: 'hex-fa-any',  equip: 'HEX', med: 'FA', qty: '*', allowed: false, reason: 'Heat exchangers have no fan. FA medium belongs on AHU, FCU, or EXF.' },
+  { id: 'hex-rf-any',  equip: 'HEX', med: 'RF', qty: '*', allowed: false, reason: 'Heat exchangers have no refrigerant circuit. Refrigerant belongs on CHR or VRV.' },
+
+  // HEX — block invalid qty
+  { id: 'hex-any-hum',  equip: 'HEX', med: '*', qty: 'HUM',  allowed: false, reason: 'Heat exchangers do not measure humidity. HUM belongs on AHU or SYS.' },
+  { id: 'hex-any-dpr',  equip: 'HEX', med: '*', qty: 'DPR',  allowed: false, reason: 'Heat exchanger differential pressure is not typically a BMS point. DPR belongs on CWP or SYS.' },
+  { id: 'hex-any-co2',  equip: 'HEX', med: '*', qty: 'CO2',  allowed: false, reason: 'Heat exchangers do not measure CO2. CO2 belongs on AHU or SYS.' },
+  { id: 'hex-any-voc',  equip: 'HEX', med: '*', qty: 'VOC',  allowed: false, reason: 'Heat exchangers do not measure VOC. VOC belongs on AHU or SYS.' },
+  { id: 'hex-any-dmp',  equip: 'HEX', med: '*', qty: 'DMP',  allowed: false, reason: 'Heat exchangers have no damper. DMP belongs on AHU or FCU.' },
+  { id: 'hex-any-vsd',  equip: 'HEX', med: '*', qty: 'VSD',  allowed: false, reason: 'Heat exchangers have no VSD. VSD belongs on fan or pump equipment.' },
+  { id: 'hex-any-run',  equip: 'HEX', med: '*', qty: 'RUN',  allowed: false, reason: 'Heat exchangers have no run status. RUN belongs on pumps and fans.' },
+  { id: 'hex-any-enb',  equip: 'HEX', med: '*', qty: 'ENB',  allowed: false, reason: 'Heat exchangers have no enable command. ENB belongs on pumps and fans.' },
+  { id: 'hex-any-flt',  equip: 'HEX', med: '*', qty: 'FLT',  allowed: false, reason: 'Heat exchangers have no fault output. FLT belongs on active plant such as pumps and fans.' },
+  { id: 'hex-any-stg',  equip: 'HEX', med: '*', qty: 'STG',  allowed: false, reason: 'Heat exchangers have no staged outputs. Use VLV for modulating control.' },
+  { id: 'hex-any-spd',  equip: 'HEX', med: '*', qty: 'SPD',  allowed: false, reason: 'Heat exchangers have no speed feedback. SPD belongs on fan or pump equipment.' },
+  { id: 'hex-any-pct',  equip: 'HEX', med: '*', qty: 'PCT',  allowed: false, reason: 'Heat exchangers have no percentage output. Use VLV for modulating control.' },
+  { id: 'hex-any-gly',  equip: 'HEX', med: '*', qty: 'GLY',  allowed: false, reason: 'Heat exchangers do not measure glycol concentration inline. GLY belongs on SYS.' },
+  { id: 'hex-any-pwr',  equip: 'HEX', med: '*', qty: 'PWR',  allowed: false, reason: 'Heat exchangers are passive devices and have no power metering. PWR belongs on GEN or SYS.' },
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // TNK — Storage tank
+  // Valid media : CW, HW, CO, GY
+  // Invalid media: SA, RA, OA, MA, EX, ZN, FA, RF
+  // Valid qty   : TMP, PRS, FLW, FSW, ALM
+  // Invalid qty : HUM, DPR, CO2, VOC, VLV, DMP, VSD, RUN, ENB, FLT, STG, SPD, PCT, GLY, PWR, STMP, RTMP
+  // ══════════════════════════════════════════════════════════════════════════
+
+  // TNK — block invalid media
+  { id: 'tnk-sa-any',  equip: 'TNK', med: 'SA', qty: '*', allowed: false, reason: 'Storage tanks have no air-side medium. SA medium belongs on AHU or FCU.' },
+  { id: 'tnk-ra-any',  equip: 'TNK', med: 'RA', qty: '*', allowed: false, reason: 'Storage tanks have no return air medium. RA medium belongs on AHU or FCU.' },
+  { id: 'tnk-oa-any',  equip: 'TNK', med: 'OA', qty: '*', allowed: false, reason: 'Storage tanks have no outside air connection. OA medium belongs on AHU or MAU.' },
+  { id: 'tnk-ma-any',  equip: 'TNK', med: 'MA', qty: '*', allowed: false, reason: 'Storage tanks have no mixed air medium. MA medium belongs on AHU.' },
+  { id: 'tnk-ex-any',  equip: 'TNK', med: 'EX', qty: '*', allowed: false, reason: 'Storage tanks have no exhaust air medium. EX medium belongs on AHU or EXF.' },
+  { id: 'tnk-zn-any',  equip: 'TNK', med: 'ZN', qty: '*', allowed: false, reason: 'Storage tanks do not sense zones. Zone sensors belong on AHU, FCU, or room controllers.' },
+  { id: 'tnk-fa-any',  equip: 'TNK', med: 'FA', qty: '*', allowed: false, reason: 'Storage tanks have no fan. FA medium belongs on AHU, FCU, or EXF.' },
+  { id: 'tnk-rf-any',  equip: 'TNK', med: 'RF', qty: '*', allowed: false, reason: 'Storage tanks have no refrigerant circuit. Refrigerant belongs on CHR or VRV.' },
+
+  // TNK — block invalid qty
+  { id: 'tnk-any-hum',  equip: 'TNK', med: '*', qty: 'HUM',  allowed: false, reason: 'Storage tanks do not measure humidity. HUM belongs on AHU or SYS.' },
+  { id: 'tnk-any-dpr',  equip: 'TNK', med: '*', qty: 'DPR',  allowed: false, reason: 'Storage tanks do not measure differential pressure. DPR belongs on CWP or SYS.' },
+  { id: 'tnk-any-co2',  equip: 'TNK', med: '*', qty: 'CO2',  allowed: false, reason: 'Storage tanks do not measure CO2. CO2 belongs on AHU or SYS.' },
+  { id: 'tnk-any-voc',  equip: 'TNK', med: '*', qty: 'VOC',  allowed: false, reason: 'Storage tanks do not measure VOC. VOC belongs on AHU or SYS.' },
+  { id: 'tnk-any-vlv',  equip: 'TNK', med: '*', qty: 'VLV',  allowed: false, reason: 'Tank valve actuators are separate devices on the pipework, not tank points.' },
+  { id: 'tnk-any-dmp',  equip: 'TNK', med: '*', qty: 'DMP',  allowed: false, reason: 'Storage tanks have no damper. DMP belongs on AHU or FCU.' },
+  { id: 'tnk-any-vsd',  equip: 'TNK', med: '*', qty: 'VSD',  allowed: false, reason: 'Storage tanks have no VSD. VSD belongs on fan or pump equipment.' },
+  { id: 'tnk-any-run',  equip: 'TNK', med: '*', qty: 'RUN',  allowed: false, reason: 'Storage tanks have no run status. RUN belongs on active plant.' },
+  { id: 'tnk-any-enb',  equip: 'TNK', med: '*', qty: 'ENB',  allowed: false, reason: 'Storage tanks have no enable command. ENB belongs on active plant.' },
+  { id: 'tnk-any-flt',  equip: 'TNK', med: '*', qty: 'FLT',  allowed: false, reason: 'Storage tanks have no fault output. FLT belongs on active plant.' },
+  { id: 'tnk-any-stg',  equip: 'TNK', med: '*', qty: 'STG',  allowed: false, reason: 'Storage tanks have no staged outputs. STG belongs on active plant.' },
+  { id: 'tnk-any-spd',  equip: 'TNK', med: '*', qty: 'SPD',  allowed: false, reason: 'Storage tanks have no speed feedback. SPD belongs on fan or pump equipment.' },
+  { id: 'tnk-any-pct',  equip: 'TNK', med: '*', qty: 'PCT',  allowed: false, reason: 'Storage tanks have no percentage output. PCT belongs on active plant.' },
+  { id: 'tnk-any-gly',  equip: 'TNK', med: '*', qty: 'GLY',  allowed: false, reason: 'Storage tanks do not measure glycol concentration inline. GLY belongs on SYS.' },
+  { id: 'tnk-any-pwr',  equip: 'TNK', med: '*', qty: 'PWR',  allowed: false, reason: 'Storage tanks are passive and have no power metering. PWR belongs on GEN or SYS.' },
+  { id: 'tnk-any-stmp', equip: 'TNK', med: '*', qty: 'STMP', allowed: false, reason: 'STMP is an air-side shorthand. On TNK use TMP for tank temperature.' },
+  { id: 'tnk-any-rtmp', equip: 'TNK', med: '*', qty: 'RTMP', allowed: false, reason: 'RTMP is an air-side shorthand. On TNK use TMP for tank temperature.' },
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // VRV — VRV / VRF system
+  // Valid media : RF, SA, RA, ZN
+  // Invalid media: OA, MA, EX, CW, HW, CO, GY, FA
+  // Valid qty   : TMP, RUN, ENB, FLT, PCT, ALM, VLV, DMP
+  // Invalid qty : HUM, PRS, DPR, CO2, VOC, FLW, FSW, VSD, STG, SPD, GLY, PWR, STMP, RTMP
+  // ══════════════════════════════════════════════════════════════════════════
+
+  // VRV — block invalid media
+  { id: 'vrv-oa-any',  equip: 'VRV', med: 'OA', qty: '*', allowed: false, reason: 'VRV/VRF systems do not handle outside air directly. OA medium belongs on AHU or MAU.' },
+  { id: 'vrv-ma-any',  equip: 'VRV', med: 'MA', qty: '*', allowed: false, reason: 'VRV/VRF systems have no mixed air plenum. MA medium belongs on AHU.' },
+  { id: 'vrv-ex-any',  equip: 'VRV', med: 'EX', qty: '*', allowed: false, reason: 'VRV/VRF systems have no exhaust air duct. EX medium belongs on AHU or EXF.' },
+  { id: 'vrv-cw-any',  equip: 'VRV', med: 'CW', qty: '*', allowed: false, reason: 'VRV/VRF systems use refrigerant, not chilled water. CW medium belongs on CHR or CWP.' },
+  { id: 'vrv-hw-any',  equip: 'VRV', med: 'HW', qty: '*', allowed: false, reason: 'VRV/VRF systems use refrigerant, not hot water. HW medium belongs on BLR or HWP.' },
+  { id: 'vrv-co-any',  equip: 'VRV', med: 'CO', qty: '*', allowed: false, reason: 'VRV/VRF systems have no condenser water circuit. Use RF medium for refrigerant.' },
+  { id: 'vrv-gy-any',  equip: 'VRV', med: 'GY', qty: '*', allowed: false, reason: 'VRV/VRF systems have no glycol circuit. GY medium belongs on HEX or SYS.' },
+  { id: 'vrv-fa-any',  equip: 'VRV', med: 'FA', qty: '*', allowed: false, reason: 'VRV/VRF condenser fan points use RF medium, not FA.' },
+
+  // VRV — block invalid qty
+  { id: 'vrv-any-hum',  equip: 'VRV', med: '*', qty: 'HUM',  allowed: false, reason: 'VRV/VRF systems do not measure humidity. HUM belongs on AHU or SYS.' },
+  { id: 'vrv-any-prs',  equip: 'VRV', med: '*', qty: 'PRS',  allowed: false, reason: 'Refrigerant circuit pressure is an internal chiller/VRV quantity, not a BMS point.' },
+  { id: 'vrv-any-dpr',  equip: 'VRV', med: '*', qty: 'DPR',  allowed: false, reason: 'VRV/VRF systems do not expose differential pressure to BMS. DPR belongs on CWP or SYS.' },
+  { id: 'vrv-any-co2',  equip: 'VRV', med: '*', qty: 'CO2',  allowed: false, reason: 'VRV/VRF systems do not measure CO2. CO2 belongs on AHU or SYS.' },
+  { id: 'vrv-any-voc',  equip: 'VRV', med: '*', qty: 'VOC',  allowed: false, reason: 'VRV/VRF systems do not measure VOC. VOC belongs on AHU or SYS.' },
+  { id: 'vrv-any-flw',  equip: 'VRV', med: '*', qty: 'FLW',  allowed: false, reason: 'VRV/VRF systems do not have flow meters. FLW belongs on SYS or CHR.' },
+  { id: 'vrv-any-fsw',  equip: 'VRV', med: '*', qty: 'FSW',  allowed: false, reason: 'VRV/VRF systems have no flow switches. FSW belongs on pipework systems.' },
+  { id: 'vrv-any-vsd',  equip: 'VRV', med: '*', qty: 'VSD',  allowed: false, reason: 'VRV/VRF compressor speed is managed internally. Use PCT for capacity percentage.' },
+  { id: 'vrv-any-stg',  equip: 'VRV', med: '*', qty: 'STG',  allowed: false, reason: 'VRV/VRF systems do not have staged outputs. Use PCT for capacity control.' },
+  { id: 'vrv-any-spd',  equip: 'VRV', med: '*', qty: 'SPD',  allowed: false, reason: 'VRV/VRF compressor speed is an internal quantity. Use PCT for capacity.' },
+  { id: 'vrv-any-gly',  equip: 'VRV', med: '*', qty: 'GLY',  allowed: false, reason: 'VRV/VRF systems have no glycol circuit. GLY belongs on SYS or HEX.' },
+  { id: 'vrv-any-pwr',  equip: 'VRV', med: '*', qty: 'PWR',  allowed: false, reason: 'VRV/VRF power draw is not typically a BMS point. PWR belongs on GEN or SYS.' },
+  { id: 'vrv-any-stmp', equip: 'VRV', med: '*', qty: 'STMP', allowed: false, reason: 'STMP is an AHU-level shorthand. On VRV use TMP with SA medium for supply temperature.' },
+  { id: 'vrv-any-rtmp', equip: 'VRV', med: '*', qty: 'RTMP', allowed: false, reason: 'RTMP is an AHU-level shorthand. On VRV use TMP with RA medium for return temperature.' },
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // GEN — Generator
+  // Valid media : FA
+  // Invalid media: SA, RA, OA, MA, EX, ZN, CW, HW, CO, GY, RF
+  // Valid qty   : RUN, ENB, FLT, ALM, PWR
+  // Invalid qty : TMP, HUM, PRS, DPR, CO2, VOC, FLW, FSW, VLV, DMP, VSD, STG, SPD, PCT, GLY, STMP, RTMP
+  // ══════════════════════════════════════════════════════════════════════════
+
+  // GEN — block invalid media
+  { id: 'gen-sa-any',  equip: 'GEN', med: 'SA', qty: '*', allowed: false, reason: 'Generators have no supply air medium. SA medium belongs on AHU or FCU.' },
+  { id: 'gen-ra-any',  equip: 'GEN', med: 'RA', qty: '*', allowed: false, reason: 'Generators have no return air medium. RA medium belongs on AHU or FCU.' },
+  { id: 'gen-oa-any',  equip: 'GEN', med: 'OA', qty: '*', allowed: false, reason: 'Generators have no outside air medium for BMS. OA medium belongs on AHU or MAU.' },
+  { id: 'gen-ma-any',  equip: 'GEN', med: 'MA', qty: '*', allowed: false, reason: 'Generators have no mixed air medium. MA medium belongs on AHU.' },
+  { id: 'gen-ex-any',  equip: 'GEN', med: 'EX', qty: '*', allowed: false, reason: 'Generator exhaust fumes are not monitored as EX medium. EX belongs on AHU or EXF.' },
+  { id: 'gen-zn-any',  equip: 'GEN', med: 'ZN', qty: '*', allowed: false, reason: 'Generators do not sense zones. Zone sensors belong on AHU, FCU, or room controllers.' },
+  { id: 'gen-cw-any',  equip: 'GEN', med: 'CW', qty: '*', allowed: false, reason: 'Generators have no chilled water circuit. CW medium belongs on CHR or CWP.' },
+  { id: 'gen-hw-any',  equip: 'GEN', med: 'HW', qty: '*', allowed: false, reason: 'Generators have no hot water circuit. HW medium belongs on BLR or HWP.' },
+  { id: 'gen-co-any',  equip: 'GEN', med: 'CO', qty: '*', allowed: false, reason: 'Generators have no condenser water circuit. CO medium belongs on CHR or CTW.' },
+  { id: 'gen-gy-any',  equip: 'GEN', med: 'GY', qty: '*', allowed: false, reason: 'Generators have no glycol circuit. GY medium belongs on HEX or SYS.' },
+  { id: 'gen-rf-any',  equip: 'GEN', med: 'RF', qty: '*', allowed: false, reason: 'Generators have no refrigerant circuit. Refrigerant belongs on CHR or VRV.' },
+
+  // GEN — block invalid qty
+  { id: 'gen-any-tmp',  equip: 'GEN', med: '*', qty: 'TMP',  allowed: false, reason: 'Generator temperature (coolant/exhaust) is not typically a BMS point. TMP belongs on AHU or SYS.' },
+  { id: 'gen-any-hum',  equip: 'GEN', med: '*', qty: 'HUM',  allowed: false, reason: 'Generators do not measure humidity. HUM belongs on AHU or SYS.' },
+  { id: 'gen-any-prs',  equip: 'GEN', med: '*', qty: 'PRS',  allowed: false, reason: 'Generators do not measure air or fluid pressure as a BMS point. PRS belongs on SYS or CHR.' },
+  { id: 'gen-any-dpr',  equip: 'GEN', med: '*', qty: 'DPR',  allowed: false, reason: 'Generators do not measure differential pressure. DPR belongs on CWP or SYS.' },
+  { id: 'gen-any-co2',  equip: 'GEN', med: '*', qty: 'CO2',  allowed: false, reason: 'Generators do not measure CO2 as a BMS point. CO2 belongs on AHU or SYS.' },
+  { id: 'gen-any-voc',  equip: 'GEN', med: '*', qty: 'VOC',  allowed: false, reason: 'Generators do not measure VOC. VOC belongs on AHU or SYS.' },
+  { id: 'gen-any-flw',  equip: 'GEN', med: '*', qty: 'FLW',  allowed: false, reason: 'Generators have no flow meters. FLW belongs on pipework systems.' },
+  { id: 'gen-any-fsw',  equip: 'GEN', med: '*', qty: 'FSW',  allowed: false, reason: 'Generators have no flow switches. FSW belongs on pipework systems.' },
+  { id: 'gen-any-vlv',  equip: 'GEN', med: '*', qty: 'VLV',  allowed: false, reason: 'Generators have no valve outputs as BMS points. VLV belongs on coil or pipe actuators.' },
+  { id: 'gen-any-dmp',  equip: 'GEN', med: '*', qty: 'DMP',  allowed: false, reason: 'Generators have no damper outputs. DMP belongs on AHU or FCU.' },
+  { id: 'gen-any-vsd',  equip: 'GEN', med: '*', qty: 'VSD',  allowed: false, reason: 'Generators have no VSD. VSD belongs on fan or pump equipment.' },
+  { id: 'gen-any-stg',  equip: 'GEN', med: '*', qty: 'STG',  allowed: false, reason: 'Generators have no staged outputs. Use ENB for on/off command.' },
+  { id: 'gen-any-spd',  equip: 'GEN', med: '*', qty: 'SPD',  allowed: false, reason: 'Generator speed is not a standard BMS point. SPD belongs on fan or pump equipment.' },
+  { id: 'gen-any-pct',  equip: 'GEN', med: '*', qty: 'PCT',  allowed: false, reason: 'Generators do not expose a percentage output to BMS. Use PWR for power monitoring.' },
+  { id: 'gen-any-gly',  equip: 'GEN', med: '*', qty: 'GLY',  allowed: false, reason: 'Generators do not measure glycol concentration. GLY belongs on SYS or HEX.' },
+  { id: 'gen-any-stmp', equip: 'GEN', med: '*', qty: 'STMP', allowed: false, reason: 'STMP is an air-side shorthand and not applicable to generators.' },
+  { id: 'gen-any-rtmp', equip: 'GEN', med: '*', qty: 'RTMP', allowed: false, reason: 'RTMP is an air-side shorthand and not applicable to generators.' },
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // PMP — General pump
+  // Valid media : CW, HW, CO, GY
+  // Invalid media: SA, RA, OA, MA, EX, ZN, FA, RF
+  // Valid qty   : RUN, ENB, FLT, VSD, SPD, FSW, PRS, DPR, FLW, PWR, ALM, PCT
+  // Invalid qty : TMP, HUM, CO2, VOC, VLV, DMP, STG, GLY, STMP, RTMP
+  // ══════════════════════════════════════════════════════════════════════════
+
+  // PMP — block invalid media
+  { id: 'pmp-sa-any',  equip: 'PMP', med: 'SA', qty: '*', allowed: false, reason: 'General pumps have no air medium. SA medium belongs on AHU or FCU.' },
+  { id: 'pmp-ra-any',  equip: 'PMP', med: 'RA', qty: '*', allowed: false, reason: 'General pumps have no return air medium. RA medium belongs on AHU or FCU.' },
+  { id: 'pmp-oa-any',  equip: 'PMP', med: 'OA', qty: '*', allowed: false, reason: 'General pumps have no outside air medium. OA medium belongs on AHU or MAU.' },
+  { id: 'pmp-ma-any',  equip: 'PMP', med: 'MA', qty: '*', allowed: false, reason: 'General pumps have no mixed air medium. MA medium belongs on AHU.' },
+  { id: 'pmp-ex-any',  equip: 'PMP', med: 'EX', qty: '*', allowed: false, reason: 'General pumps have no exhaust air medium. EX medium belongs on AHU or EXF.' },
+  { id: 'pmp-zn-any',  equip: 'PMP', med: 'ZN', qty: '*', allowed: false, reason: 'General pumps do not sense zones. Zone sensors belong on AHU, FCU, or room controllers.' },
+  { id: 'pmp-fa-any',  equip: 'PMP', med: 'FA', qty: '*', allowed: false, reason: 'General pumps have no fan medium. Pumps are not fans.' },
+  { id: 'pmp-rf-any',  equip: 'PMP', med: 'RF', qty: '*', allowed: false, reason: 'General pumps have no refrigerant circuit. Refrigerant belongs on CHR or VRV.' },
+
+  // PMP — block invalid qty
+  { id: 'pmp-any-tmp',  equip: 'PMP', med: '*', qty: 'TMP',  allowed: false, reason: 'Pumps do not measure water temperature. Temperature belongs on SYS (header sensor).' },
+  { id: 'pmp-any-hum',  equip: 'PMP', med: '*', qty: 'HUM',  allowed: false, reason: 'Pumps do not measure humidity.' },
+  { id: 'pmp-any-co2',  equip: 'PMP', med: '*', qty: 'CO2',  allowed: false, reason: 'Pumps do not measure CO2.' },
+  { id: 'pmp-any-voc',  equip: 'PMP', med: '*', qty: 'VOC',  allowed: false, reason: 'Pumps do not measure VOC.' },
+  { id: 'pmp-any-vlv',  equip: 'PMP', med: '*', qty: 'VLV',  allowed: false, reason: 'Pumps do not have valve outputs — valves are separate actuators on the pipework.' },
+  { id: 'pmp-any-dmp',  equip: 'PMP', med: '*', qty: 'DMP',  allowed: false, reason: 'Pumps have no dampers.' },
+  { id: 'pmp-any-stg',  equip: 'PMP', med: '*', qty: 'STG',  allowed: false, reason: 'Pumps have no staged outputs — use VSD for variable speed or ENB for on/off.' },
+  { id: 'pmp-any-gly',  equip: 'PMP', med: '*', qty: 'GLY',  allowed: false, reason: 'Pumps do not measure glycol concentration. GLY belongs on SYS or HEX.' },
+  { id: 'pmp-any-stmp', equip: 'PMP', med: '*', qty: 'STMP', allowed: false, reason: 'STMP is an air-side shorthand and not applicable to pumps.' },
+  { id: 'pmp-any-rtmp', equip: 'PMP', med: '*', qty: 'RTMP', allowed: false, reason: 'RTMP is an air-side shorthand and not applicable to pumps.' },
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // SYS — System / circuit level
+  // Valid media : CW, HW, CO, GY, SA, RA, ZN, OA
+  // Invalid media: MA, EX, FA, RF
+  // Valid qty   : TMP, HUM, PRS, DPR, CO2, VOC, FLW, FSW, GLY, PWR, ALM, STMP, RTMP
+  // Invalid qty : VLV, DMP, VSD, RUN, ENB, FLT, STG, SPD, PCT
+  // ══════════════════════════════════════════════════════════════════════════
+
+  // SYS — block invalid media
+  { id: 'sys-ma-any',  equip: 'SYS', med: 'MA', qty: '*', allowed: false, reason: 'System-level points do not use mixed air medium. MA medium belongs on AHU.' },
+  { id: 'sys-ex-any',  equip: 'SYS', med: 'EX', qty: '*', allowed: false, reason: 'System-level points do not use exhaust air medium. EX medium belongs on AHU or EXF.' },
+  { id: 'sys-fa-any',  equip: 'SYS', med: 'FA', qty: '*', allowed: false, reason: 'System-level points do not use the fan medium. FA belongs on specific fan equipment.' },
+  { id: 'sys-rf-any',  equip: 'SYS', med: 'RF', qty: '*', allowed: false, reason: 'System-level points do not use refrigerant medium. RF belongs on CHR or VRV.' },
+
+  // SYS — block invalid qty
+  { id: 'sys-any-vlv',  equip: 'SYS', med: '*', qty: 'VLV',  allowed: false, reason: 'System-level points do not have valve outputs. VLV belongs on specific coil or pipe actuators.' },
+  { id: 'sys-any-dmp',  equip: 'SYS', med: '*', qty: 'DMP',  allowed: false, reason: 'System-level points do not have damper outputs. DMP belongs on specific AHU or FCU.' },
+  { id: 'sys-any-vsd',  equip: 'SYS', med: '*', qty: 'VSD',  allowed: false, reason: 'System-level points do not have VSD speed references. VSD belongs on specific fan or pump.' },
+  { id: 'sys-any-run',  equip: 'SYS', med: '*', qty: 'RUN',  allowed: false, reason: 'System-level points do not have run status. RUN belongs on specific active plant.' },
+  { id: 'sys-any-enb',  equip: 'SYS', med: '*', qty: 'ENB',  allowed: false, reason: 'System-level points do not have enable commands. ENB belongs on specific active plant.' },
+  { id: 'sys-any-flt',  equip: 'SYS', med: '*', qty: 'FLT',  allowed: false, reason: 'System-level points do not have fault outputs. FLT belongs on specific active plant.' },
+  { id: 'sys-any-stg',  equip: 'SYS', med: '*', qty: 'STG',  allowed: false, reason: 'Stage outputs belong on specific equipment, not at system level. Use SYS for monitoring quantities only.' },
+  { id: 'sys-any-spd',  equip: 'SYS', med: '*', qty: 'SPD',  allowed: false, reason: 'Speed feedback belongs on specific fan or pump equipment, not at system level.' },
+  { id: 'sys-any-pct',  equip: 'SYS', med: '*', qty: 'PCT',  allowed: false, reason: 'Percentage outputs belong on specific equipment. SYS is for monitoring quantities only.' },
+
+];
+
+// ─── SEED PROJECTS ────────────────────────────────────────────────────────────
 export const seedProjects: Project[] = [
   {
     id: 'proj-pacofs',
@@ -11,325 +607,7 @@ export const seedProjects: Project[] = [
   },
 ];
 
-export const seedEquip: EquipEntry[] = [
-  { id: uuidv4(), code: 'AHU', label: 'Air handling unit',     takesNum: true  },
-  { id: uuidv4(), code: 'FCU', label: 'Fan coil unit',          takesNum: true  },
-  { id: uuidv4(), code: 'MAU', label: 'Make-up air unit',       takesNum: true  },
-  { id: uuidv4(), code: 'EXF', label: 'Exhaust fan',            takesNum: true  },
-  { id: uuidv4(), code: 'CHR', label: 'Chiller',                takesNum: true  },
-  { id: uuidv4(), code: 'CTW', label: 'Cooling tower',          takesNum: true  },
-  { id: uuidv4(), code: 'CWP', label: 'Chilled water pump',     takesNum: true  },
-  { id: uuidv4(), code: 'HWP', label: 'Hot water pump',         takesNum: true  },
-  { id: uuidv4(), code: 'ILH', label: 'Inline electric heater', takesNum: true  },
-  { id: uuidv4(), code: 'BLR', label: 'Boiler',                 takesNum: true  },
-  { id: uuidv4(), code: 'HEX', label: 'Heat exchanger',         takesNum: true  },
-  { id: uuidv4(), code: 'TNK', label: 'Storage tank',           takesNum: true  },
-  { id: uuidv4(), code: 'VRV', label: 'VRV / VRF system',       takesNum: true  },
-  { id: uuidv4(), code: 'GEN', label: 'Generator',              takesNum: true  },
-  { id: uuidv4(), code: 'PMP', label: 'General pump',           takesNum: true  },
-  { id: uuidv4(), code: 'SYS', label: 'System / circuit level', takesNum: false },
-];
-
-export const seedMed: MedEntry[] = [
-  { id: uuidv4(), code: 'SA', label: 'Supply air'      },
-  { id: uuidv4(), code: 'RA', label: 'Return air'      },
-  { id: uuidv4(), code: 'OA', label: 'Outside air'     },
-  { id: uuidv4(), code: 'MA', label: 'Mixed air'       },
-  { id: uuidv4(), code: 'EX', label: 'Exhaust air'     },
-  { id: uuidv4(), code: 'ZN', label: 'Zone / room'     },
-  { id: uuidv4(), code: 'CW', label: 'Chilled water'   },
-  { id: uuidv4(), code: 'HW', label: 'Hot water'       },
-  { id: uuidv4(), code: 'CO', label: 'Condenser water' },
-  { id: uuidv4(), code: 'GY', label: 'Glycol circuit'  },
-  { id: uuidv4(), code: 'FA', label: 'Fan'             },
-  { id: uuidv4(), code: 'RF', label: 'Refrigerant'     },
-];
-
-export const seedQty: QtyEntry[] = [
-  { id: uuidv4(), code: 'RUN',  label: 'Running status',        ioType: 'DI' },
-  { id: uuidv4(), code: 'ENB',  label: 'Enable command',        ioType: 'DO' },
-  { id: uuidv4(), code: 'FLT',  label: 'Fault',                 ioType: 'DI' },
-  { id: uuidv4(), code: 'TMP',  label: 'Temperature',           ioType: 'AI' },
-  { id: uuidv4(), code: 'HUM',  label: 'Humidity',              ioType: 'AI' },
-  { id: uuidv4(), code: 'PRS',  label: 'Pressure',              ioType: 'AI' },
-  { id: uuidv4(), code: 'DPR',  label: 'Differential pressure', ioType: 'AI' },
-  { id: uuidv4(), code: 'CO2',  label: 'CO2 level (ppm)',       ioType: 'AI' },
-  { id: uuidv4(), code: 'VOC',  label: 'VOC index',             ioType: 'AI' },
-  { id: uuidv4(), code: 'FLW',  label: 'Flow rate',             ioType: 'AI' },
-  { id: uuidv4(), code: 'FSW',  label: 'Flow switch',           ioType: 'DI' },
-  { id: uuidv4(), code: 'VLV',  label: 'Valve position',        ioType: 'AO' },
-  { id: uuidv4(), code: 'DMP',  label: 'Damper position',       ioType: 'AO' },
-  { id: uuidv4(), code: 'VSD',  label: 'Drive speed ref',       ioType: 'AO' },
-  { id: uuidv4(), code: 'STG',  label: 'Stage output',          ioType: 'DO' },
-  { id: uuidv4(), code: 'PCT',  label: 'Percentage output',     ioType: 'AO' },
-  { id: uuidv4(), code: 'GLY',  label: 'Glycol concentration',  ioType: 'AI' },
-  { id: uuidv4(), code: 'PWR',  label: 'Power / energy',        ioType: 'AI' },
-  { id: uuidv4(), code: 'SPD',  label: 'Speed feedback',        ioType: 'AI' },
-  { id: uuidv4(), code: 'ALM',  label: 'Alarm output',          ioType: 'DO' },
-  { id: uuidv4(), code: 'STMP', label: 'Supply temperature',    ioType: 'AI' },
-  { id: uuidv4(), code: 'RTMP', label: 'Return temperature',    ioType: 'AI' },
-];
-
-export const seedMod: ModEntry[] = [
-  { id: uuidv4(), code: 'SP', label: 'Setpoint'           },
-  { id: uuidv4(), code: 'HI', label: 'High limit'         },
-  { id: uuidv4(), code: 'LO', label: 'Low limit'          },
-  { id: uuidv4(), code: 'DP', label: 'Differential'       },
-  { id: uuidv4(), code: 'FB', label: 'Feedback / actual'  },
-  { id: uuidv4(), code: 'T',  label: 'Top position'       },
-  { id: uuidv4(), code: 'M',  label: 'Middle position'    },
-  { id: uuidv4(), code: 'B',  label: 'Bottom position'    },
-  { id: uuidv4(), code: '1',  label: 'Stage / instance 1' },
-  { id: uuidv4(), code: '2',  label: 'Stage / instance 2' },
-  { id: uuidv4(), code: '3',  label: 'Stage / instance 3' },
-];
-
-export const seedRules: SemanticRule[] = [
-  // GROUP A — CHW PUMP: wrong mediums
-  { id: 'cwp-hw-any',  equip: 'CWP', med: 'HW', qty: '*', allowed: false, reason: 'CHW pumps carry chilled water, not hot water. Use HWP for hot water circuits.' },
-  { id: 'cwp-co-any',  equip: 'CWP', med: 'CO', qty: '*', allowed: false, reason: 'CHW pumps have no condenser water circuit. Use CTW or CHR for condenser points.' },
-  { id: 'cwp-rf-any',  equip: 'CWP', med: 'RF', qty: '*', allowed: false, reason: 'CHW pumps have no refrigerant circuit — refrigerant is inside the chiller.' },
-  { id: 'cwp-sa-any',  equip: 'CWP', med: 'SA', qty: '*', allowed: false, reason: 'CHW pumps have no air medium. Supply air points belong on AHU or FCU.' },
-  { id: 'cwp-ra-any',  equip: 'CWP', med: 'RA', qty: '*', allowed: false, reason: 'CHW pumps have no air medium.' },
-  { id: 'cwp-oa-any',  equip: 'CWP', med: 'OA', qty: '*', allowed: false, reason: 'CHW pumps have no air medium.' },
-  { id: 'cwp-ma-any',  equip: 'CWP', med: 'MA', qty: '*', allowed: false, reason: 'CHW pumps have no mixed air medium.' },
-  { id: 'cwp-ex-any',  equip: 'CWP', med: 'EX', qty: '*', allowed: false, reason: 'CHW pumps have no exhaust air medium.' },
-  { id: 'cwp-zn-any',  equip: 'CWP', med: 'ZN', qty: '*', allowed: false, reason: 'CHW pumps do not sense zones. Zone points belong on AHU, FCU, or room controllers.' },
-  { id: 'cwp-fa-any',  equip: 'CWP', med: 'FA', qty: '*', allowed: false, reason: 'CHW pumps have no fan medium. Pumps are not fans.' },
-  // GROUP B — CHW PUMP: wrong quantities
-  { id: 'cwp-any-tmp',  equip: 'CWP', med: '*', qty: 'TMP',  allowed: false, reason: 'Pumps do not measure water temperature — temperature belongs on SYS (header sensor) or CHR (chiller leaving/entering).' },
-  { id: 'cwp-any-hum',  equip: 'CWP', med: '*', qty: 'HUM',  allowed: false, reason: 'Pumps do not measure humidity.' },
-  { id: 'cwp-any-co2',  equip: 'CWP', med: '*', qty: 'CO2',  allowed: false, reason: 'Pumps do not measure CO2.' },
-  { id: 'cwp-any-voc',  equip: 'CWP', med: '*', qty: 'VOC',  allowed: false, reason: 'Pumps do not measure VOC.' },
-  { id: 'cwp-any-vlv',  equip: 'CWP', med: '*', qty: 'VLV',  allowed: false, reason: 'Pumps do not have valve outputs — valves are separate actuators on the pipework.' },
-  { id: 'cwp-any-dmp',  equip: 'CWP', med: '*', qty: 'DMP',  allowed: false, reason: 'Pumps have no dampers.' },
-  { id: 'cwp-any-stg',  equip: 'CWP', med: '*', qty: 'STG',  allowed: false, reason: 'Pumps have no staged outputs — use VSD for variable speed or ENB for on/off.' },
-  { id: 'cwp-any-gly',  equip: 'CWP', med: '*', qty: 'GLY',  allowed: false, reason: 'Glycol concentration is a system-level measurement — use SYGLY not CWP.' },
-  // GROUP C — HW PUMP: wrong mediums and quantities
-  { id: 'hwp-cw-any',  equip: 'HWP', med: 'CW', qty: '*', allowed: false, reason: 'HW pumps carry hot water, not chilled water. Use CWP for chilled water circuits.' },
-  { id: 'hwp-co-any',  equip: 'HWP', med: 'CO', qty: '*', allowed: false, reason: 'HW pumps have no condenser water circuit.' },
-  { id: 'hwp-rf-any',  equip: 'HWP', med: 'RF', qty: '*', allowed: false, reason: 'HW pumps have no refrigerant circuit.' },
-  { id: 'hwp-sa-any',  equip: 'HWP', med: 'SA', qty: '*', allowed: false, reason: 'HW pumps have no air medium.' },
-  { id: 'hwp-ra-any',  equip: 'HWP', med: 'RA', qty: '*', allowed: false, reason: 'HW pumps have no air medium.' },
-  { id: 'hwp-oa-any',  equip: 'HWP', med: 'OA', qty: '*', allowed: false, reason: 'HW pumps have no air medium.' },
-  { id: 'hwp-ma-any',  equip: 'HWP', med: 'MA', qty: '*', allowed: false, reason: 'HW pumps have no mixed air medium.' },
-  { id: 'hwp-ex-any',  equip: 'HWP', med: 'EX', qty: '*', allowed: false, reason: 'HW pumps have no exhaust air medium.' },
-  { id: 'hwp-zn-any',  equip: 'HWP', med: 'ZN', qty: '*', allowed: false, reason: 'HW pumps do not sense zones.' },
-  { id: 'hwp-fa-any',  equip: 'HWP', med: 'FA', qty: '*', allowed: false, reason: 'HW pumps have no fan medium.' },
-  { id: 'hwp-any-tmp',  equip: 'HWP', med: '*', qty: 'TMP',  allowed: false, reason: 'Pumps do not measure water temperature — use SYSHWTMP for header temperature.' },
-  { id: 'hwp-any-hum',  equip: 'HWP', med: '*', qty: 'HUM',  allowed: false, reason: 'Pumps do not measure humidity.' },
-  { id: 'hwp-any-co2',  equip: 'HWP', med: '*', qty: 'CO2',  allowed: false, reason: 'Pumps do not measure CO2.' },
-  { id: 'hwp-any-vlv',  equip: 'HWP', med: '*', qty: 'VLV',  allowed: false, reason: 'Pumps do not have valve outputs — valves are separate actuators.' },
-  { id: 'hwp-any-dmp',  equip: 'HWP', med: '*', qty: 'DMP',  allowed: false, reason: 'Pumps have no dampers.' },
-  { id: 'hwp-any-stg',  equip: 'HWP', med: '*', qty: 'STG',  allowed: false, reason: 'Pumps have no staged outputs — use VSD for variable speed or ENB for on/off.' },
-  // GROUP D — GENERAL PUMP (PMP)
-  { id: 'pmp-sa-any',  equip: 'PMP', med: 'SA', qty: '*', allowed: false, reason: 'General pumps have no air medium.' },
-  { id: 'pmp-ra-any',  equip: 'PMP', med: 'RA', qty: '*', allowed: false, reason: 'General pumps have no air medium.' },
-  { id: 'pmp-oa-any',  equip: 'PMP', med: 'OA', qty: '*', allowed: false, reason: 'General pumps have no air medium.' },
-  { id: 'pmp-ma-any',  equip: 'PMP', med: 'MA', qty: '*', allowed: false, reason: 'General pumps have no mixed air medium.' },
-  { id: 'pmp-ex-any',  equip: 'PMP', med: 'EX', qty: '*', allowed: false, reason: 'General pumps have no exhaust air medium.' },
-  { id: 'pmp-zn-any',  equip: 'PMP', med: 'ZN', qty: '*', allowed: false, reason: 'General pumps do not sense zones.' },
-  { id: 'pmp-fa-any',  equip: 'PMP', med: 'FA', qty: '*', allowed: false, reason: 'General pumps have no fan medium.' },
-  { id: 'pmp-rf-any',  equip: 'PMP', med: 'RF', qty: '*', allowed: false, reason: 'General pumps have no refrigerant circuit.' },
-  { id: 'pmp-any-tmp',  equip: 'PMP', med: '*', qty: 'TMP',  allowed: false, reason: 'Pumps do not measure fluid temperature — assign temperature to the system (SYS) or heat exchanger (HEX).' },
-  { id: 'pmp-any-hum',  equip: 'PMP', med: '*', qty: 'HUM',  allowed: false, reason: 'Pumps do not measure humidity.' },
-  { id: 'pmp-any-vlv',  equip: 'PMP', med: '*', qty: 'VLV',  allowed: false, reason: 'Pumps do not have valve outputs.' },
-  { id: 'pmp-any-dmp',  equip: 'PMP', med: '*', qty: 'DMP',  allowed: false, reason: 'Pumps have no dampers.' },
-  { id: 'pmp-any-stg',  equip: 'PMP', med: '*', qty: 'STG',  allowed: false, reason: 'Pumps have no staged outputs.' },
-  // GROUP E — CHILLER: wrong mediums
-  { id: 'chr-sa-any',  equip: 'CHR', med: 'SA', qty: '*', allowed: false, reason: 'Chillers have no supply air medium — supply air points belong on AHU or FCU.' },
-  { id: 'chr-ra-any',  equip: 'CHR', med: 'RA', qty: '*', allowed: false, reason: 'Chillers have no return air medium.' },
-  { id: 'chr-oa-any',  equip: 'CHR', med: 'OA', qty: '*', allowed: false, reason: 'Chillers have no outside air medium.' },
-  { id: 'chr-ma-any',  equip: 'CHR', med: 'MA', qty: '*', allowed: false, reason: 'Chillers have no mixed air medium.' },
-  { id: 'chr-ex-any',  equip: 'CHR', med: 'EX', qty: '*', allowed: false, reason: 'Chillers have no exhaust air medium.' },
-  { id: 'chr-zn-any',  equip: 'CHR', med: 'ZN', qty: '*', allowed: false, reason: 'Chillers do not sense zones — zone points belong on AHU or FCU.' },
-  { id: 'chr-hw-any',  equip: 'CHR', med: 'HW', qty: '*', allowed: false, reason: 'Chillers produce chilled water, not hot water. Use BLR or HEX for hot water points.' },
-  // GROUP F — CHILLER: wrong quantities
-  { id: 'chr-any-hum',  equip: 'CHR', med: '*', qty: 'HUM',  allowed: false, reason: 'Chillers do not measure humidity.' },
-  { id: 'chr-any-co2',  equip: 'CHR', med: '*', qty: 'CO2',  allowed: false, reason: 'Chillers do not measure CO2.' },
-  { id: 'chr-any-voc',  equip: 'CHR', med: '*', qty: 'VOC',  allowed: false, reason: 'Chillers do not measure VOC.' },
-  { id: 'chr-any-dmp',  equip: 'CHR', med: '*', qty: 'DMP',  allowed: false, reason: 'Chillers have no dampers.' },
-  { id: 'chr-any-vsd',  equip: 'CHR', med: '*', qty: 'VSD',  allowed: false, reason: 'Chillers do not have a VSD output point — the chiller\'s internal compressor speed is not a BMS output. VSD points belong on CWP or HWP.' },
-  // GROUP G — COOLING TOWER: wrong mediums
-  { id: 'ctw-cw-any',  equip: 'CTW', med: 'CW', qty: '*', allowed: false, reason: 'Cooling towers carry condenser water (CO), not chilled water (CW). Use CO as the medium.' },
-  { id: 'ctw-hw-any',  equip: 'CTW', med: 'HW', qty: '*', allowed: false, reason: 'Cooling towers have no hot water circuit.' },
-  { id: 'ctw-sa-any',  equip: 'CTW', med: 'SA', qty: '*', allowed: false, reason: 'Cooling towers have no supply air medium.' },
-  { id: 'ctw-ra-any',  equip: 'CTW', med: 'RA', qty: '*', allowed: false, reason: 'Cooling towers have no return air medium.' },
-  { id: 'ctw-oa-any',  equip: 'CTW', med: 'OA', qty: '*', allowed: false, reason: 'Cooling towers have no outside air medium — use CO for condenser water temperature.' },
-  { id: 'ctw-ma-any',  equip: 'CTW', med: 'MA', qty: '*', allowed: false, reason: 'Cooling towers have no mixed air medium.' },
-  { id: 'ctw-zn-any',  equip: 'CTW', med: 'ZN', qty: '*', allowed: false, reason: 'Cooling towers do not sense zones.' },
-  { id: 'ctw-rf-any',  equip: 'CTW', med: 'RF', qty: '*', allowed: false, reason: 'Cooling towers have no refrigerant circuit.' },
-  { id: 'ctw-gy-any',  equip: 'CTW', med: 'GY', qty: '*', allowed: false, reason: 'Cooling towers carry condenser water, not glycol.' },
-  // GROUP H — INLINE ELECTRIC HEATER: wrong mediums
-  { id: 'ilh-cw-any',  equip: 'ILH', med: 'CW', qty: '*', allowed: false, reason: 'Inline electric heaters have no chilled water circuit. For a CHW cooling coil use AHU or HEX.' },
-  { id: 'ilh-hw-any',  equip: 'ILH', med: 'HW', qty: '*', allowed: false, reason: 'Inline electric heaters generate heat electrically — there is no hot water circuit. For a hot water heating coil use HEX.' },
-  { id: 'ilh-co-any',  equip: 'ILH', med: 'CO', qty: '*', allowed: false, reason: 'Inline electric heaters have no condenser water circuit.' },
-  { id: 'ilh-gy-any',  equip: 'ILH', med: 'GY', qty: '*', allowed: false, reason: 'Inline electric heaters have no glycol circuit.' },
-  { id: 'ilh-rf-any',  equip: 'ILH', med: 'RF', qty: '*', allowed: false, reason: 'Inline electric heaters have no refrigerant circuit.' },
-  { id: 'ilh-ra-any',  equip: 'ILH', med: 'RA', qty: '*', allowed: false, reason: 'Inline heaters are in the supply duct — they do not sense return air.' },
-  { id: 'ilh-oa-any',  equip: 'ILH', med: 'OA', qty: '*', allowed: false, reason: 'Inline electric heaters have no outside air medium.' },
-  { id: 'ilh-ma-any',  equip: 'ILH', med: 'MA', qty: '*', allowed: false, reason: 'Inline electric heaters have no mixed air medium.' },
-  { id: 'ilh-zn-any',  equip: 'ILH', med: 'ZN', qty: '*', allowed: false, reason: 'Inline electric heaters do not sense zones — zone temperature belongs on AHU or FCU.' },
-  // GROUP I — INLINE ELECTRIC HEATER: wrong quantities
-  { id: 'ilh-any-vlv',  equip: 'ILH', med: '*', qty: 'VLV',  allowed: false, reason: 'Inline electric heaters have no valve — they use staged contactors (STG) or percentage output (PCT).' },
-  { id: 'ilh-any-dmp',  equip: 'ILH', med: '*', qty: 'DMP',  allowed: false, reason: 'Inline electric heaters have no damper.' },
-  { id: 'ilh-any-vsd',  equip: 'ILH', med: '*', qty: 'VSD',  allowed: false, reason: 'Inline electric heaters have no variable speed drive — use STG for staged or PCT for SCR-controlled output.' },
-  { id: 'ilh-any-fsw',  equip: 'ILH', med: '*', qty: 'FSW',  allowed: false, reason: 'Inline electric heaters have no fluid flow switch. For duct airflow proving use AHU1FSW on the AHU.' },
-  { id: 'ilh-any-flw',  equip: 'ILH', med: '*', qty: 'FLW',  allowed: false, reason: 'Inline electric heaters have no fluid flow measurement.' },
-  { id: 'ilh-any-hum',  equip: 'ILH', med: '*', qty: 'HUM',  allowed: false, reason: 'Inline electric heaters do not measure humidity.' },
-  { id: 'ilh-any-co2',  equip: 'ILH', med: '*', qty: 'CO2',  allowed: false, reason: 'Inline electric heaters do not measure CO2.' },
-  { id: 'ilh-any-gly',  equip: 'ILH', med: '*', qty: 'GLY',  allowed: false, reason: 'Inline electric heaters have no glycol circuit.' },
-  // GROUP J — BOILER: wrong mediums
-  { id: 'blr-cw-any',  equip: 'BLR', med: 'CW', qty: '*', allowed: false, reason: 'Boilers produce hot water, not chilled water. Use CHR for chilled water production.' },
-  { id: 'blr-co-any',  equip: 'BLR', med: 'CO', qty: '*', allowed: false, reason: 'Boilers have no condenser water circuit.' },
-  { id: 'blr-rf-any',  equip: 'BLR', med: 'RF', qty: '*', allowed: false, reason: 'Boilers have no refrigerant circuit.' },
-  { id: 'blr-sa-any',  equip: 'BLR', med: 'SA', qty: '*', allowed: false, reason: 'Boilers have no supply air medium — air sensing belongs on AHU.' },
-  { id: 'blr-ra-any',  equip: 'BLR', med: 'RA', qty: '*', allowed: false, reason: 'Boilers have no return air medium.' },
-  { id: 'blr-oa-any',  equip: 'BLR', med: 'OA', qty: '*', allowed: false, reason: 'Boilers have no outside air medium.' },
-  { id: 'blr-ma-any',  equip: 'BLR', med: 'MA', qty: '*', allowed: false, reason: 'Boilers have no mixed air medium.' },
-  { id: 'blr-zn-any',  equip: 'BLR', med: 'ZN', qty: '*', allowed: false, reason: 'Boilers do not sense zones.' },
-  { id: 'blr-fa-any',  equip: 'BLR', med: 'FA', qty: '*', allowed: false, reason: 'Boilers have no fan medium. Combustion air fans are internal and not mapped as BMS points.' },
-  { id: 'blr-any-vsd',  equip: 'BLR', med: '*', qty: 'VSD',  allowed: false, reason: 'Boilers do not have a VSD output — they are modulated via PCT (percentage) or staged via STG.' },
-  { id: 'blr-any-dmp',  equip: 'BLR', med: '*', qty: 'DMP',  allowed: false, reason: 'Boiler flue dampers are safety interlocks internal to the boiler — they are not BMS-controlled damper outputs.' },
-  { id: 'blr-any-hum',  equip: 'BLR', med: '*', qty: 'HUM',  allowed: false, reason: 'Boilers do not measure humidity.' },
-  { id: 'blr-any-co2',  equip: 'BLR', med: '*', qty: 'CO2',  allowed: false, reason: 'Boilers do not measure CO2 for BMS purposes — flue gas analysis is done by separate instrumentation.' },
-  // GROUP K — STORAGE TANK: passive vessels
-  { id: 'tnk-sa-any',  equip: 'TNK', med: 'SA', qty: '*', allowed: false, reason: 'Storage tanks have no air medium.' },
-  { id: 'tnk-ra-any',  equip: 'TNK', med: 'RA', qty: '*', allowed: false, reason: 'Storage tanks have no air medium.' },
-  { id: 'tnk-oa-any',  equip: 'TNK', med: 'OA', qty: '*', allowed: false, reason: 'Storage tanks have no air medium.' },
-  { id: 'tnk-ma-any',  equip: 'TNK', med: 'MA', qty: '*', allowed: false, reason: 'Storage tanks have no air medium.' },
-  { id: 'tnk-ex-any',  equip: 'TNK', med: 'EX', qty: '*', allowed: false, reason: 'Storage tanks have no air medium.' },
-  { id: 'tnk-co-any',  equip: 'TNK', med: 'CO', qty: '*', allowed: false, reason: 'Storage tanks do not carry condenser water.' },
-  { id: 'tnk-rf-any',  equip: 'TNK', med: 'RF', qty: '*', allowed: false, reason: 'Storage tanks do not carry refrigerant.' },
-  { id: 'tnk-fa-any',  equip: 'TNK', med: 'FA', qty: '*', allowed: false, reason: 'Storage tanks have no fan.' },
-  { id: 'tnk-zn-any',  equip: 'TNK', med: 'ZN', qty: '*', allowed: false, reason: 'Storage tanks do not sense zones.' },
-  { id: 'tnk-any-run',  equip: 'TNK', med: '*', qty: 'RUN',  allowed: false, reason: 'Tanks do not run — RUN status belongs on pumps, fans, and active equipment.' },
-  { id: 'tnk-any-enb',  equip: 'TNK', med: '*', qty: 'ENB',  allowed: false, reason: 'Tanks cannot be enabled — they are passive. ENB belongs on the pump serving the tank.' },
-  { id: 'tnk-any-flt',  equip: 'TNK', med: '*', qty: 'FLT',  allowed: false, reason: 'Tanks do not have fault outputs — faults belong on the pumps and heaters associated with the tank.' },
-  { id: 'tnk-any-vlv',  equip: 'TNK', med: '*', qty: 'VLV',  allowed: false, reason: 'Tank isolation valves are separate actuators — assign VLV to the valve actuator or the AHU/HEX it serves.' },
-  { id: 'tnk-any-dmp',  equip: 'TNK', med: '*', qty: 'DMP',  allowed: false, reason: 'Tanks have no dampers.' },
-  { id: 'tnk-any-vsd',  equip: 'TNK', med: '*', qty: 'VSD',  allowed: false, reason: 'Tanks have no variable speed drive.' },
-  { id: 'tnk-any-stg',  equip: 'TNK', med: '*', qty: 'STG',  allowed: false, reason: 'Tanks have no staged outputs.' },
-  { id: 'tnk-any-fsw',  equip: 'TNK', med: '*', qty: 'FSW',  allowed: false, reason: 'Tanks do not have flow switches — flow switches belong on the pump or pipe serving the tank.' },
-  { id: 'tnk-any-flw',  equip: 'TNK', med: '*', qty: 'FLW',  allowed: false, reason: 'Tanks do not measure flow — flow measurement belongs on the pump or pipe.' },
-  { id: 'tnk-any-hum',  equip: 'TNK', med: '*', qty: 'HUM',  allowed: false, reason: 'Tanks do not measure humidity.' },
-  { id: 'tnk-any-co2',  equip: 'TNK', med: '*', qty: 'CO2',  allowed: false, reason: 'Tanks do not measure CO2.' },
-  { id: 'tnk-any-pct',  equip: 'TNK', med: '*', qty: 'PCT',  allowed: false, reason: 'Tanks have no percentage output — PCT belongs on an active actuator like a heater or valve.' },
-  // GROUP L — EXHAUST FAN: wrong mediums
-  { id: 'exf-cw-any',  equip: 'EXF', med: 'CW', qty: '*', allowed: false, reason: 'Exhaust fans have no chilled water circuit.' },
-  { id: 'exf-hw-any',  equip: 'EXF', med: 'HW', qty: '*', allowed: false, reason: 'Exhaust fans have no hot water circuit.' },
-  { id: 'exf-co-any',  equip: 'EXF', med: 'CO', qty: '*', allowed: false, reason: 'Exhaust fans have no condenser water circuit.' },
-  { id: 'exf-gy-any',  equip: 'EXF', med: 'GY', qty: '*', allowed: false, reason: 'Exhaust fans have no glycol circuit.' },
-  { id: 'exf-rf-any',  equip: 'EXF', med: 'RF', qty: '*', allowed: false, reason: 'Exhaust fans have no refrigerant circuit.' },
-  { id: 'exf-sa-any',  equip: 'EXF', med: 'SA', qty: '*', allowed: false, reason: 'Exhaust fans deal with extract/exhaust air, not supply air. Use EX as the medium.' },
-  { id: 'exf-oa-any',  equip: 'EXF', med: 'OA', qty: '*', allowed: false, reason: 'Exhaust fans do not handle outside air.' },
-  { id: 'exf-ma-any',  equip: 'EXF', med: 'MA', qty: '*', allowed: false, reason: 'Exhaust fans have no mixed air medium.' },
-  { id: 'exf-zn-any',  equip: 'EXF', med: 'ZN', qty: '*', allowed: false, reason: 'Exhaust fans do not sense zones — zone CO2 or temperature belongs on the room controller or AHU.' },
-  { id: 'exf-any-vlv',  equip: 'EXF', med: '*', qty: 'VLV',  allowed: false, reason: 'Exhaust fans have no valve outputs.' },
-  { id: 'exf-any-tmp',  equip: 'EXF', med: '*', qty: 'TMP',  allowed: false, reason: 'Exhaust fans do not measure air temperature.' },
-  { id: 'exf-any-hum',  equip: 'EXF', med: '*', qty: 'HUM',  allowed: false, reason: 'Exhaust fans do not measure humidity.' },
-  { id: 'exf-any-co2',  equip: 'EXF', med: '*', qty: 'CO2',  allowed: false, reason: 'Exhaust fans do not measure CO2 — CO2 sensing belongs on the zone or AHU.' },
-  // GROUP M — AHU: wrong mediums
-  { id: 'ahu-rf-any',  equip: 'AHU', med: 'RF', qty: '*', allowed: false, reason: 'AHU refrigerant points belong on the chiller (CHR) or VRV system — the AHU coil is the load, not the refrigerant circuit.' },
-  { id: 'ahu-co-any',  equip: 'AHU', med: 'CO', qty: '*', allowed: false, reason: 'AHUs have no condenser water medium — condenser points belong on CHR or CTW.' },
-  { id: 'ahu-gy-any',  equip: 'AHU', med: 'GY', qty: '*', allowed: false, reason: 'Glycol concentration is a plant room measurement — use SYGLY, not a point on the AHU.' },
-  // GROUP N — AHU: wrong medium+quantity combinations
-  { id: 'ahu-cw-run',   equip: 'AHU', med: 'CW', qty: 'RUN', allowed: false, reason: 'Chilled water does not run — running status belongs on the AHU itself (AHU1RUN) or its fan (AHU1FARUN).' },
-  { id: 'ahu-hw-run',   equip: 'AHU', med: 'HW', qty: 'RUN', allowed: false, reason: 'Hot water does not run — running status belongs on the AHU itself or its fan.' },
-  { id: 'ahu-cw-flt',   equip: 'AHU', med: 'CW', qty: 'FLT', allowed: false, reason: 'Chilled water does not fault — fault status belongs on the AHU, its fan, or the pump.' },
-  { id: 'ahu-hw-flt',   equip: 'AHU', med: 'HW', qty: 'FLT', allowed: false, reason: 'Hot water does not fault — fault belongs on the equipment.' },
-  { id: 'ahu-cw-enb',   equip: 'AHU', med: 'CW', qty: 'ENB', allowed: false, reason: 'You cannot enable a fluid medium — ENB belongs on the AHU itself (AHU1ENB) or the pump.' },
-  { id: 'ahu-hw-enb',   equip: 'AHU', med: 'HW', qty: 'ENB', allowed: false, reason: 'You cannot enable a fluid medium — ENB belongs on the AHU itself or the pump.' },
-  { id: 'ahu-any-vsd',  equip: 'AHU', med: '',   qty: 'VSD', allowed: false, reason: 'AHU drive speed belongs on the fan medium (AHU1FAVSD), not bare on the AHU — add MED = FA.' },
-  // GROUP O — FCU: wrong mediums
-  { id: 'fcu-oa-any',  equip: 'FCU', med: 'OA', qty: '*', allowed: false, reason: 'Fan coil units do not handle outside air — use AHU or MAU for fresh air treatment.' },
-  { id: 'fcu-ma-any',  equip: 'FCU', med: 'MA', qty: '*', allowed: false, reason: 'Fan coil units do not mix outside and return air — use AHU for mixed air handling.' },
-  { id: 'fcu-ex-any',  equip: 'FCU', med: 'EX', qty: '*', allowed: false, reason: 'Fan coil units do not exhaust air — use EXF for exhaust fans.' },
-  { id: 'fcu-co-any',  equip: 'FCU', med: 'CO', qty: '*', allowed: false, reason: 'Fan coil units have no condenser water circuit.' },
-  { id: 'fcu-rf-any',  equip: 'FCU', med: 'RF', qty: '*', allowed: false, reason: 'Fan coil units have no refrigerant circuit — refrigerant is inside the chiller or VRV. Use VRV for VRV cassette units.' },
-  { id: 'fcu-gy-any',  equip: 'FCU', med: 'GY', qty: '*', allowed: false, reason: 'Fan coil units do not measure glycol concentration.' },
-  { id: 'fcu-cw-run',  equip: 'FCU', med: 'CW', qty: 'RUN', allowed: false, reason: 'Chilled water does not run — FCU running status is FCU1RUN (no medium).' },
-  { id: 'fcu-hw-run',  equip: 'FCU', med: 'HW', qty: 'RUN', allowed: false, reason: 'Hot water does not run — FCU running status is FCU1RUN (no medium).' },
-  // GROUP P — SYS: cannot have equipment-type quantities
-  { id: 'sys-any-run',  equip: 'SYS', med: '*', qty: 'RUN',  allowed: false, reason: 'The system level has no running status — assign RUN to the specific equipment (CHR, CWP, AHU, etc.).' },
-  { id: 'sys-any-flt',  equip: 'SYS', med: '*', qty: 'FLT',  allowed: false, reason: 'The system level has no fault output — assign FLT to the specific equipment that can fault.' },
-  { id: 'sys-any-enb',  equip: 'SYS', med: '*', qty: 'ENB',  allowed: false, reason: 'The system level cannot be enabled — assign ENB to the specific equipment.' },
-  { id: 'sys-any-vsd',  equip: 'SYS', med: '*', qty: 'VSD',  allowed: false, reason: 'Drive speed belongs on the specific pump or fan, not the system level.' },
-  { id: 'sys-any-stg',  equip: 'SYS', med: '*', qty: 'STG',  allowed: false, reason: 'Staged outputs belong on the specific equipment (ILH, CHR), not the system level.' },
-  { id: 'sys-any-pct',  equip: 'SYS', med: '*', qty: 'PCT',  allowed: false, reason: 'Percentage outputs belong on the specific equipment (ILH, heater), not the system level.' },
-  { id: 'sys-any-fsw',  equip: 'SYS', med: '*', qty: 'FSW',  allowed: false, reason: 'Flow switches belong on the specific pump or chiller (CWP1FSW, CHR1CWFSW), not the system level.' },
-  { id: 'sys-any-hum',  equip: 'SYS', med: '*', qty: 'HUM',  allowed: false, reason: 'Humidity is not a system-level water circuit measurement — assign HUM to the AHU or zone (ZN medium).' },
-  { id: 'sys-fa-any',   equip: 'SYS', med: 'FA', qty: '*',   allowed: false, reason: 'The system level has no fan — FA medium belongs on AHU, FCU, or EXF.' },
-  { id: 'sys-zn-any',   equip: 'SYS', med: 'ZN', qty: '*',   allowed: false, reason: 'Zone sensing is not a system-level point — assign ZN points to the AHU or FCU serving the zone.' },
-  { id: 'sys-rf-any',   equip: 'SYS', med: 'RF', qty: '*',   allowed: false, reason: 'Refrigerant points belong on the chiller (CHR), not the system level.' },
-  // GROUP Q — GENERATOR
-  { id: 'gen-sa-any',  equip: 'GEN', med: 'SA', qty: '*', allowed: false, reason: 'Generators have no supply air medium.' },
-  { id: 'gen-ra-any',  equip: 'GEN', med: 'RA', qty: '*', allowed: false, reason: 'Generators have no return air medium.' },
-  { id: 'gen-oa-any',  equip: 'GEN', med: 'OA', qty: '*', allowed: false, reason: 'Generators have no outside air medium — combustion air intake is not a BMS point.' },
-  { id: 'gen-ma-any',  equip: 'GEN', med: 'MA', qty: '*', allowed: false, reason: 'Generators have no mixed air medium.' },
-  { id: 'gen-cw-any',  equip: 'GEN', med: 'CW', qty: '*', allowed: false, reason: 'Generators have no chilled water circuit.' },
-  { id: 'gen-hw-any',  equip: 'GEN', med: 'HW', qty: '*', allowed: false, reason: 'Generators have no hot water circuit.' },
-  { id: 'gen-co-any',  equip: 'GEN', med: 'CO', qty: '*', allowed: false, reason: 'Generators have no condenser water circuit.' },
-  { id: 'gen-gy-any',  equip: 'GEN', med: 'GY', qty: '*', allowed: false, reason: 'Generators have no glycol circuit.' },
-  { id: 'gen-rf-any',  equip: 'GEN', med: 'RF', qty: '*', allowed: false, reason: 'Generators have no refrigerant circuit.' },
-  { id: 'gen-zn-any',  equip: 'GEN', med: 'ZN', qty: '*', allowed: false, reason: 'Generators do not sense zones.' },
-  { id: 'gen-any-vlv',  equip: 'GEN', med: '*', qty: 'VLV',  allowed: false, reason: 'Generators have no valve outputs.' },
-  { id: 'gen-any-dmp',  equip: 'GEN', med: '*', qty: 'DMP',  allowed: false, reason: 'Generators have no damper outputs.' },
-  { id: 'gen-any-vsd',  equip: 'GEN', med: '*', qty: 'VSD',  allowed: false, reason: 'Generators are not VSD-controlled.' },
-  { id: 'gen-any-stg',  equip: 'GEN', med: '*', qty: 'STG',  allowed: false, reason: 'Generators have no staged outputs.' },
-  { id: 'gen-any-hum',  equip: 'GEN', med: '*', qty: 'HUM',  allowed: false, reason: 'Generators do not measure humidity.' },
-  { id: 'gen-any-co2',  equip: 'GEN', med: '*', qty: 'CO2',  allowed: false, reason: 'Generators do not measure CO2.' },
-  { id: 'gen-any-fsw',  equip: 'GEN', med: '*', qty: 'FSW',  allowed: false, reason: 'Generators have no flow switches.' },
-  // GROUP R — UNIVERSAL FLUID MEDIUM RULES (run/flt/enb on fluids)
-  { id: 'any-cw-run',  equip: '*', med: 'CW', qty: 'RUN', allowed: false, reason: 'Chilled water cannot run — RUN is equipment status. Use no medium for equipment running status (e.g. CHR1RUN).' },
-  { id: 'any-hw-run',  equip: '*', med: 'HW', qty: 'RUN', allowed: false, reason: 'Hot water cannot run — RUN is equipment status.' },
-  { id: 'any-co-run',  equip: '*', med: 'CO', qty: 'RUN', allowed: false, reason: 'Condenser water cannot run — RUN is equipment status.' },
-  { id: 'any-gy-run',  equip: '*', med: 'GY', qty: 'RUN', allowed: false, reason: 'Glycol circuit cannot run — RUN is equipment status.' },
-  { id: 'any-rf-run',  equip: '*', med: 'RF', qty: 'RUN', allowed: false, reason: 'Refrigerant cannot run — RUN is equipment status.' },
-  { id: 'any-sa-run',  equip: '*', med: 'SA', qty: 'RUN', allowed: false, reason: 'Supply air cannot run — RUN is equipment status. Use FA medium for fan running (e.g. AHU1FARUN).' },
-  { id: 'any-ra-run',  equip: '*', med: 'RA', qty: 'RUN', allowed: false, reason: 'Return air cannot run — RUN is equipment status.' },
-  { id: 'any-oa-run',  equip: '*', med: 'OA', qty: 'RUN', allowed: false, reason: 'Outside air cannot run — RUN is equipment status.' },
-  { id: 'any-ma-run',  equip: '*', med: 'MA', qty: 'RUN', allowed: false, reason: 'Mixed air cannot run — RUN is equipment status.' },
-  { id: 'any-zn-run',  equip: '*', med: 'ZN', qty: 'RUN', allowed: false, reason: 'Zones do not run — RUN is equipment status.' },
-  { id: 'any-cw-flt',  equip: '*', med: 'CW', qty: 'FLT', allowed: false, reason: 'Chilled water cannot fault — FLT is equipment status. A low-flow condition is CHR1CWFSW (flow switch) not a fault on the water itself.' },
-  { id: 'any-hw-flt',  equip: '*', med: 'HW', qty: 'FLT', allowed: false, reason: 'Hot water cannot fault — FLT is equipment status.' },
-  { id: 'any-cw-enb',  equip: '*', med: 'CW', qty: 'ENB', allowed: false, reason: 'You cannot enable a fluid — ENB is an equipment command.' },
-  { id: 'any-hw-enb',  equip: '*', med: 'HW', qty: 'ENB', allowed: false, reason: 'You cannot enable a fluid — ENB is an equipment command.' },
-  // GROUP S — UNIVERSAL ZONE MEDIUM RULES
-  { id: 'any-zn-vlv',  equip: '*', med: 'ZN', qty: 'VLV',  allowed: false, reason: 'Zones do not have valve outputs — the valve is on the AHU or FCU coil, not the zone. Use AHU1CWVLV.' },
-  { id: 'any-zn-dmp',  equip: '*', med: 'ZN', qty: 'DMP',  allowed: false, reason: 'Zones do not have damper outputs — the damper is on the AHU, not the zone. Use AHU1OADMP.' },
-  { id: 'any-zn-vsd',  equip: '*', med: 'ZN', qty: 'VSD',  allowed: false, reason: 'Zones have no variable speed drive.' },
-  { id: 'any-zn-stg',  equip: '*', med: 'ZN', qty: 'STG',  allowed: false, reason: 'Zones have no staged outputs.' },
-  { id: 'any-zn-pct',  equip: '*', med: 'ZN', qty: 'PCT',  allowed: false, reason: 'Zones have no percentage output.' },
-  { id: 'any-zn-fsw',  equip: '*', med: 'ZN', qty: 'FSW',  allowed: false, reason: 'Zones have no flow switch — airflow proving is on the AHU (AHU1FSW), not the zone.' },
-  { id: 'any-zn-flw',  equip: '*', med: 'ZN', qty: 'FLW',  allowed: false, reason: 'Zones do not measure flow rate.' },
-  { id: 'any-zn-gly',  equip: '*', med: 'ZN', qty: 'GLY',  allowed: false, reason: 'Zones do not measure glycol concentration.' },
-  { id: 'any-zn-prs',  equip: '*', med: 'ZN', qty: 'PRS',  allowed: false, reason: 'Zone static pressure is measured differently — use bare PRS without ZN medium, on the AHU (AHU1PRS).' },
-  // GROUP T — UNIVERSAL WATER MEDIUM RULES (air quantities on water)
-  { id: 'any-cw-hum',  equip: '*', med: 'CW', qty: 'HUM',  allowed: false, reason: 'Chilled water circuits do not have humidity sensors — humidity is an air-side measurement (SA, RA, or ZN medium).' },
-  { id: 'any-hw-hum',  equip: '*', med: 'HW', qty: 'HUM',  allowed: false, reason: 'Hot water circuits do not have humidity sensors.' },
-  { id: 'any-co-hum',  equip: '*', med: 'CO', qty: 'HUM',  allowed: false, reason: 'Condenser water circuits do not have humidity sensors.' },
-  { id: 'any-gy-hum',  equip: '*', med: 'GY', qty: 'HUM',  allowed: false, reason: 'Glycol circuits do not have humidity sensors.' },
-  { id: 'any-cw-co2',  equip: '*', med: 'CW', qty: 'CO2',  allowed: false, reason: 'CO2 is an air quality measurement — use ZN, SA, or RA medium.' },
-  { id: 'any-hw-co2',  equip: '*', med: 'HW', qty: 'CO2',  allowed: false, reason: 'CO2 is an air quality measurement, not a water circuit point.' },
-  { id: 'any-cw-voc',  equip: '*', med: 'CW', qty: 'VOC',  allowed: false, reason: 'VOC is an air quality measurement — use ZN or SA medium.' },
-  { id: 'any-hw-voc',  equip: '*', med: 'HW', qty: 'VOC',  allowed: false, reason: 'VOC is an air quality measurement.' },
-  { id: 'any-cw-dmp',  equip: '*', med: 'CW', qty: 'DMP',  allowed: false, reason: 'Chilled water circuits have valves (VLV), not dampers. Dampers are air-side components.' },
-  { id: 'any-hw-dmp',  equip: '*', med: 'HW', qty: 'DMP',  allowed: false, reason: 'Hot water circuits have valves (VLV), not dampers.' },
-  { id: 'any-co-dmp',  equip: '*', med: 'CO', qty: 'DMP',  allowed: false, reason: 'Condenser water circuits have valves, not dampers.' },
-  // GROUP U — UNIVERSAL AIR MEDIUM RULES (water quantities on air)
-  { id: 'any-sa-vlv',  equip: '*', med: 'SA', qty: 'VLV',  allowed: false, reason: 'Supply air streams use dampers (DMP), not valves. Valves are water-side components.' },
-  { id: 'any-ra-vlv',  equip: '*', med: 'RA', qty: 'VLV',  allowed: false, reason: 'Return air streams use dampers (DMP), not valves.' },
-  { id: 'any-oa-vlv',  equip: '*', med: 'OA', qty: 'VLV',  allowed: false, reason: 'Outside air streams use dampers (DMP), not valves.' },
-  { id: 'any-ma-vlv',  equip: '*', med: 'MA', qty: 'VLV',  allowed: false, reason: 'Mixed air streams use dampers (DMP), not valves.' },
-  { id: 'any-ex-vlv',  equip: '*', med: 'EX', qty: 'VLV',  allowed: false, reason: 'Exhaust air streams use dampers (DMP), not valves.' },
-  { id: 'any-sa-gly',  equip: '*', med: 'SA', qty: 'GLY',  allowed: false, reason: 'Glycol concentration is a water-side measurement — it cannot be measured in a supply air stream.' },
-  { id: 'any-ra-gly',  equip: '*', med: 'RA', qty: 'GLY',  allowed: false, reason: 'Glycol concentration is a water-side measurement.' },
-  { id: 'any-oa-gly',  equip: '*', med: 'OA', qty: 'GLY',  allowed: false, reason: 'Glycol concentration is a water-side measurement.' },
-  { id: 'any-sa-flw',  equip: '*', med: 'SA', qty: 'FLW',  allowed: false, reason: 'Use FSW (flow switch) for duct airflow proving, not FLW. FLW is for pipe flow rate measurement in litres per second.' },
-  { id: 'any-ra-flw',  equip: '*', med: 'RA', qty: 'FLW',  allowed: false, reason: 'Use FSW for duct airflow proving. FLW is for pipe flow meters.' },
-];
-
+// ─── HELPERS ──────────────────────────────────────────────────────────────────
 function makeVar(
   equip: string, num: string, med: string, qty: string, mod: string,
   equipList: EquipEntry[], medList: MedEntry[], qtyList: QtyEntry[], modList: ModEntry[]
@@ -372,6 +650,7 @@ function makeVar(
   };
 }
 
+// ─── SEED CONTROLLER BUILDER ──────────────────────────────────────────────────
 export function buildSeedController(
   equipList: EquipEntry[],
   medList: MedEntry[],
@@ -461,7 +740,7 @@ export function buildSeedController(
   };
 }
 
-// ---- Seed Assemblies ----
+// ─── SEED ASSEMBLIES ──────────────────────────────────────────────────────────
 export const seedAssemblies: Assembly[] = [
   {
     id: uuidv4(),
@@ -633,7 +912,7 @@ export const seedAssemblies: Assembly[] = [
   },
 ];
 
-// ---- Seed Controller Models ----
+// ─── SEED CONTROLLER MODELS ───────────────────────────────────────────────────
 export const seedControllerModels: ControllerModel[] = [
   {
     id: 'eliwell-ewpc974t',
@@ -655,7 +934,7 @@ export const seedControllerModels: ControllerModel[] = [
   },
 ];
 
-// ---- Seed Expansion Modules ----
+// ─── SEED EXPANSION MODULES ───────────────────────────────────────────────────
 export const seedExpansionModules: ExpansionModule[] = [
   {
     id: uuidv4(),

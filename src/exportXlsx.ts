@@ -11,73 +11,87 @@ function ioTypeOf(qty: string, qtyList: QtyEntry[], ioOverride?: string | null):
   return qtyList.find(q => q.code === qty)?.ioType ?? '';
 }
 
-function equipLabel(code: string, equipList: EquipEntry[]) {
-  return equipList.find(e => e.code === code)?.label ?? code;
-}
-function medLabel(code: string, medList: MedEntry[]) {
-  if (!code) return '—';
-  return medList.find(m => m.code === code)?.label ?? code;
-}
 function qtyLabel(code: string, qtyList: QtyEntry[]) {
   return qtyList.find(q => q.code === code)?.label ?? code;
 }
 
-// ── Sheet 1: one row per variable, grouped by controller ─────────────────────
+// Build a human-readable device description for a variable
+function deviceDesc(
+  v: Controller['variables'][number],
+  qtyList: QtyEntry[],
+): string {
+  const base = qtyLabel(v.qty, qtyList);
+  const sig = v.device?.signalType;
+  if (sig && sig !== '') return `${base} – ${sig}`;
+  return base;
+}
+
+// ── Sheet 1: BOQ per controller ───────────────────────────────────────────────
 
 function buildSheet1(
   controllers: Controller[],
   controllerModels: ControllerModel[],
+  expansionModules: ExpansionModule[],
   qtyList: QtyEntry[],
-  equipList: EquipEntry[],
-  medList: MedEntry[],
+  _equipList: EquipEntry[],
+  _medList: MedEntry[],
 ): XLSX.WorkSheet {
   const rows: (string | number)[][] = [];
 
-  // Header
-  rows.push([
-    'Controller', 'Site', 'Point Name', 'Equipment', '#',
-    'Medium', 'Quantity', 'Modifier', 'IO Type', 'Description',
-  ]);
-
   for (const ctrl of controllers) {
+    const dup = ctrl.duplicates ?? 1;
     const modelName = controllerModels.find(m => m.id === ctrl.modelId)?.name ?? '(no model)';
+    const ctrlTitle = ctrl.siteName
+      ? `${ctrl.label}  —  ${ctrl.siteName}`
+      : ctrl.label;
 
-    // Controller sub-header row
-    rows.push([`${ctrl.label} — ${ctrl.siteName}  [${modelName}]`, '', '', '', '', '', '', '', '', '']);
+    // Controller heading row
+    rows.push([ctrlTitle, '', '', '']);
+    // Column headers
+    rows.push(['Item No', 'Item', 'Unit', 'No']);
 
-    for (const v of ctrl.variables) {
-      rows.push([
-        ctrl.label,
-        ctrl.siteName,
-        v.name,
-        `${v.equip} — ${equipLabel(v.equip, equipList)}`,
-        v.num,
-        v.med ? `${v.med} — ${medLabel(v.med, medList)}` : '—',
-        `${v.qty} — ${qtyLabel(v.qty, qtyList)}`,
-        v.mod || '—',
-        ioTypeOf(v.qty, qtyList, v.ioOverride),
-        v.description,
-      ]);
+    let item = 1;
+
+    // Item: controller itself
+    if (ctrl.modelId) {
+      rows.push([item++, modelName, 'No', dup]);
     }
 
-    // Blank spacer between controllers
-    rows.push(['', '', '', '', '', '', '', '', '', '']);
+    // Items: expansion modules
+    for (const exp of ctrl.expansions ?? []) {
+      const mod = expansionModules.find(m => m.id === exp.moduleId);
+      if (mod) {
+        rows.push([item++, mod.name, 'No', exp.quantity * dup]);
+      }
+    }
+
+    // Items: field devices — group physical IO vars by description
+    const deviceTotals: Map<string, number> = new Map();
+    for (const v of ctrl.variables) {
+      const io = ioTypeOf(v.qty, qtyList, v.ioOverride);
+      if (io === 'AV' || io === 'BV') continue; // skip RS-485 / soft points
+      const desc = deviceDesc(v, qtyList);
+      deviceTotals.set(desc, (deviceTotals.get(desc) ?? 0) + 1);
+    }
+    for (const [desc, count] of deviceTotals) {
+      rows.push([item++, desc, 'No', count * dup]);
+    }
+
+    // Blank spacer
+    rows.push(['', '', '', '']);
   }
 
   const ws = XLSX.utils.aoa_to_sheet(rows);
-
-  // Column widths
   ws['!cols'] = [
-    { wch: 32 }, { wch: 16 }, { wch: 18 }, { wch: 28 }, { wch: 5 },
-    { wch: 22 }, { wch: 22 }, { wch: 8 }, { wch: 8 }, { wch: 48 },
+    { wch: 10 }, { wch: 40 }, { wch: 8 }, { wch: 8 },
   ];
-
   return ws;
 }
 
-// ── Sheet 2: project-wide totals ─────────────────────────────────────────────
+// ── Sheet 2: project-wide BOQ totals ─────────────────────────────────────────
 
 function buildSheet2(
+  projectName: string,
   controllers: Controller[],
   controllerModels: ControllerModel[],
   expansionModules: ExpansionModule[],
@@ -85,115 +99,94 @@ function buildSheet2(
 ): XLSX.WorkSheet {
   const rows: (string | number)[][] = [];
 
-  // ─ Section A: Controller models used ──────────────────────────────────────
-  rows.push(['CONTROLLER MODELS', '']);
-  rows.push(['Model', 'Count']);
+  rows.push([`PROJECT SUMMARY — ${projectName}`, '', '', '']);
+  rows.push(['', '', '', '']);
+  rows.push(['Item No', 'Item', 'Unit', 'Total Qty']);
 
-  const modelCount: Record<string, number> = {};
+  let item = 1;
+
+  // Controllers
+  const modelCount: Map<string, number> = new Map();
   for (const ctrl of controllers) {
-    if (ctrl.modelId) modelCount[ctrl.modelId] = (modelCount[ctrl.modelId] ?? 0) + 1;
+    if (!ctrl.modelId) continue;
+    const dup = ctrl.duplicates ?? 1;
+    modelCount.set(ctrl.modelId, (modelCount.get(ctrl.modelId) ?? 0) + dup);
   }
-  if (Object.keys(modelCount).length === 0) {
-    rows.push(['(no models assigned)', 0]);
-  } else {
-    for (const [id, count] of Object.entries(modelCount)) {
-      const name = controllerModels.find(m => m.id === id)?.name ?? id;
-      rows.push([name, count]);
-    }
+  for (const [id, count] of modelCount) {
+    const name = controllerModels.find(m => m.id === id)?.name ?? id;
+    rows.push([item++, name, 'No', count]);
   }
+  if (modelCount.size === 0) rows.push([item++, '(no controller models assigned)', 'No', 0]);
 
-  rows.push(['', '']);
+  rows.push(['', '', '', '']);
 
-  // ─ Section B: Expansion modules used ──────────────────────────────────────
-  rows.push(['EXPANSION MODULES', '']);
-  rows.push(['Module', 'Total Qty']);
-
-  const expCount: Record<string, number> = {};
+  // Expansion modules
+  const expCount: Map<string, number> = new Map();
   for (const ctrl of controllers) {
+    const dup = ctrl.duplicates ?? 1;
     for (const exp of ctrl.expansions ?? []) {
-      expCount[exp.moduleId] = (expCount[exp.moduleId] ?? 0) + exp.quantity;
+      expCount.set(exp.moduleId, (expCount.get(exp.moduleId) ?? 0) + exp.quantity * dup);
     }
   }
-  if (Object.keys(expCount).length === 0) {
-    rows.push(['(none)', 0]);
-  } else {
-    for (const [id, qty] of Object.entries(expCount)) {
-      const name = expansionModules.find(m => m.id === id)?.name ?? id;
-      rows.push([name, qty]);
-    }
+  for (const [id, count] of expCount) {
+    const name = expansionModules.find(m => m.id === id)?.name ?? id;
+    rows.push([item++, name, 'No', count]);
   }
+  if (expCount.size === 0) rows.push([item++, '(no expansion modules)', 'No', 0]);
 
-  rows.push(['', '']);
+  rows.push(['', '', '', '']);
 
-  // ─ Section C: IO point totals across all controllers ─────────────────────
-  rows.push(['IO POINT TOTALS', '', '', '']);
-  rows.push(['IO Type', 'Description', 'Required', 'Available']);
-
-  let totalAI = 0, totalAO = 0, totalDI = 0, totalDO = 0, totalAV = 0;
-  let availAI = 0, availAO = 0, availDI = 0, availDO = 0;
-
+  // Field devices — aggregate across all controllers
+  const deviceTotals: Map<string, number> = new Map();
   for (const ctrl of controllers) {
+    const dup = ctrl.duplicates ?? 1;
     for (const v of ctrl.variables) {
       const io = ioTypeOf(v.qty, qtyList, v.ioOverride);
-      if (io === 'AI') totalAI++;
-      else if (io === 'AO') totalAO++;
-      else if (io === 'DI') totalDI++;
-      else if (io === 'DO') totalDO++;
-      else if (io === 'AV') totalAV++;
-    }
-
-    // Available IO from model + expansions
-    const model = controllerModels.find(m => m.id === ctrl.modelId);
-    if (model) {
-      let ai = model.io.ai, ao = model.io.ao, di = model.io.di, _do = model.io.do;
-      for (const exp of ctrl.expansions ?? []) {
-        const mod = expansionModules.find(m => m.id === exp.moduleId);
-        if (mod) {
-          ai += mod.io.ai * exp.quantity;
-          ao += mod.io.ao * exp.quantity;
-          di += mod.io.di * exp.quantity;
-          _do += mod.io.do * exp.quantity;
-        }
-      }
-      availAI += ai; availAO += ao; availDI += di; availDO += _do;
+      if (io === 'AV' || io === 'BV') continue;
+      const desc = deviceDesc(v, qtyList);
+      deviceTotals.set(desc, (deviceTotals.get(desc) ?? 0) + 1 * dup);
     }
   }
+  for (const [desc, count] of deviceTotals) {
+    rows.push([item++, desc, 'No', count]);
+  }
+  if (deviceTotals.size === 0) rows.push([item++, '(no field devices)', 'No', 0]);
 
-  const hasAvail = availAI + availAO + availDI + availDO > 0;
-  rows.push(['AI', 'Analogue Input',  totalAI, hasAvail ? availAI : '—']);
-  rows.push(['AO', 'Analogue Output', totalAO, hasAvail ? availAO : '—']);
-  rows.push(['DI', 'Digital Input',   totalDI, hasAvail ? availDI : '—']);
-  rows.push(['DO', 'Digital Output',  totalDO, hasAvail ? availDO : '—']);
-  rows.push(['AV', 'RS-485 / Network', totalAV, '—']);
-  rows.push(['', 'TOTAL', totalAI + totalAO + totalDI + totalDO + totalAV,
-    hasAvail ? availAI + availAO + availDI + availDO : '—']);
+  rows.push(['', '', '', '']);
 
-  rows.push(['', '']);
+  // IO totals summary at the bottom
+  rows.push(['', 'IO SUMMARY', '', '']);
+  rows.push(['', 'AI  Analogue Input',  '', 0]);
+  rows.push(['', 'AO  Analogue Output', '', 0]);
+  rows.push(['', 'DI  Digital Input',   '', 0]);
+  rows.push(['', 'DO  Digital Output',  '', 0]);
+  rows.push(['', 'AV  RS-485 / Network','', 0]);
 
-  // ─ Section D: Sensor / point counts per controller ────────────────────────
-  rows.push(['POINTS PER CONTROLLER', '', '', '', '']);
-  rows.push(['Controller', 'Site', 'Model', 'Points', 'AI', 'AO', 'DI', 'DO', 'AV']);
-
+  // Compute IO totals
+  let ai = 0, ao = 0, di = 0, doCount = 0, av = 0;
   for (const ctrl of controllers) {
-    const modelName = controllerModels.find(m => m.id === ctrl.modelId)?.name ?? '—';
-    let ai = 0, ao = 0, di = 0, _do = 0, av = 0;
+    const dup = ctrl.duplicates ?? 1;
     for (const v of ctrl.variables) {
       const io = ioTypeOf(v.qty, qtyList, v.ioOverride);
-      if (io === 'AI') ai++;
-      else if (io === 'AO') ao++;
-      else if (io === 'DI') di++;
-      else if (io === 'DO') _do++;
-      else if (io === 'AV') av++;
+      if (io === 'AI') ai += dup;
+      else if (io === 'AO') ao += dup;
+      else if (io === 'DI') di += dup;
+      else if (io === 'DO') doCount += dup;
+      else if (io === 'AV') av += dup;
     }
-    rows.push([ctrl.label, ctrl.siteName, modelName, ctrl.variables.length, ai, ao, di, _do, av]);
   }
+  // Fill IO rows (rows are at known relative positions from the push above)
+  const ioStart = rows.length - 5;
+  (rows[ioStart][3] as unknown) = ai;
+  (rows[ioStart + 1][3] as unknown) = ao;
+  (rows[ioStart + 2][3] as unknown) = di;
+  (rows[ioStart + 3][3] as unknown) = doCount;
+  (rows[ioStart + 4][3] as unknown) = av;
 
   const ws = XLSX.utils.aoa_to_sheet(rows);
   ws['!cols'] = [
-    { wch: 28 }, { wch: 22 }, { wch: 26 }, { wch: 10 },
-    { wch: 8 }, { wch: 8 }, { wch: 8 }, { wch: 8 }, { wch: 8 },
+    { wch: 10 }, { wch: 40 }, { wch: 8 }, { wch: 12 },
   ];
-
   return ws;
 }
 
@@ -210,10 +203,10 @@ export function exportProjectXlsx(
 ): void {
   const wb = XLSX.utils.book_new();
 
-  const ws1 = buildSheet1(controllers, controllerModels, qtyList, equipList, medList);
-  const ws2 = buildSheet2(controllers, controllerModels, expansionModules, qtyList);
+  const ws1 = buildSheet1(controllers, controllerModels, expansionModules, qtyList, equipList, medList);
+  const ws2 = buildSheet2(projectName, controllers, controllerModels, expansionModules, qtyList);
 
-  XLSX.utils.book_append_sheet(wb, ws1, 'Controllers & Points');
+  XLSX.utils.book_append_sheet(wb, ws1, 'BOQ per Controller');
   XLSX.utils.book_append_sheet(wb, ws2, 'Project Summary');
 
   const safeProject = projectName.replace(/[/\\?*[\]:]/g, '-') || 'BMSHub-Export';

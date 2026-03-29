@@ -1600,8 +1600,33 @@ export default function ControllerBuilderTab({
     );
   }
 
+  const activeControllers = controllers.filter(c => c.projectId === activeProjectId);
+  const activeProject = projects.find(p => p.id === activeProjectId);
+
   return (
-    <div className="flex gap-4 h-full" style={{ minHeight: 'calc(100vh - 100px)' }}>
+    <div className="flex flex-col gap-3 h-full" style={{ minHeight: 'calc(100vh - 100px)' }}>
+
+      {/* ── Top bar: project name + Export button ── */}
+      <div className="flex items-center justify-between bg-white rounded-xl border px-5 py-3"
+        style={{ borderColor: '#D3D1C7' }}>
+        <span className="font-semibold text-sm" style={{ color: '#2C2C2A' }}>
+          {activeProject?.name ?? 'Project'}
+          <span className="ml-2 font-normal text-xs" style={{ color: '#888780' }}>
+            {activeControllers.length} controller{activeControllers.length !== 1 ? 's' : ''}
+          </span>
+        </span>
+        {activeControllers.length > 0 && (
+          <button
+            onClick={handleExport}
+            className="text-sm px-4 py-1.5 rounded font-medium"
+            style={{ background: '#1D9E75', color: '#fff' }}
+          >
+            ↓ Export BOQ to Excel
+          </button>
+        )}
+      </div>
+
+      <div className="flex gap-4 flex-1">
       {/* Left panel */}
       <div
         className="flex-shrink-0 bg-white rounded-xl border p-4 flex flex-col gap-3"
@@ -1621,15 +1646,6 @@ export default function ControllerBuilderTab({
           onSelectProject={handleSelectProject}
           onAddProject={() => setShowNewProjectModal(true)}
         />
-        {controllers.filter(c => c.projectId === activeProjectId).length > 0 && (
-          <button
-            onClick={handleExport}
-            className="w-full text-sm py-2 rounded font-medium border"
-            style={{ borderColor: '#1D9E75', color: '#085041', background: '#E1F5EE' }}
-          >
-            ↓ Export to Excel
-          </button>
-        )}
       </div>
 
       {/* Right panel */}
@@ -1675,6 +1691,7 @@ export default function ControllerBuilderTab({
           onCancel={() => setShowNewProjectModal(false)}
         />
       )}
+      </div>{/* end flex gap-4 */}
     </div>
   );
 }

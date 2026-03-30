@@ -9,7 +9,7 @@ import {
   loadAssemblies, loadControllerModels, loadExpansionModules, loadProjects,
   saveEquip, saveMed, saveQty, saveMod, saveSemanticConfig, saveControllers,
   saveAssemblies, saveControllerModels, saveExpansionModules, saveProjects,
-  isFirstRun, needsRulesRefresh, getSeedVersion, setSeedVersion, CURRENT_SEED_VERSION,
+  isFirstRun, getSeedVersion, setSeedVersion, CURRENT_SEED_VERSION,
   exportAll, importAll,
 } from './storage';
 import {

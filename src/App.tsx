@@ -20,12 +20,14 @@ import DictionaryTab from './components/DictionaryTab';
 import AssembliesTab from './components/AssembliesTab';
 import ControllerBuilderTab from './components/ControllerBuilderTab';
 import ExportTab from './components/ExportTab';
+import WelcomeModal from './components/WelcomeModal';
 
 type Tab = 'dictionary' | 'assemblies' | 'builder' | 'export';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<Tab>('builder');
   const [loaded, setLoaded] = useState(false);
+  const [showWelcome, setShowWelcome] = useState(false);
 
   const [equip, setEquip] = useState<EquipEntry[]>([]);
   const [med, setMed] = useState<MedEntry[]>([]);
@@ -88,6 +90,7 @@ export default function App() {
         saveControllers([]);   setControllers([]);
         saveProjects([]);      setProjects([]);
         setSeedVersion(CURRENT_SEED_VERSION);
+        setShowWelcome(true);
       } else {
         setEquip(loadEquip());
         setMed(loadMed());
@@ -187,6 +190,7 @@ export default function App() {
 
   return (
     <div className="min-h-screen" style={{ background: '#F1EFE8' }}>
+      {showWelcome && <WelcomeModal onAccept={() => setShowWelcome(false)} />}
       {/* Header */}
       <header style={{ background: '#2C2C2A', position: 'sticky', top: 0, zIndex: 50 }} className="px-6 py-3 flex items-center gap-4">
         <div className="flex items-center gap-2">

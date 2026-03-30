@@ -26,7 +26,7 @@ import AboutTab from './components/AboutTab';
 type Tab = 'dictionary' | 'assemblies' | 'builder' | 'export' | 'about';
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState<Tab>('builder');
+  const [activeTab, setActiveTab] = useState<Tab>('about');
   const [loaded, setLoaded] = useState(false);
   const [showWelcome, setShowWelcome] = useState(false);
 
@@ -183,11 +183,11 @@ export default function App() {
   }, []);
 
   const tabs: { id: Tab; label: string }[] = [
-    { id: 'dictionary',  label: 'Dictionary' },
-    { id: 'assemblies',  label: 'Assemblies' },
-    { id: 'builder',     label: 'Controller Builder' },
-    { id: 'export',      label: 'Export' },
     { id: 'about',       label: 'About' },
+    { id: 'builder',     label: 'Controller Builder' },
+    { id: 'assemblies',  label: 'Assemblies' },
+    { id: 'dictionary',  label: 'Dictionary' },
+    { id: 'export',      label: 'Export' },
   ];
 
   return (

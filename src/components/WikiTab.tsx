@@ -134,9 +134,9 @@ export default function WikiTab() {
             <strong style={{ color: '#2C2C2A' }}>AV and BV points</strong> — Not every point is a wire.
             Setpoints, calculated values, and software alarms live inside the controller as
             <em> Analogue Values</em> (AV) or <em>Binary Values</em> (BV). Mark a point as
-            {' '}<Badge color="blue">AV</Badge> in the assembly and BMSHub will include it in your
-            simulator export but exclude it from the physical I/O count — because there's nothing to
-            wire to it.
+            {' '}<Badge color="blue">AV</Badge> or <Badge color="blue">BV</Badge> in the assembly
+            and BMSHub will include it in your simulator export but exclude it from the physical I/O
+            count — because there's nothing to wire to it.
           </p>
         </Section>
 
@@ -183,8 +183,9 @@ export default function WikiTab() {
             <span><Badge color="blue">DO</Badge> Digital Output — relays, contactors, enable signals</span>
           </div>
           <p>
-            <Badge color="blue">AV</Badge> RS-485 / network points and software values are
-            counted separately and never appear in the physical I/O total.
+            <Badge color="blue">AV</Badge> RS-485 / network points and <Badge color="blue">BV</Badge> binary
+            software values (e.g. software alarms, enable flags) are counted separately and never
+            appear in the physical I/O total.
           </p>
           <p>
             Once you assign a <strong style={{ color: '#2C2C2A' }}>controller model</strong>, BMSHub

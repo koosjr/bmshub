@@ -9,7 +9,7 @@ import {
   loadAssemblies, loadControllerModels, loadExpansionModules, loadProjects,
   saveEquip, saveMed, saveQty, saveMod, saveSemanticConfig, saveControllers,
   saveAssemblies, saveControllerModels, saveExpansionModules, saveProjects,
-  isFirstRun, needsRulesRefresh, setSeedVersion, CURRENT_SEED_VERSION,
+  isFirstRun, needsRulesRefresh, getSeedVersion, setSeedVersion, CURRENT_SEED_VERSION,
   exportAll, importAll,
 } from './storage';
 import {
@@ -81,8 +81,11 @@ export default function App() {
         saveExpansionModules(seedExpansionModules); setExpansionModules(seedExpansionModules);
       }
 
+      // Always fetch seed.json — it carries its own seed_version field
+      const seed = await fetchSeed();
+      const remoteVersion: number = seed ? ((seed.seed_version as number) ?? CURRENT_SEED_VERSION) : CURRENT_SEED_VERSION;
+
       if (isFirstRun()) {
-        const seed = await fetchSeed();
         if (seed) {
           applySeedPayload(seed);
         } else {
@@ -91,22 +94,21 @@ export default function App() {
         // Controllers and projects always start empty on first run
         saveControllers([]);   setControllers([]);
         saveProjects([]);      setProjects([]);
-        setSeedVersion(CURRENT_SEED_VERSION);
+        setSeedVersion(remoteVersion);
         setShowWelcome(true);
       } else {
         setEquip(loadEquip());
         setMed(loadMed());
         setQty(loadQty());
         setMod(loadMod());
-        if (needsRulesRefresh()) {
-          // Re-apply seed dict + config + assemblies + hardware, preserving user controllers/projects
-          const seed = await fetchSeed();
+        // Refresh if seed.json has a higher version than what's stored locally
+        if (getSeedVersion() < remoteVersion) {
           if (seed) {
             applySeedPayload(seed);
           } else {
             applyHardcodedSeed();
           }
-          setSeedVersion(CURRENT_SEED_VERSION);
+          setSeedVersion(remoteVersion);
         } else {
           setSemanticConfig(loadSemanticConfig() ?? seedSemanticConfig);
           setAssemblies(loadAssemblies());

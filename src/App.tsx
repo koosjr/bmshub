@@ -22,8 +22,9 @@ import ControllerBuilderTab from './components/ControllerBuilderTab';
 import ExportTab from './components/ExportTab';
 import WelcomeModal from './components/WelcomeModal';
 import AboutTab from './components/AboutTab';
+import WikiTab from './components/WikiTab';
 
-type Tab = 'dictionary' | 'assemblies' | 'builder' | 'export' | 'about';
+type Tab = 'dictionary' | 'assemblies' | 'builder' | 'export' | 'about' | 'wiki';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<Tab>('about');
@@ -188,6 +189,7 @@ export default function App() {
     { id: 'assemblies',  label: 'Assemblies' },
     { id: 'dictionary',  label: 'Dictionary' },
     { id: 'export',      label: 'Export' },
+    { id: 'wiki',        label: 'Help' },
   ];
 
   return (
@@ -289,7 +291,8 @@ export default function App() {
             onExportForSimulator={handleExportForSimulator}
           />
         )}
-        {loaded && activeTab === 'about' && <AboutTab />}
+        {loaded && activeTab === 'about' && <AboutTab onNavigate={setActiveTab} />}
+        {loaded && activeTab === 'wiki'  && <WikiTab />}
       </main>
     </div>
   );

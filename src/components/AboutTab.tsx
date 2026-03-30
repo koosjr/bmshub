@@ -1,4 +1,4 @@
-export default function AboutTab() {
+export default function AboutTab({ onNavigate }: { onNavigate?: (tab: 'about' | 'builder' | 'assemblies' | 'dictionary' | 'export' | 'wiki') => void }) {
   return (
     <div className="max-w-2xl mx-auto px-4 py-10 space-y-8">
 
@@ -59,6 +59,22 @@ export default function AboutTab() {
           className="text-sm underline" style={{ color: '#085041' }}>
           uyskoos@gmail.com
         </a>
+      </div>
+
+      {/* CTA buttons */}
+      <div className="flex flex-wrap gap-3 justify-center">
+        <button
+          onClick={() => onNavigate?.('builder')}
+          className="px-6 py-3 rounded-lg font-semibold text-sm text-white"
+          style={{ background: '#1D9E75' }}>
+          Start Building →
+        </button>
+        <button
+          onClick={() => onNavigate?.('wiki')}
+          className="px-6 py-3 rounded-lg font-semibold text-sm border"
+          style={{ borderColor: '#D3D1C7', color: '#2C2C2A', background: '#fff' }}>
+          How it works
+        </button>
       </div>
 
       {/* Open source */}

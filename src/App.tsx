@@ -21,8 +21,9 @@ import AssembliesTab from './components/AssembliesTab';
 import ControllerBuilderTab from './components/ControllerBuilderTab';
 import ExportTab from './components/ExportTab';
 import WelcomeModal from './components/WelcomeModal';
+import AboutTab from './components/AboutTab';
 
-type Tab = 'dictionary' | 'assemblies' | 'builder' | 'export';
+type Tab = 'dictionary' | 'assemblies' | 'builder' | 'export' | 'about';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<Tab>('builder');
@@ -186,6 +187,7 @@ export default function App() {
     { id: 'assemblies',  label: 'Assemblies' },
     { id: 'builder',     label: 'Controller Builder' },
     { id: 'export',      label: 'Export' },
+    { id: 'about',       label: 'About' },
   ];
 
   return (
@@ -287,6 +289,7 @@ export default function App() {
             onExportForSimulator={handleExportForSimulator}
           />
         )}
+        {loaded && activeTab === 'about' && <AboutTab />}
       </main>
     </div>
   );

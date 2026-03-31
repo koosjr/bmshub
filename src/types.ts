@@ -114,6 +114,7 @@ export interface Controller {
   id: string;
   siteName: string;
   label: string;
+  profileName?: string;                // TB device profile — same for all devices of same type
   variables: ControllerVariable[];
   createdAt: string;
   updatedAt: string;

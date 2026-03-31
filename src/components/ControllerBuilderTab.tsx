@@ -1316,7 +1316,7 @@ function ControllerDetail({
   onUpdate: (c: Controller) => void;
 }) {
   const [editingMeta, setEditingMeta] = useState(false);
-  const [metaForm, setMetaForm] = useState({ siteName: controller.siteName, label: controller.label, duplicates: controller.duplicates ?? 1 });
+  const [metaForm, setMetaForm] = useState({ siteName: controller.siteName, label: controller.label, profileName: controller.profileName ?? '', duplicates: controller.duplicates ?? 1 });
   const [duplicateName, setDuplicateName] = useState<string | null>(null);
   const [showAssemblyModal, setShowAssemblyModal] = useState(false);
   const [applyResult, setApplyResult] = useState<{ added: number; skipped: { name: string; reason: string }[] } | null>(null);
@@ -1324,7 +1324,7 @@ function ControllerDetail({
   const existingNames = controller.variables.map(v => v.name);
 
   function saveMeta() {
-    onUpdate({ ...controller, siteName: metaForm.siteName, label: metaForm.label, duplicates: metaForm.duplicates, updatedAt: new Date().toISOString() });
+    onUpdate({ ...controller, siteName: metaForm.siteName, label: metaForm.label, profileName: metaForm.profileName || undefined, duplicates: metaForm.duplicates, updatedAt: new Date().toISOString() });
     setEditingMeta(false);
   }
 
@@ -1381,6 +1381,11 @@ function ControllerDetail({
                 value={metaForm.label} onChange={e => setMetaForm(f => ({ ...f, label: e.target.value }))} />
             </div>
             <div>
+              <label className="text-xs font-medium block mb-1" style={{ color: '#888780' }}>Profile Name</label>
+              <input className="border rounded px-2 py-1 text-sm" style={{ borderColor: '#D3D1C7' }} placeholder="e.g. DSE GenComm"
+                value={metaForm.profileName} onChange={e => setMetaForm(f => ({ ...f, profileName: e.target.value }))} />
+            </div>
+            <div>
               <label className="text-xs font-medium block mb-1" style={{ color: '#888780' }}>Duplicates</label>
               <input type="number" min={1} className="border rounded px-2 py-1 text-sm w-20 font-mono" style={{ borderColor: '#D3D1C7' }}
                 value={metaForm.duplicates} onChange={e => setMetaForm(f => ({ ...f, duplicates: Math.max(1, parseInt(e.target.value) || 1) }))} />
@@ -1392,13 +1397,14 @@ function ControllerDetail({
           <div className="flex-1">
             <p className="text-xs font-semibold" style={{ color: '#888780' }}>{controller.siteName}</p>
             <p className="text-lg font-bold" style={{ color: '#2C2C2A' }}>{controller.label}</p>
+            {controller.profileName && <p className="text-xs" style={{ color: '#1D9E75' }}>Profile: {controller.profileName}</p>}
             <p className="text-xs mt-1" style={{ color: '#888780' }}>
               Updated {new Date(controller.updatedAt).toLocaleDateString()}
             </p>
           </div>
         )}
         {!editingMeta && (
-          <button onClick={() => { setMetaForm({ siteName: controller.siteName, label: controller.label, duplicates: controller.duplicates ?? 1 }); setEditingMeta(true); }}
+          <button onClick={() => { setMetaForm({ siteName: controller.siteName, label: controller.label, profileName: controller.profileName ?? '', duplicates: controller.duplicates ?? 1 }); setEditingMeta(true); }}
             className="text-xs px-2 py-1 rounded border ml-4" style={{ borderColor: '#D3D1C7', color: '#888780' }}>
             Edit
           </button>

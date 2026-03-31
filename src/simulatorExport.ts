@@ -10,6 +10,7 @@ export interface SimExportPoint {
 export interface SimExportDevice {
   id: string;
   name: string;
+  profile_name: string;            // TB device profile — same for all devices of same type
   description: string;
   modbus_address_offset: number;   // 0 = no offset; -1 = Eliwell 1-based docs
   points: SimExportPoint[];
@@ -62,6 +63,7 @@ export function exportForSimulator(
     devices.push({
       id: ctrl.id,
       name: deviceName,
+      profile_name: ctrl.profileName || ctrl.label,  // fallback to label if not set
       description: ctrl.label,
       modbus_address_offset: modbusOffset,
       points,

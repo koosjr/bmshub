@@ -640,22 +640,19 @@ function SemanticConfigSection({ cfg, equip, med, qty, mod, onUpdate }: {
     onUpdate({ ...cfg, qtyMods: next });
   }
 
-  // Merged rows — every dict item appears, even if absent from config (defaults to [])
-  // Sorted alphabetically by code at display time; stored order is never modified
-  const equipRows = [
-    ...[...equip].sort((a, b) => a.code.localeCompare(b.code)).map(e => e.code),
-    ...Object.keys(cfg.equipMeds).filter(k => !equip.find(e => e.code === k)).sort(),
-  ].map(k => [k, cfg.equipMeds[k] ?? []] as [string, string[]]);
+  // Merged rows — every dict item always has a row (defaults to [] if not in config).
+  // Orphaned config keys (deleted from dict) are excluded — cascade delete handles cleanup.
+  const equipRows = [...equip]
+    .sort((a, b) => a.code.localeCompare(b.code))
+    .map(e => [e.code, cfg.equipMeds[e.code] ?? []] as [string, string[]]);
 
-  const medRows = [
-    ...[...med].sort((a, b) => a.code.localeCompare(b.code)).map(m => m.code),
-    ...Object.keys(cfg.medQtys).filter(k => !med.find(m => m.code === k)).sort(),
-  ].map(k => [k, cfg.medQtys[k] ?? []] as [string, string[]]);
+  const medRows = [...med]
+    .sort((a, b) => a.code.localeCompare(b.code))
+    .map(m => [m.code, cfg.medQtys[m.code] ?? []] as [string, string[]]);
 
-  const qtyRows = [
-    ...[...qty].sort((a, b) => a.code.localeCompare(b.code)).map(q => q.code),
-    ...Object.keys(cfg.qtyMods).filter(k => !qty.find(q => q.code === k)).sort(),
-  ].map(k => [k, cfg.qtyMods[k] ?? []] as [string, string[]]);
+  const qtyRows = [...qty]
+    .sort((a, b) => a.code.localeCompare(b.code))
+    .map(q => [q.code, cfg.qtyMods[q.code] ?? []] as [string, string[]]);
 
   const tabStyle = (active: boolean) => ({
     padding: '6px 14px',

@@ -255,31 +255,30 @@ body { padding: 8px; }
 }
 .elec-supplementary span { color: var(--t1); }
 
-/* ── DIAGNOSTICS GROUPED GRID ────────────────────────────────── */
-.diag-section {
-  display: flex;
-  flex-direction: column;
+/* ── DIAGNOSTICS — 6-COLUMN V-ENGINE LAYOUT ─────────────────── */
+.diag-columns {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
   gap: 10px;
 }
-.diag-group {
+.diag-col {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 5px;
 }
-.diag-group__title {
+.diag-col__title {
   font-size: 11px;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.04em;
   color: var(--t3);
   padding-bottom: 3px;
   border-bottom: 1px solid var(--border);
+  margin-bottom: 1px;
+  white-space: nowrap;
 }
-.diag-group__cards {
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 6px;
-}
+.diag-col--bank .diag-col__title { color: var(--eng-text); }
+
 .diag-card {
   background: var(--panel-alt);
   border-radius: 5px;
@@ -309,10 +308,10 @@ body { padding: 8px; }
 .diag-card--never .diag-card__value { color: var(--t4); }
 
 @media (max-width: 900px) {
-  .diag-group__cards { grid-template-columns: repeat(3, 1fr); }
+  .diag-columns { grid-template-columns: repeat(3, 1fr); }
 }
 @media (max-width: 600px) {
-  .diag-group__cards { grid-template-columns: repeat(2, 1fr); }
+  .diag-columns { grid-template-columns: repeat(2, 1fr); }
 }
 
 /* ── ACCUMULATORS ───────────────────────────────────────────── */
@@ -574,10 +573,10 @@ body { padding: 8px; }
         </div>
       </div>
 
-      <!-- DIAGNOSTICS TAB — Grouped 6-Column Grid -->
+      <!-- DIAGNOSTICS TAB — 6-Column V-Engine -->
       <div class="tab-pane" id="tab-diagnostics">
-        <div class="diag-section" id="diag-section">
-          <!-- Populated by JS -->
+        <div class="diag-columns" id="diag-columns">
+          <!-- Populated by JS: Bank1 | 4 common | Bank2 -->
         </div>
       </div>
 
@@ -842,50 +841,52 @@ const ALARM_NAMES = [
 // NOTE: SCALE_MAP applies Modbus-to-engineering-unit conversion at ingest time.
 // The 'scale' property here is an ADDITIONAL display-time multiplier (typically 1).
 // Only set scale != 1 for fields NOT already in SCALE_MAP that need unit conversion.
-// Diagnostics grouped in 6-column rows. Bank 1 & 2 side by side per row.
-const DIAG_GROUPS = [
-  { title: 'Turbo & Intake', fields: [
-    { key: 'turboPress1',        label: 'Turbo Press 1',    unit: 'kPa',  scale: 1 },
-    { key: 'inletManifoldTemp1', label: 'Manifold Temp 1',  unit: '°C',   scale: 1 },
-    { key: 'exhaustTemp1',       label: 'Exhaust Temp 1',   unit: '°C',   scale: 1 },
-    { key: 'turboPress2',        label: 'Turbo Press 2',    unit: 'kPa',  scale: 1 },
-    { key: 'inletManifoldTemp2', label: 'Manifold Temp 2',  unit: '°C',   scale: 1 },
-    { key: 'exhaustTemp2',       label: 'Exhaust Temp 2',   unit: '°C',   scale: 1 },
+// 6 columns: Bank 1 | 4 common groups | Bank 2
+const DIAG_COLUMNS = [
+  { title: 'Bank 1 (Left)', bank: true, fields: [
+    { key: 'turboPress1',        label: 'Turbo Press',     unit: 'kPa',  scale: 1 },
+    { key: 'inletManifoldTemp1', label: 'Manifold Temp',   unit: '°C',   scale: 1 },
+    { key: 'exhaustTemp1',       label: 'Exhaust Temp',    unit: '°C',   scale: 1 },
+    { key: 'injectorRail1',      label: 'Injector Rail',   unit: 'MPa',  scale: 0.01 },
+    { key: 'coolantPress1',      label: 'Coolant Press',   unit: 'kPa',  scale: 1 },
+    { key: 'fuelPress1',         label: 'Fuel Press',      unit: 'kPa',  scale: 1 },
   ]},
-  { title: 'Pressures & Fuel', fields: [
-    { key: 'coolantPress1',  label: 'Coolant Press 1',  unit: 'kPa',  scale: 1 },
-    { key: 'fuelPress1',     label: 'Fuel Press 1',     unit: 'kPa',  scale: 1 },
-    { key: 'injectorRail1',  label: 'Injector Rail 1',  unit: 'MPa',  scale: 0.01 },
-    { key: 'coolantPress2',  label: 'Coolant Press 2',  unit: 'kPa',  scale: 1 },
-    { key: 'fuelPress2',     label: 'Fuel Press 2',     unit: 'kPa',  scale: 1 },
-    { key: 'injectorRail2',  label: 'Injector Rail 2',  unit: 'MPa',  scale: 0.01 },
-  ]},
-  { title: 'Atmosphere & Temperatures', fields: [
-    { key: 'atmosPressure',   label: 'Atmos Pressure',  unit: 'kPa',  scale: 1 },
+  { title: 'Atmosphere', fields: [
+    { key: 'atmosPressure',   label: 'Atmos Press',     unit: 'kPa',  scale: 1 },
     { key: 'airInletPress',   label: 'Air Inlet Press', unit: 'kPa',  scale: 1 },
     { key: 'intercoolerTemp', label: 'Intercooler',     unit: '°C',   scale: 1 },
     { key: 'fuelTemp',        label: 'Fuel Temp',       unit: '°C',   scale: 1 },
-    { key: 'turboOilTemp',    label: 'Turbo Oil Temp',  unit: '°C',   scale: 1 },
-    { key: 'ecuTemp',         label: 'ECU Temp',        unit: '°C',   scale: 1 },
   ]},
   { title: 'Fluids & Levels', fields: [
-    { key: 'oilLevel',       label: 'Oil Level',        unit: '%',    scale: 1 },
-    { key: 'coolantLevel',   label: 'Coolant Level',    unit: '%',    scale: 1 },
-    { key: 'crankCasePress', label: 'Crank Case',       unit: 'kPa',  scale: 0.01 },
-    { key: 'fanSpeed',       label: 'Fan Speed',        unit: 'RPM',  scale: 1 },
-    { key: 'accelPosition',  label: 'Accel Position',   unit: '%',    scale: 1 },
+    { key: 'oilLevel',        label: 'Oil Level',       unit: '%',    scale: 1 },
+    { key: 'coolantLevel',    label: 'Coolant Level',   unit: '%',    scale: 1 },
+    { key: 'crankCasePress',  label: 'Crank Case',      unit: 'kPa',  scale: 0.01 },
+    { key: 'turboOilTemp',    label: 'Turbo Oil Temp',  unit: '°C',   scale: 1 },
   ]},
-  { title: 'Electrical & ECU', fields: [
-    { key: 'dcVoltage',      label: 'DC Voltage',       unit: 'V',    scale: 1 },
-    { key: 'backupSupplyV',  label: 'Backup Supply',    unit: 'V',    scale: 1 },
-    { key: 'chargerMode',    label: 'Charger Mode',     unit: '',     scale: 1, enum: BATTERY_CHARGER_MODE },
-    { key: 'ecuRatedSpeed',  label: 'Rated Speed',      unit: 'RPM',  scale: 1 },
-    { key: 'ecuIdleSpeed',   label: 'Idle Speed',       unit: 'RPM',  scale: 1 },
+  { title: 'ECU & Speed', fields: [
+    { key: 'ecuTemp',         label: 'ECU Temp',        unit: '°C',   scale: 1 },
+    { key: 'ecuRatedSpeed',   label: 'Rated Speed',     unit: 'RPM',  scale: 1 },
+    { key: 'ecuIdleSpeed',    label: 'Idle Speed',      unit: 'RPM',  scale: 1 },
+    { key: 'accelPosition',   label: 'Accel Position',  unit: '%',    scale: 1 },
+  ]},
+  { title: 'Electrical', fields: [
+    { key: 'dcVoltage',       label: 'DC Voltage',      unit: 'V',    scale: 1 },
+    { key: 'backupSupplyV',   label: 'Backup Supply',   unit: 'V',    scale: 1 },
+    { key: 'chargerMode',     label: 'Charger Mode',    unit: '',     scale: 1, enum: BATTERY_CHARGER_MODE },
+    { key: 'fanSpeed',        label: 'Fan Speed',       unit: 'RPM',  scale: 1 },
+  ]},
+  { title: 'Bank 2 (Right)', bank: true, fields: [
+    { key: 'turboPress2',        label: 'Turbo Press',     unit: 'kPa',  scale: 1 },
+    { key: 'inletManifoldTemp2', label: 'Manifold Temp',   unit: '°C',   scale: 1 },
+    { key: 'exhaustTemp2',       label: 'Exhaust Temp',    unit: '°C',   scale: 1 },
+    { key: 'injectorRail2',      label: 'Injector Rail',   unit: 'MPa',  scale: 0.01 },
+    { key: 'coolantPress2',      label: 'Coolant Press',   unit: 'kPa',  scale: 1 },
+    { key: 'fuelPress2',         label: 'Fuel Press',      unit: 'kPa',  scale: 1 },
   ]},
 ];
 
 // Flat list of all diag fields for updateDiagnosticsTab iteration
-const DIAG_FIELDS = DIAG_GROUPS.flatMap(g => g.fields);
+const DIAG_FIELDS = DIAG_COLUMNS.flatMap(g => g.fields);
 
 // ── ACCUMULATOR FIELD DEFINITIONS ──────────────────────────────
 // NOTE: SCALE_MAP applies Modbus-to-engineering-unit conversion at ingest time.
@@ -977,15 +978,13 @@ document.querySelectorAll('.tabs__btn').forEach(btn => {
 // ── BUILD DIAGNOSTICS GRID ─────────────────────────────────────
 
 function buildDiagGrid() {
-  const section = document.getElementById('diag-section');
-  section.innerHTML = '';
-  DIAG_GROUPS.forEach(group => {
-    const grp = document.createElement('div');
-    grp.className = 'diag-group';
-    grp.innerHTML = `<div class="diag-group__title">${group.title}</div>`;
-    const cards = document.createElement('div');
-    cards.className = 'diag-group__cards';
-    group.fields.forEach(f => {
+  const container = document.getElementById('diag-columns');
+  container.innerHTML = '';
+  DIAG_COLUMNS.forEach(col => {
+    const colEl = document.createElement('div');
+    colEl.className = 'diag-col' + (col.bank ? ' diag-col--bank' : '');
+    colEl.innerHTML = `<div class="diag-col__title">${col.title}</div>`;
+    col.fields.forEach(f => {
       const card = document.createElement('div');
       card.className = 'diag-card';
       card.id = 'diag-' + f.key;
@@ -993,10 +992,9 @@ function buildDiagGrid() {
         <div class="diag-card__label">${f.label}</div>
         <div class="diag-card__value">-- <span class="diag-card__unit">${f.unit}</span></div>
       `;
-      cards.appendChild(card);
+      colEl.appendChild(card);
     });
-    grp.appendChild(cards);
-    section.appendChild(grp);
+    container.appendChild(colEl);
   });
 }
 

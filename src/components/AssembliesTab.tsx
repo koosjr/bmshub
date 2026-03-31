@@ -687,7 +687,7 @@ export default function AssembliesTab({
                 </tr>
               </thead>
               <tbody>
-                {assemblies.map(a => {
+                {[...assemblies].sort((a, b) => a.name.localeCompare(b.name)).map(a => {
                   const equipEntry = equip.find(e => e.code === a.equipCode);
                   return (
                     <tr key={a.id} className="border-b last:border-b-0 hover:bg-gray-50 transition-colors" style={{ borderColor: '#F1EFE8' }}>

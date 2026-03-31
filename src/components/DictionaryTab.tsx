@@ -177,7 +177,7 @@ function EquipSection({ equip, controllers, onUpdate }: {
           </tr>
         </thead>
         <tbody>
-          {equip.map(e => {
+          {[...equip].sort((a, b) => a.code.localeCompare(b.code)).map(e => {
             const usage = getEquipUsage(e.code, controllers);
             return (
               <tr key={e.id} className="border-t" style={{ borderColor: '#F1EFE8' }}>
@@ -312,7 +312,7 @@ function MedSection({ med, controllers, onUpdate }: {
           </tr>
         </thead>
         <tbody>
-          {med.map(e => {
+          {[...med].sort((a, b) => a.code.localeCompare(b.code)).map(e => {
             const usage = getMedUsage(e.code, controllers);
             return (
               <tr key={e.id} className="border-t" style={{ borderColor: '#F1EFE8' }}>
@@ -411,7 +411,7 @@ function QtySection({ qty, controllers, onUpdate }: {
           </tr>
         </thead>
         <tbody>
-          {qty.map(e => {
+          {[...qty].sort((a, b) => a.code.localeCompare(b.code)).map(e => {
             const usage = getQtyUsage(e.code, controllers);
             return (
               <tr key={e.id} className="border-t" style={{ borderColor: '#F1EFE8' }}>
@@ -520,7 +520,7 @@ function ModSection({ mod, controllers, onUpdate }: {
           </tr>
         </thead>
         <tbody>
-          {mod.map(e => {
+          {[...mod].sort((a, b) => a.code.localeCompare(b.code)).map(e => {
             const usage = getModUsage(e.code, controllers);
             return (
               <tr key={e.id} className="border-t" style={{ borderColor: '#F1EFE8' }}>
@@ -607,19 +607,20 @@ function SemanticConfigSection({ cfg, equip, med, qty, mod, onUpdate }: {
   }
 
   // Merged rows — every dict item appears, even if absent from config (defaults to [])
+  // Sorted alphabetically by code at display time; stored order is never modified
   const equipRows = [
-    ...equip.map(e => e.code),
-    ...Object.keys(cfg.equipMeds).filter(k => !equip.find(e => e.code === k)),
+    ...[...equip].sort((a, b) => a.code.localeCompare(b.code)).map(e => e.code),
+    ...Object.keys(cfg.equipMeds).filter(k => !equip.find(e => e.code === k)).sort(),
   ].map(k => [k, cfg.equipMeds[k] ?? []] as [string, string[]]);
 
   const medRows = [
-    ...med.map(m => m.code),
-    ...Object.keys(cfg.medQtys).filter(k => !med.find(m => m.code === k)),
+    ...[...med].sort((a, b) => a.code.localeCompare(b.code)).map(m => m.code),
+    ...Object.keys(cfg.medQtys).filter(k => !med.find(m => m.code === k)).sort(),
   ].map(k => [k, cfg.medQtys[k] ?? []] as [string, string[]]);
 
   const qtyRows = [
-    ...qty.map(q => q.code),
-    ...Object.keys(cfg.qtyMods).filter(k => !qty.find(q => q.code === k)),
+    ...[...qty].sort((a, b) => a.code.localeCompare(b.code)).map(q => q.code),
+    ...Object.keys(cfg.qtyMods).filter(k => !qty.find(q => q.code === k)).sort(),
   ].map(k => [k, cfg.qtyMods[k] ?? []] as [string, string[]]);
 
   const tabStyle = (active: boolean) => ({

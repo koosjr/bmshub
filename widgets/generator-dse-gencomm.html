@@ -809,6 +809,9 @@ const ALARM_NAMES = [
 ];
 
 // ── DIAGNOSTICS FIELD DEFINITIONS ──────────────────────────────
+// NOTE: SCALE_MAP applies Modbus-to-engineering-unit conversion at ingest time.
+// The 'scale' property here is an ADDITIONAL display-time multiplier (typically 1).
+// Only set scale != 1 for fields NOT already in SCALE_MAP that need unit conversion.
 const DIAG_FIELDS = [
   { key: 'coolantPress1',      label: 'Coolant Press 1',     unit: 'kPa',  scale: 1 },
   { key: 'coolantPress2',      label: 'Coolant Press 2',     unit: 'kPa',  scale: 1 },
@@ -841,6 +844,9 @@ const DIAG_FIELDS = [
 ];
 
 // ── ACCUMULATOR FIELD DEFINITIONS ──────────────────────────────
+// NOTE: SCALE_MAP applies Modbus-to-engineering-unit conversion at ingest time.
+// The 'scale' property here is an ADDITIONAL display-time multiplier (typically 1).
+// Only set scale != 1 for fields NOT already in SCALE_MAP that need unit conversion.
 const ACCUM_FIELDS = [
   { key: 'genPosKwh',  label: 'Gen +kWh',         unit: 'kWh',   scale: 1 },
   { key: 'genNegKwh',  label: 'Gen -kWh',         unit: 'kWh',   scale: 1 },
@@ -852,6 +858,8 @@ const ACCUM_FIELDS = [
   { key: '_lifetimeSFC', label: 'Lifetime SFC',    unit: 'L/kWh', scale: 1, derived: true },
 ];
 
+
+const IN_THINGSBOARD = typeof self !== 'undefined' && self.ctx != null;
 
 // ── STATE ──────────────────────────────────────────────────────
 const D = {};   // Latest values (scaled)
@@ -975,6 +983,7 @@ function decodeAlarms() {
         severity: sev.label,
         color: sev.color,
         code: code,
+        ts: TS['alarmReg' + reg] || null,
       });
     }
   }
@@ -1017,7 +1026,7 @@ function updateAlarmBar() {
 
   rowsEl.innerHTML = displayAlarms.map(a => `
     <div class="alarm-bar__row">
-      <span class="alarm-bar__col-time">${new Date().toLocaleString()}</span>
+      <span class="alarm-bar__col-time">${a.ts ? new Date(a.ts).toLocaleString() : '--'}</span>
       <span class="alarm-bar__col-severity" style="color:${a.color}">${a.severity}</span>
       <span class="alarm-bar__col-name">${a.name}</span>
       <span class="alarm-bar__col-state" style="color:${a.code === 9 ? 'var(--sev-inact)' : a.color}">${a.code === 9 ? 'Inactive' : 'Active'}</span>
@@ -1077,6 +1086,18 @@ function updateFuelPanel() {
     specific = D.fuelConsumption / (D.genTotalVA / 1000);
   }
   setValCell('vc-fuel-specific', 'fuelConsumption', specific, 'L/h/kVA', 3);
+
+  // Apply worst-case staleness for derived value
+  const el = document.getElementById('vc-fuel-specific');
+  if (el) {
+    const s1 = getStaleness('fuelConsumption');
+    const s2 = getStaleness('genTotalVA');
+    const worst = (s1 === 'never' || s2 === 'never') ? 'never' :
+                  (s1 === 'stale' || s2 === 'stale') ? 'stale' : 'live';
+    el.classList.remove('val-cell--stale', 'val-cell--never');
+    if (worst === 'stale') el.classList.add('val-cell--stale');
+    if (worst === 'never') el.classList.add('val-cell--never');
+  }
 }
 
 function updateMainsPanel() {
@@ -1240,10 +1261,9 @@ function processDataUpdate(data) {
 }
 
 // ThingsBoard lifecycle hooks (only active when running inside TB)
-if (typeof self !== 'undefined' && self.ctx) {
+if (IN_THINGSBOARD) {
   self.onInit = function() {
-    buildDiagGrid();
-    buildAccumGrid();
+    // Grids already built unconditionally at script load time
   };
   self.onDataUpdated = function() {
     processDataUpdate(self.ctx.data);
@@ -1306,7 +1326,7 @@ buildDiagGrid();
 buildAccumGrid();
 
 // If not inside ThingsBoard, start demo mode
-if (typeof self === 'undefined' || !self.ctx) {
+if (!IN_THINGSBOARD) {
   loadDemoData();
 }
 

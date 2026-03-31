@@ -64,17 +64,17 @@ Primary focus panel. Largest visual zone.
 
 | Field                  | Source                    | Unit  | Scale | Display Size |
 |------------------------|---------------------------|-------|-------|--------------|
-| Engine Speed           | Page 4, Offset 6          | RPM   | 1     | Large (18px) |
-| Generator Frequency    | Page 4, Offset 7          | Hz    | ×0.1  | Large        |
-| Generator Total Watts  | Page 6, Offset 0          | W     | 1     | Large (→kW)  |
-| Oil Pressure           | Page 4, Offset 0          | kPa   | 1     | Medium (14px)|
-| Coolant Temperature    | Page 4, Offset 1          | °C    | 1     | Medium       |
-| Oil Temperature        | Page 4, Offset 2          | °C    | 1     | Medium       |
+| Generator Frequency    | Page 4, Offset 7          | Hz    | ×0.1  | Large (18px) |
+| Coolant Temperature    | Page 4, Offset 1          | °C    | 1     | Large        |
+| Oil Pressure           | Page 4, Offset 0          | kPa   | 1     | Large        |
+| Engine Speed           | Page 4, Offset 6          | RPM   | 1     | Medium (14px)|
 | Engine Battery Voltage | Page 4, Offset 5          | V     | ×0.1  | Medium       |
+| Generator Total Watts  | Page 6, Offset 0          | W     | 1     | Medium (→kW) |
+| Oil Temperature        | Page 4, Offset 2          | °C    | 1     | Medium       |
 | Charge Alt Voltage     | Page 4, Offset 4          | V     | ×0.1  | Medium       |
 | Percentage Load        | Page 5, Offset 74         | %     | 1     | Medium       |
 
-Layout: 3×3 grid within the panel. Top row (RPM, Freq, Total kW) uses larger font for prominence.
+Layout: 3×3 grid within the panel. Top row (Hz, Coolant Temp, Oil Pressure) uses larger font — these are the critical engine health indicators. Second tier (RPM, Battery, kW, etc.) in medium font.
 
 ### 3. Fuel Panel (top-right, ~50% width, top half)
 
@@ -83,7 +83,7 @@ Layout: 3×3 grid within the panel. Top row (RPM, Freq, Total kW) uses larger fo
 | Fuel Level         | Page 4, Offset 3      | %      | 1     | 0-130% range                             |
 | Total Fuel Used    | Page 7, Offset 34     | Litres | 1     | UINT32 accumulator                       |
 | Fuel Consumption   | Page 5, Offset 10     | L/h    | ×0.01 | UINT32                                   |
-| Specific Consump.  | *Calculated*          | L/kWh  | —     | Instantaneous: Consumption(L/h) / (Total_kW/1000). Shows current efficiency. |
+| Specific Consump.  | *Calculated*          | L/h/kVA | —    | Instantaneous: Fuel_Consumption(L/h) / Generator_Total_VA(kVA). Live efficiency reading. |
 
 4-column layout. Specific consumption is a derived value computed in the widget JS.
 

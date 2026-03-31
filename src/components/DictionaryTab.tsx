@@ -716,13 +716,15 @@ function SemanticConfigSection({ cfg, equip, med, qty, mod, onUpdate }: {
         </td>
         <td className="py-2 pr-4 align-top text-xs" style={{ color: '#888780', whiteSpace: 'nowrap' }}>{keyLabel}</td>
         <td className="py-1.5 align-top">
-          {values.map(v => (
-            <span key={v} title={labelFn(v)}
-              className="inline-block font-mono text-xs px-1.5 py-0.5 rounded mr-1 mb-1"
-              style={{ background: v === '' ? '#F1EFE8' : '#E1F5EE', color: v === '' ? '#888780' : '#085041', border: '1px solid', borderColor: v === '' ? '#D3D1C7' : '#A8D5C4' }}>
-              {v === '' ? '∅' : v}
-            </span>
-          ))}
+          {[...values]
+            .sort((a, b) => a === '' ? -1 : b === '' ? 1 : a.localeCompare(b))
+            .map(v => (
+              <span key={v} title={labelFn(v)}
+                className="inline-block font-mono text-xs px-1.5 py-0.5 rounded mr-1 mb-1"
+                style={{ background: v === '' ? '#F1EFE8' : '#E1F5EE', color: v === '' ? '#888780' : '#085041', border: '1px solid', borderColor: v === '' ? '#D3D1C7' : '#A8D5C4' }}>
+                {v === '' ? '∅' : v}
+              </span>
+            ))}
         </td>
         <td className="py-2 pl-2 align-top">
           <button onClick={onEdit}

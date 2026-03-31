@@ -314,33 +314,57 @@ body { padding: 8px; }
   .diag-columns { grid-template-columns: repeat(2, 1fr); }
 }
 
-/* ── ACCUMULATORS ───────────────────────────────────────────── */
-.accum-grid {
+/* ── ACCUMULATORS — 2-column split ──────────────────────────── */
+.accum-layout {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  gap: 10px;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.accum-col {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.accum-col__title {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--t3);
+  padding-bottom: 3px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 2px;
+}
+.accum-col--gen .accum-col__title { color: var(--elec-text); }
+.accum-col__cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
 }
 .accum-card {
   background: var(--panel-alt);
   border-radius: 6px;
-  padding: 12px;
+  padding: 10px;
   border: 1px solid var(--border);
 }
 .accum-card__label {
   color: var(--t4);
-  font-size: 12px;
+  font-size: 11px;
   text-transform: uppercase;
-  margin-bottom: 4px;
+  margin-bottom: 3px;
 }
 .accum-card__value {
   color: var(--t1);
-  font-size: 22px;
+  font-size: 20px;
   font-weight: 700;
 }
 .accum-card__unit {
   color: var(--t4);
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 400;
+}
+@media (max-width: 768px) {
+  .accum-layout { grid-template-columns: 1fr; }
 }
 
 /* ── ALARM BAR ──────────────────────────────────────────────── */
@@ -582,8 +606,8 @@ body { padding: 8px; }
 
       <!-- ACCUMULATORS TAB -->
       <div class="tab-pane" id="tab-accumulators">
-        <div class="accum-grid" id="accum-grid">
-          <!-- Populated by JS -->
+        <div class="accum-layout" id="accum-layout">
+          <!-- Populated by JS: Gen Energy | Operations -->
         </div>
       </div>
     </div>
@@ -892,16 +916,20 @@ const DIAG_FIELDS = DIAG_COLUMNS.flatMap(g => g.fields);
 // NOTE: SCALE_MAP applies Modbus-to-engineering-unit conversion at ingest time.
 // The 'scale' property here is an ADDITIONAL display-time multiplier (typically 1).
 // Only set scale != 1 for fields NOT already in SCALE_MAP that need unit conversion.
-const ACCUM_FIELDS = [
-  { key: 'genPosKwh',  label: 'Gen +kWh',         unit: 'kWh',   scale: 1 },
-  { key: 'genNegKwh',  label: 'Gen -kWh',         unit: 'kWh',   scale: 1 },
-  { key: 'genKvah',    label: 'Gen kVAh',         unit: 'kVAh',  scale: 1 },
-  { key: 'genKvarh',   label: 'Gen kVArh',        unit: 'kVArh', scale: 1 },
-  { key: 'fuelUsed',   label: 'Total Fuel Used',  unit: 'L',     scale: 1 },
-  { key: 'runTime',    label: 'Run Hours',         unit: 'h',     scale: 1/3600 },
-  { key: 'numStarts',  label: 'Number of Starts',  unit: '',      scale: 1 },
-  { key: '_lifetimeSFC', label: 'Lifetime SFC',    unit: 'L/kWh', scale: 1, derived: true },
+// Accumulators: Generator energy (left), Operations (right)
+const ACCUM_GEN = [
+  { key: 'genPosKwh',  label: '+kWh',      unit: 'kWh',   scale: 1 },
+  { key: 'genNegKwh',  label: '-kWh',      unit: 'kWh',   scale: 1 },
+  { key: 'genKvah',    label: 'kVAh',      unit: 'kVAh',  scale: 1 },
+  { key: 'genKvarh',   label: 'kVArh',     unit: 'kVArh', scale: 1 },
 ];
+const ACCUM_OPS = [
+  { key: 'fuelUsed',     label: 'Total Fuel Used',  unit: 'L',     scale: 1 },
+  { key: 'runTime',      label: 'Run Hours',        unit: 'h',     scale: 1/3600 },
+  { key: 'numStarts',    label: 'Starts',           unit: '',      scale: 1 },
+  { key: '_lifetimeSFC', label: 'Lifetime SFC',     unit: 'L/kWh', scale: 1, derived: true },
+];
+const ACCUM_FIELDS = [...ACCUM_GEN, ...ACCUM_OPS];
 
 
 const IN_THINGSBOARD = typeof self !== 'undefined' && self.ctx != null;
@@ -1000,10 +1028,13 @@ function buildDiagGrid() {
 
 // ── BUILD ACCUMULATORS GRID ────────────────────────────────────
 
-function buildAccumGrid() {
-  const grid = document.getElementById('accum-grid');
-  grid.innerHTML = '';
-  ACCUM_FIELDS.forEach(f => {
+function buildAccumCol(fields, title, cssExtra) {
+  const col = document.createElement('div');
+  col.className = 'accum-col' + (cssExtra ? ' ' + cssExtra : '');
+  col.innerHTML = `<div class="accum-col__title">${title}</div>`;
+  const cards = document.createElement('div');
+  cards.className = 'accum-col__cards';
+  fields.forEach(f => {
     const card = document.createElement('div');
     card.className = 'accum-card';
     card.id = 'accum-' + f.key;
@@ -1011,8 +1042,17 @@ function buildAccumGrid() {
       <div class="accum-card__label">${f.label}</div>
       <div class="accum-card__value">-- <span class="accum-card__unit">${f.unit}</span></div>
     `;
-    grid.appendChild(card);
+    cards.appendChild(card);
   });
+  col.appendChild(cards);
+  return col;
+}
+
+function buildAccumGrid() {
+  const layout = document.getElementById('accum-layout');
+  layout.innerHTML = '';
+  layout.appendChild(buildAccumCol(ACCUM_GEN, 'Generator Energy', 'accum-col--gen'));
+  layout.appendChild(buildAccumCol(ACCUM_OPS, 'Operations & Fuel', ''));
 }
 
 // ── ALARM DECODER ──────────────────────────────────────────────

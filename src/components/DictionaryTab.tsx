@@ -102,10 +102,12 @@ function SectionCard({ title, children }: SectionCardProps) {
 }
 
 // ---- EQUIP Section ----
-function EquipSection({ equip, controllers, onUpdate }: {
+function EquipSection({ equip, controllers, onUpdate, semanticConfig, onUpdateSemanticConfig }: {
   equip: EquipEntry[];
   controllers: Controller[];
   onUpdate: (d: EquipEntry[]) => void;
+  semanticConfig: SemanticConfig;
+  onUpdateSemanticConfig: (d: SemanticConfig) => void;
 }) {
   const [editing, setEditing] = useState<EquipEntry | null>(null);
   const [adding, setAdding] = useState(false);
@@ -163,10 +165,9 @@ function EquipSection({ equip, controllers, onUpdate }: {
     if (!confirm(`Delete EQUIP "${e.code}"?`)) return;
     onUpdate(equip.filter(x => x.id !== e.id));
     // Remove from semantic config — drop equipMeds row for this code
-    const cfg = props.semanticConfig;
-    const newEquipMeds = { ...cfg.equipMeds };
+    const newEquipMeds = { ...semanticConfig.equipMeds };
     delete newEquipMeds[e.code];
-    props.onUpdateSemanticConfig({ ...cfg, equipMeds: newEquipMeds });
+    onUpdateSemanticConfig({ ...semanticConfig, equipMeds: newEquipMeds });
   }
 
   return (
@@ -260,10 +261,12 @@ function EquipSection({ equip, controllers, onUpdate }: {
 }
 
 // ---- MED Section ----
-function MedSection({ med, controllers, onUpdate }: {
+function MedSection({ med, controllers, onUpdate, semanticConfig, onUpdateSemanticConfig }: {
   med: MedEntry[];
   controllers: Controller[];
   onUpdate: (d: MedEntry[]) => void;
+  semanticConfig: SemanticConfig;
+  onUpdateSemanticConfig: (d: SemanticConfig) => void;
 }) {
   const [editing, setEditing] = useState<MedEntry | null>(null);
   const [adding, setAdding] = useState(false);
@@ -304,14 +307,13 @@ function MedSection({ med, controllers, onUpdate }: {
     if (!confirm(`Delete MED "${e.code}"?`)) return;
     onUpdate(med.filter(x => x.id !== e.id));
     // Remove from semantic config — drop medQtys row + remove from all equipMeds values
-    const cfg = props.semanticConfig;
-    const newMedQtys = { ...cfg.medQtys };
+    const newMedQtys = { ...semanticConfig.medQtys };
     delete newMedQtys[e.code];
     const newEquipMeds: Record<string, string[]> = {};
-    for (const [k, vals] of Object.entries(cfg.equipMeds)) {
+    for (const [k, vals] of Object.entries(semanticConfig.equipMeds) as [string, string[]][]) {
       newEquipMeds[k] = vals.filter(v => v !== e.code);
     }
-    props.onUpdateSemanticConfig({ ...cfg, medQtys: newMedQtys, equipMeds: newEquipMeds });
+    onUpdateSemanticConfig({ ...semanticConfig, medQtys: newMedQtys, equipMeds: newEquipMeds });
   }
 
   return (
@@ -367,10 +369,12 @@ function MedSection({ med, controllers, onUpdate }: {
 }
 
 // ---- QTY Section ----
-function QtySection({ qty, controllers, onUpdate }: {
+function QtySection({ qty, controllers, onUpdate, semanticConfig, onUpdateSemanticConfig }: {
   qty: QtyEntry[];
   controllers: Controller[];
   onUpdate: (d: QtyEntry[]) => void;
+  semanticConfig: SemanticConfig;
+  onUpdateSemanticConfig: (d: SemanticConfig) => void;
 }) {
   const [editing, setEditing] = useState<QtyEntry | null>(null);
   const [adding, setAdding] = useState(false);
@@ -411,14 +415,13 @@ function QtySection({ qty, controllers, onUpdate }: {
     if (!confirm(`Delete QTY "${e.code}"?`)) return;
     onUpdate(qty.filter(x => x.id !== e.id));
     // Remove from semantic config — drop qtyMods row + remove from all medQtys values
-    const cfg = props.semanticConfig;
-    const newQtyMods = { ...cfg.qtyMods };
+    const newQtyMods = { ...semanticConfig.qtyMods };
     delete newQtyMods[e.code];
     const newMedQtys: Record<string, string[]> = {};
-    for (const [k, vals] of Object.entries(cfg.medQtys)) {
+    for (const [k, vals] of Object.entries(semanticConfig.medQtys) as [string, string[]][]) {
       newMedQtys[k] = vals.filter(v => v !== e.code);
     }
-    props.onUpdateSemanticConfig({ ...cfg, qtyMods: newQtyMods, medQtys: newMedQtys });
+    onUpdateSemanticConfig({ ...semanticConfig, qtyMods: newQtyMods, medQtys: newMedQtys });
   }
 
   return (
@@ -486,10 +489,12 @@ function QtySection({ qty, controllers, onUpdate }: {
 }
 
 // ---- MOD Section ----
-function ModSection({ mod, controllers, onUpdate }: {
+function ModSection({ mod, controllers, onUpdate, semanticConfig, onUpdateSemanticConfig }: {
   mod: ModEntry[];
   controllers: Controller[];
   onUpdate: (d: ModEntry[]) => void;
+  semanticConfig: SemanticConfig;
+  onUpdateSemanticConfig: (d: SemanticConfig) => void;
 }) {
   const [editing, setEditing] = useState<ModEntry | null>(null);
   const [adding, setAdding] = useState(false);
@@ -530,12 +535,11 @@ function ModSection({ mod, controllers, onUpdate }: {
     if (!confirm(`Delete MOD "${e.code}"?`)) return;
     onUpdate(mod.filter(x => x.id !== e.id));
     // Remove from semantic config — remove from all qtyMods values
-    const cfg = props.semanticConfig;
     const newQtyMods: Record<string, string[]> = {};
-    for (const [k, vals] of Object.entries(cfg.qtyMods)) {
+    for (const [k, vals] of Object.entries(semanticConfig.qtyMods) as [string, string[]][]) {
       newQtyMods[k] = vals.filter(v => v !== e.code);
     }
-    props.onUpdateSemanticConfig({ ...cfg, qtyMods: newQtyMods });
+    onUpdateSemanticConfig({ ...semanticConfig, qtyMods: newQtyMods });
   }
 
   return (
@@ -966,10 +970,10 @@ export default function DictionaryTab(props: Props) {
   return (
     <div className="max-w-5xl mx-auto">
       <h1 className="text-xl font-bold mb-4" style={{ color: '#2C2C2A' }}>Dictionary</h1>
-      <EquipSection equip={props.equip} controllers={props.controllers} onUpdate={props.onUpdateEquip} />
-      <MedSection med={props.med} controllers={props.controllers} onUpdate={props.onUpdateMed} />
-      <QtySection qty={props.qty} controllers={props.controllers} onUpdate={props.onUpdateQty} />
-      <ModSection mod={props.mod} controllers={props.controllers} onUpdate={props.onUpdateMod} />
+      <EquipSection equip={props.equip} controllers={props.controllers} onUpdate={props.onUpdateEquip} semanticConfig={props.semanticConfig} onUpdateSemanticConfig={props.onUpdateSemanticConfig} />
+      <MedSection med={props.med} controllers={props.controllers} onUpdate={props.onUpdateMed} semanticConfig={props.semanticConfig} onUpdateSemanticConfig={props.onUpdateSemanticConfig} />
+      <QtySection qty={props.qty} controllers={props.controllers} onUpdate={props.onUpdateQty} semanticConfig={props.semanticConfig} onUpdateSemanticConfig={props.onUpdateSemanticConfig} />
+      <ModSection mod={props.mod} controllers={props.controllers} onUpdate={props.onUpdateMod} semanticConfig={props.semanticConfig} onUpdateSemanticConfig={props.onUpdateSemanticConfig} />
       <SemanticConfigSection cfg={props.semanticConfig} equip={props.equip} med={props.med} qty={props.qty} mod={props.mod} onUpdate={props.onUpdateSemanticConfig} />
     </div>
   );

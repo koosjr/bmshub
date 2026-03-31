@@ -353,20 +353,23 @@ function VariableForm({
 
   // Available MEDs — only those valid for selected EQUIP
   const filteredMeds = useMemo(() =>
-    medList.filter(m => isMedAllowed(form.equip, m.code, semanticConfig)),
+    medList.filter(m => isMedAllowed(form.equip, m.code, semanticConfig))
+           .sort((a, b) => a.code.localeCompare(b.code)),
     [medList, form.equip, semanticConfig]
   );
 
   // Available QTYs — only those valid for selected MED
   const filteredQtys = useMemo(() =>
-    qtyList.filter(q => isQtyAllowed(form.med, q.code, semanticConfig)),
+    qtyList.filter(q => isQtyAllowed(form.med, q.code, semanticConfig))
+           .sort((a, b) => a.code.localeCompare(b.code)),
     [qtyList, form.med, semanticConfig]
   );
 
   // Available MODs filtered by QTY
   const availableMods = useMemo(() => {
     if (!form.qty) return [];
-    return getModsForQty(form.qty, modList, semanticConfig);
+    return getModsForQty(form.qty, modList, semanticConfig)
+           .sort((a, b) => a.code.localeCompare(b.code));
   }, [form.qty, modList, semanticConfig]);
 
   // When QTY changes, clear MOD if not valid
@@ -493,7 +496,7 @@ function VariableForm({
             value={form.equip}
             onChange={e => handleEquipChange(e.target.value)}
           >
-            {equipList.map(e => (
+            {[...equipList].sort((a, b) => a.code.localeCompare(b.code)).map(e => (
               <option key={e.id} value={e.code}>{e.code} — {e.label}</option>
             ))}
           </select>
@@ -1168,7 +1171,7 @@ function HardwareIOPanel({
             onChange={e => setModelId(e.target.value)}
           >
             <option value="">— No model —</option>
-            {controllerModels.map(m => (
+            {[...controllerModels].sort((a, b) => a.name.localeCompare(b.name)).map(m => (
               <option key={m.id} value={m.id}>{m.name} — {m.description}</option>
             ))}
           </select>
@@ -1209,7 +1212,7 @@ function HardwareIOPanel({
             onChange={e => { if (e.target.value) addExpansion(e.target.value); }}
           >
             <option value="">+ Add expansion module</option>
-            {expansionModules.map(m => (
+            {[...expansionModules].sort((a, b) => a.name.localeCompare(b.name)).map(m => (
               <option key={m.id} value={m.id}>{m.name} — {m.description}</option>
             ))}
           </select>

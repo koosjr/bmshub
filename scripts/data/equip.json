@@ -1,0 +1,230 @@
+[
+  {
+    "id": "e3188e57-0425-4cee-b37e-f84cc5d2ec17",
+    "code": "AHU",
+    "label": "Air handling unit",
+    "takesNum": true
+  },
+  {
+    "id": "c7e0724f-4cfc-403e-befd-da6ff60935a6",
+    "code": "FCU",
+    "label": "Fan coil unit",
+    "takesNum": true
+  },
+  {
+    "id": "18d8b26b-a62f-429e-9932-1e5a0d445ec1",
+    "code": "MAU",
+    "label": "Make-up air unit",
+    "takesNum": true
+  },
+  {
+    "id": "6ff172be-a0e8-462b-8cae-b1f202880b88",
+    "code": "EXF",
+    "label": "Exhaust fan",
+    "takesNum": true
+  },
+  {
+    "id": "99b7d6b9-3604-4574-b912-fe2a79422deb",
+    "code": "CHR",
+    "label": "Chiller",
+    "takesNum": true
+  },
+  {
+    "id": "23709f82-c7d4-445a-ab74-2335f407dd5e",
+    "code": "CTW",
+    "label": "Cooling tower",
+    "takesNum": true
+  },
+  {
+    "id": "2603d8e5-158e-4492-9aa0-6943b787f007",
+    "code": "CWP",
+    "label": "Chilled water pump",
+    "takesNum": true
+  },
+  {
+    "id": "87773244-f38e-42a2-a8bd-efed74f5cc32",
+    "code": "HWP",
+    "label": "Hot water pump",
+    "takesNum": true
+  },
+  {
+    "id": "de70888e-43cb-473a-98a7-829472bc6d47",
+    "code": "ILH",
+    "label": "Inline electric heater",
+    "takesNum": true
+  },
+  {
+    "id": "40d47b47-0991-4773-bc7c-37d573941e08",
+    "code": "BSR",
+    "label": "Boiler - Steam Element",
+    "takesNum": true
+  },
+  {
+    "id": "36d10fae-756f-49ba-8674-3f864ff2e385",
+    "code": "HEX",
+    "label": "Heat exchanger",
+    "takesNum": true
+  },
+  {
+    "id": "07542033-95a8-4eda-886e-df2ca3cca37a",
+    "code": "TNK",
+    "label": "Storage tank",
+    "takesNum": true
+  },
+  {
+    "id": "a74f6691-0eeb-4e74-a8ef-f8bce1242b9f",
+    "code": "VRV",
+    "label": "VRV / VRF system",
+    "takesNum": true
+  },
+  {
+    "id": "3c1343e5-e41e-40f1-ab3b-8e150631d392",
+    "code": "GEN",
+    "label": "Generator",
+    "takesNum": true
+  },
+  {
+    "id": "ec84f891-3394-46dd-8153-208260b2e4a7",
+    "code": "PMP",
+    "label": "General pump",
+    "takesNum": true
+  },
+  {
+    "id": "36e88a78-3300-4fd3-b11e-0ea2656efb6f",
+    "code": "SYS",
+    "label": "System / circuit level",
+    "takesNum": false
+  },
+  {
+    "id": "6bcd81f6-ce2d-4b2d-9f02-838bd2fa2ed5",
+    "code": "SAF",
+    "label": "Supply Air Fan",
+    "takesNum": true
+  },
+  {
+    "id": "a17f9eeb-787b-4379-9297-82d19c2c8dbc",
+    "code": "SXF",
+    "label": "Smoke Extract Fan",
+    "takesNum": true
+  },
+  {
+    "id": "824d79f0-20f1-45e4-9dbe-c0eb365b5ee8",
+    "code": "VFD",
+    "label": "Variable Frequency Drive",
+    "takesNum": true
+  },
+  {
+    "id": "54aa25bd-9f4c-4229-81f6-9d9ab9ffa69b",
+    "code": "ECF",
+    "label": "FAN - EC",
+    "takesNum": true
+  },
+  {
+    "id": "63d33478-20de-4f0c-977a-8146d4f98877",
+    "code": "BWE",
+    "label": "Boiler - Water Electrode",
+    "takesNum": true
+  },
+  {
+    "id": "c04d3f53-50f1-4cc2-b300-0fbc460f215f",
+    "code": "BWR",
+    "label": "Boiler - Water Elements (Resistive)",
+    "takesNum": true
+  },
+  {
+    "id": "5500a54e-b42a-4096-a6c2-5247d0cdafce",
+    "code": "BSC",
+    "label": "Boiler - Steam Coal",
+    "takesNum": true
+  },
+  {
+    "id": "3e187ca5-02ea-43fb-9f4a-4f229db56804",
+    "code": "BWC",
+    "label": "Boiler - Water Coal",
+    "takesNum": true
+  },
+  {
+    "id": "ad5ee883-88fc-4d5c-9804-e9f5bfcd4138",
+    "code": "BSE",
+    "label": "Boiler - Steam Electric",
+    "takesNum": true
+  },
+  {
+    "id": "c8c67c7b-39cd-46c9-bd61-b3dcb4c94ec6",
+    "code": "BSD",
+    "label": "Boiler - Steam Diesel",
+    "takesNum": true
+  },
+  {
+    "id": "645e261c-e5b0-486d-ae5a-25920466bced",
+    "code": "BWD",
+    "label": "Boiler - Water Diesel",
+    "takesNum": true
+  },
+  {
+    "id": "5901da52-4bbd-4727-b8f9-89e9246c34f1",
+    "code": "BWG",
+    "label": "Boiler - Water LPG",
+    "takesNum": true
+  },
+  {
+    "id": "a02ab6ae-d243-46a2-a92c-30de65c87b53",
+    "code": "BSG",
+    "label": "Boiler - Steam LPG",
+    "takesNum": true
+  },
+  {
+    "id": "83a4c770-214f-4f30-973c-ab3bc985c24d",
+    "code": "RCR",
+    "label": "Refrigeration - Cold Room",
+    "takesNum": true
+  },
+  {
+    "id": "87ac3f88-d64e-4a6b-b01c-a89f055b9da9",
+    "code": "RFR",
+    "label": "Refrigeration - Freezer Room",
+    "takesNum": true
+  },
+  {
+    "id": "b3b6dc32-1a24-475c-ab7c-283ebf06cafc",
+    "code": "AUT",
+    "label": "Autoclave",
+    "takesNum": true
+  },
+  {
+    "id": "72358014-d9bb-4905-941b-ae998a4ae17b",
+    "code": "FMH",
+    "label": "Fume Hood",
+    "takesNum": true
+  },
+  {
+    "id": "30e39970-29a7-4ea2-b057-ebeb7ffba0e5",
+    "code": "LFC",
+    "label": "Laminar Flow Cabinet",
+    "takesNum": true
+  },
+  {
+    "id": "cbf8900f-267f-4277-aab1-f44f1a22fc6a",
+    "code": "GSB",
+    "label": "Gas Bank - Laboratory",
+    "takesNum": true
+  },
+  {
+    "id": "265efb98-10cd-4471-920a-5855da6c13d9",
+    "code": "VAC",
+    "label": "Vacuum Pump",
+    "takesNum": true
+  },
+  {
+    "id": "bf0f040e-6723-4b1a-9acc-322270c8a2f5",
+    "code": "ACP",
+    "label": "Air Compressor",
+    "takesNum": true
+  },
+  {
+    "id": "a436fac9-9d91-4fe2-ba3d-691be26eee38",
+    "code": "HUM",
+    "label": "Humidifier",
+    "takesNum": true
+  }
+]

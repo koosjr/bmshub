@@ -1,0 +1,356 @@
+{
+  "ACP": [
+    "EL",
+    "AR",
+    "OL",
+    "AL",
+    "CP",
+    "OA"
+  ],
+  "AHU": [
+    "FA",
+    "SA",
+    "RA",
+    "OA",
+    "EX",
+    "CW",
+    "HW",
+    "SW",
+    "IL",
+    "SP",
+    "AU",
+    "MN",
+    "WA",
+    "AR",
+    "RM",
+    "ZN",
+    "FD"
+  ],
+  "AUT": [
+    "SW",
+    "EL",
+    "WA",
+    "ST",
+    "AL",
+    "IL"
+  ],
+  "BSC": [
+    "FU",
+    "SW",
+    "EL",
+    "ST",
+    "WA",
+    "AL",
+    "AR",
+    "OA",
+    "EX",
+    "SA",
+    "ES"
+  ],
+  "BSD": [
+    "FU",
+    "OL",
+    "SW",
+    "EL",
+    "ST",
+    "WA",
+    "AR",
+    "SA",
+    "OA",
+    "EX",
+    "ES",
+    "HW"
+  ],
+  "BSE": [
+    "EL",
+    "SW",
+    "ST",
+    "WA",
+    "AL",
+    "ES"
+  ],
+  "BSG": [
+    "FU",
+    "SW",
+    "EL",
+    "ST",
+    "WA",
+    "AR"
+  ],
+  "BSR": [
+    "EL",
+    "SW",
+    "ST",
+    "WA",
+    "AL"
+  ],
+  "BWC": [
+    "FU",
+    "HW",
+    "EL"
+  ],
+  "BWD": [
+    "FU",
+    "OL",
+    "HW",
+    "EL",
+    "OA",
+    "AR",
+    "OX",
+    "SW",
+    "RW"
+  ],
+  "BWE": [
+    "EL",
+    "HW"
+  ],
+  "BWG": [
+    "FU",
+    "HW",
+    "EL",
+    "SW",
+    "RW",
+    "ES",
+    "WA",
+    "IL"
+  ],
+  "BWR": [
+    "EL",
+    "HW"
+  ],
+  "CHR": [
+    "CW",
+    "CO",
+    "EV",
+    "RF",
+    "EL",
+    "GY",
+    "DF",
+    "HW",
+    "FA",
+    "CP",
+    "IL"
+  ],
+  "CTW": [
+    "CO",
+    "OA",
+    "FA",
+    "SW",
+    "RW",
+    "AR"
+  ],
+  "CWP": [
+    "SW",
+    "RW",
+    "WA",
+    "SP",
+    "ES",
+    "AL",
+    "SG"
+  ],
+  "ECF": [
+    "FA",
+    "SA",
+    "EX",
+    "AL",
+    "IL"
+  ],
+  "EXF": [
+    "EX",
+    "FA"
+  ],
+  "FCU": [
+    "CW",
+    "HW",
+    "SA",
+    "RA",
+    "ZN",
+    "EL"
+  ],
+  "FMH": [
+    "EX",
+    "FA",
+    "IL",
+    "AL",
+    "AR"
+  ],
+  "GEN": [
+    "EL",
+    "FU",
+    "EN",
+    "OL",
+    "WA",
+    "AL",
+    "IL",
+    "SG",
+    "HE",
+    "FA",
+    "OA",
+    "SP",
+    "AN",
+    "BT",
+    "TB",
+    "IC",
+    "AV",
+    "SC",
+    "DC",
+    "AC",
+    "CM",
+    "CL",
+    "EC",
+    "EG",
+    "AU",
+    "AR",
+    "AT",
+    "FD",
+    "IR",
+    "ME",
+    "MF",
+    "GN"
+  ],
+  "GSB": [
+    "MA",
+    "OX",
+    "NI",
+    "NO",
+    "AR",
+    "FU"
+  ],
+  "HEX": [
+    "CW",
+    "HW",
+    "CO",
+    "GY",
+    "AR",
+    "AL",
+    "ST"
+  ],
+  "HWP": [
+    "WA",
+    "SW",
+    "RW",
+    "SP",
+    "ES",
+    "AL",
+    "SG"
+  ],
+  "ILH": [
+    "HW",
+    "EL",
+    "SW",
+    "RW",
+    "IL",
+    "WA",
+    "AL",
+    "HE"
+  ],
+  "LFC": [
+    "SA",
+    "RA",
+    "AR",
+    "IL",
+    "AL",
+    "FA",
+    "FD"
+  ],
+  "MAU": [
+    "FA",
+    "SA",
+    "OA",
+    "RA",
+    "CW",
+    "HW"
+  ],
+  "PMP": [
+    "CW",
+    "HW",
+    "WA",
+    "CO",
+    "GY",
+    "IL",
+    "ES",
+    "SP",
+    "AU",
+    "MN",
+    "SG",
+    "AL"
+  ],
+  "RCR": [
+    "RF",
+    "CP",
+    "EL",
+    "OL"
+  ],
+  "RFR": [
+    "RF",
+    "CP",
+    "EL",
+    "OL",
+    "DF"
+  ],
+  "SAF": [
+    "IL",
+    "ES",
+    "AL"
+  ],
+  "SXF": [
+    "IL",
+    "AL",
+    "ES"
+  ],
+  "SYS": [
+    "CW",
+    "HW",
+    "CO",
+    "GY",
+    "EL",
+    "WA"
+  ],
+  "TNK": [
+    "CW",
+    "HW",
+    "WA",
+    "FU",
+    "OL",
+    "AL"
+  ],
+  "VAC": [
+    "AR",
+    "EL",
+    "AL"
+  ],
+  "VFD": [
+    "EL",
+    "FA",
+    "ES",
+    "AL",
+    "IL"
+  ],
+  "VRV": [
+    "RF",
+    "SA",
+    "RA",
+    "ZN",
+    "CP",
+    "EV",
+    "DF",
+    "FA",
+    "HW",
+    "OA",
+    "SW",
+    "RW",
+    "EL",
+    "IL",
+    "AR"
+  ],
+  "HUM": [
+    "WA",
+    "RA",
+    "AU",
+    "MN",
+    "IL",
+    "AR",
+    "SG",
+    "AL"
+  ]
+}

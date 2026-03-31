@@ -1,0 +1,129 @@
+{
+  "id": "009108b4-b17d-45e0-b7c8-e329acf536ea",
+  "name": "AHU - Hydronic, VFD, SP, TEMP, CO2, ECON",
+  "equipCode": "AHU",
+  "description": "AHU with VFD, Temperature and CO2 Control, Economy Cycle",
+  "points": [
+    {
+      "id": "5f92c66d-3a48-42ef-8837-6469532edac0",
+      "med": "SA",
+      "qty": "TMP",
+      "mod": ""
+    },
+    {
+      "id": "4e1a8cd2-1ecf-4fc1-b2b4-0b24edf8c52a",
+      "med": "RA",
+      "qty": "TMP",
+      "mod": ""
+    },
+    {
+      "id": "ec47e4c8-7603-4ec0-8a86-6890b186d716",
+      "med": "OA",
+      "qty": "TMP",
+      "mod": ""
+    },
+    {
+      "id": "5bb5198e-aa26-4c75-a9b9-55394920c7bf",
+      "med": "RA",
+      "qty": "CO2",
+      "mod": ""
+    },
+    {
+      "id": "887e9f88-a435-4b70-977d-322745dd3a7d",
+      "med": "FA",
+      "qty": "VSD",
+      "mod": "OUT"
+    },
+    {
+      "id": "2f069d7f-897f-48e0-bebf-bb379759df1c",
+      "med": "AR",
+      "qty": "FSW",
+      "mod": ""
+    },
+    {
+      "id": "c3499b2e-0f95-4556-82e8-a33967207b36",
+      "med": "AU",
+      "qty": "SWT",
+      "mod": ""
+    },
+    {
+      "id": "737b5f3e-a389-4b2f-835c-98765283b24d",
+      "med": "MN",
+      "qty": "SWT",
+      "mod": ""
+    },
+    {
+      "id": "aaee9401-f536-4714-b15a-21602b8a28a8",
+      "med": "FD",
+      "qty": "SWT",
+      "mod": ""
+    },
+    {
+      "id": "4ff4fa86-db86-4fb4-9ded-bf80c87e39e7",
+      "med": "IL",
+      "qty": "FIR",
+      "mod": ""
+    },
+    {
+      "id": "cf8e0ab4-f32b-4792-91f8-934eced92545",
+      "med": "OA",
+      "qty": "DMP",
+      "mod": ""
+    },
+    {
+      "id": "fcb8abb3-a0f8-4c27-8fad-572f77bfc2db",
+      "med": "OA",
+      "qty": "DMO",
+      "mod": ""
+    },
+    {
+      "id": "ba0a7a6b-9c66-45fc-954f-62ff54784341",
+      "med": "AR",
+      "qty": "PRS",
+      "mod": ""
+    },
+    {
+      "id": "ed29ac60-30c4-4ad2-8299-96dbc3017f22",
+      "med": "AR",
+      "qty": "PRS",
+      "mod": "SP",
+      "ioOverride": "AV"
+    },
+    {
+      "id": "a0c633d1-f73c-4d0d-b5e9-d6b74ef4be8c",
+      "med": "CW",
+      "qty": "VLV",
+      "mod": "OUT"
+    },
+    {
+      "id": "d556aeeb-ff29-456a-8ca9-9fb01b17ed82",
+      "med": "CW",
+      "qty": "VLP",
+      "mod": "FB"
+    },
+    {
+      "id": "cd85302f-9625-4b54-afaf-79a0f3be6b6e",
+      "med": "HW",
+      "qty": "VLV",
+      "mod": "OUT"
+    },
+    {
+      "id": "cae56849-8825-45ab-8953-e2ea8e879313",
+      "med": "HW",
+      "qty": "VLP",
+      "mod": "FB"
+    },
+    {
+      "id": "87cfc48c-001a-4bb1-b986-0b52b58cde24",
+      "med": "FA",
+      "qty": "FLT",
+      "mod": ""
+    },
+    {
+      "id": "6d7f0aa5-a811-4d50-b60c-9e0885af6007",
+      "med": "FA",
+      "qty": "STS",
+      "mod": ""
+    }
+  ]
+}

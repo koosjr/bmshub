@@ -1,0 +1,32 @@
+{
+  "id": "90458716-ea9f-4348-910e-7926406b43fd",
+  "name": "Hot Water Pump",
+  "equipCode": "HWP",
+  "description": "Hot Water Pump",
+  "points": [
+    {
+      "id": "402871c3-b3cc-492f-bfdd-115328a619a5",
+      "med": "WA",
+      "qty": "FSW",
+      "mod": ""
+    },
+    {
+      "id": "f2edf4db-d18f-4378-9fbe-e296e51f0477",
+      "med": "ES",
+      "qty": "SWT",
+      "mod": ""
+    },
+    {
+      "id": "02e1f13b-377a-4d51-84f4-beb1ad2edd14",
+      "med": "AL",
+      "qty": "TRP",
+      "mod": ""
+    },
+    {
+      "id": "0a298f73-550f-4dee-a65d-e02d980ea022",
+      "med": "SG",
+      "qty": "STS",
+      "mod": ""
+    }
+  ]
+}

@@ -1,0 +1,51 @@
+{
+  "id": "79e9f4e2-f7ea-4da6-bed5-387360bf1113",
+  "name": "Inline Heater - 3 Step",
+  "equipCode": "ILH",
+  "description": "Inline Heater - Electric, 3 Steps",
+  "points": [
+    {
+      "id": "6a967bae-82f5-4696-b4b9-1adda081eca4",
+      "med": "SW",
+      "qty": "TMP",
+      "mod": ""
+    },
+    {
+      "id": "40ab62ff-2d29-4ce1-b936-8c04a1a7bb97",
+      "med": "RW",
+      "qty": "TMP",
+      "mod": ""
+    },
+    {
+      "id": "1b913e4f-8f02-4f11-a8a5-2c4b7462d502",
+      "med": "HE",
+      "qty": "STG",
+      "mod": "1"
+    },
+    {
+      "id": "9abfc80c-f46e-4399-9b8e-8da5cd810c31",
+      "med": "HE",
+      "qty": "STG",
+      "mod": "2"
+    },
+    {
+      "id": "eb79c769-342c-46dd-aa53-be235718a06e",
+      "med": "HE",
+      "qty": "STG",
+      "mod": "3"
+    },
+    {
+      "id": "1faad8b1-3218-479f-8c1d-5888cb1cd185",
+      "med": "IL",
+      "qty": "OHS",
+      "mod": ""
+    },
+    {
+      "id": "184e8308-a399-4fed-880d-88653e33bb62",
+      "med": "SW",
+      "qty": "TMP",
+      "mod": "SP",
+      "ioOverride": "AV"
+    }
+  ]
+}

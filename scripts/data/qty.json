@@ -1,0 +1,296 @@
+[
+  {
+    "id": "3a3ffe57-a3db-479f-8bbb-5b88fd47af9f",
+    "code": "RUN",
+    "label": "Running status",
+    "ioType": "DI"
+  },
+  {
+    "id": "a0a5d60d-58d4-4d22-b1e1-4754fbb9dea8",
+    "code": "ENB",
+    "label": "Enable command",
+    "ioType": "DO"
+  },
+  {
+    "id": "5337c93a-e270-453f-8d21-7b6ac974c3e7",
+    "code": "FLT",
+    "label": "Fault",
+    "ioType": "DI"
+  },
+  {
+    "id": "7730cdef-20e7-4d8a-a38a-43acbc87df14",
+    "code": "TMP",
+    "label": "Temperature",
+    "ioType": "AI"
+  },
+  {
+    "id": "1caf097c-9ca3-43f0-9194-c00be7b209e6",
+    "code": "HUM",
+    "label": "Humidity",
+    "ioType": "AI"
+  },
+  {
+    "id": "15d0ae8d-4071-4c8e-96ac-6b6114bf32e7",
+    "code": "PRS",
+    "label": "Pressure Sensor",
+    "ioType": "AI"
+  },
+  {
+    "id": "c4fdfd3d-a79b-4178-9e13-5b71cacceeb9",
+    "code": "DPR",
+    "label": "Differential pressure",
+    "ioType": "AI"
+  },
+  {
+    "id": "e7be0aeb-3bc4-41a5-8d5c-d1e9a115a90b",
+    "code": "CO2",
+    "label": "CO2 level (ppm)",
+    "ioType": "AI"
+  },
+  {
+    "id": "b716a442-c281-4d64-9674-cfebe2a60705",
+    "code": "FLW",
+    "label": "Flow rate",
+    "ioType": "AI"
+  },
+  {
+    "id": "dded79a5-4baa-40f7-b231-83baea8fb8e5",
+    "code": "FSW",
+    "label": "Flow switch",
+    "ioType": "DI"
+  },
+  {
+    "id": "9a6bba0c-6b57-4382-a60e-3e57da09a2f7",
+    "code": "VLV",
+    "label": "Valve Modulating",
+    "ioType": "AO"
+  },
+  {
+    "id": "e88ca8ed-0827-43d3-ab2a-73c04e8971c2",
+    "code": "DMP",
+    "label": "Damper position",
+    "ioType": "AI"
+  },
+  {
+    "id": "22690972-17cb-4e48-b6bc-18fc83327800",
+    "code": "VSD",
+    "label": "Drive speed signal",
+    "ioType": "AO"
+  },
+  {
+    "id": "9fb8af46-0cc0-4ee5-b0f3-3787a1d3d656",
+    "code": "STG",
+    "label": "Stage output",
+    "ioType": "DO"
+  },
+  {
+    "id": "263e3b6e-f6f6-4300-881b-8e7a6c1c1ec9",
+    "code": "PCT",
+    "label": "Percentage output",
+    "ioType": "AO"
+  },
+  {
+    "id": "dda3c1a0-49b2-4452-b4c6-62a98adf42e2",
+    "code": "GLY",
+    "label": "Glycol concentration",
+    "ioType": "AI"
+  },
+  {
+    "id": "d5ac7b16-fa84-4a1f-9b66-7e2dd63fe956",
+    "code": "PWA",
+    "label": "Power Active",
+    "ioType": "AI"
+  },
+  {
+    "id": "b81d165b-81c4-451f-917b-90a75f03e6b9",
+    "code": "SPD",
+    "label": "Speed feedback",
+    "ioType": "AI"
+  },
+  {
+    "id": "a09ee73a-c4da-4a9a-bcca-e2a560f0db8c",
+    "code": "ALM",
+    "label": "Alarm",
+    "ioType": "DI"
+  },
+  {
+    "id": "123e375c-73b2-4a22-8d4d-1bc130c9ed5c",
+    "code": "STMP",
+    "label": "Supply temperature",
+    "ioType": "AI"
+  },
+  {
+    "id": "dca80830-508d-4542-aef6-7c580d3c1a0c",
+    "code": "RTMP",
+    "label": "Return temperature",
+    "ioType": "AI"
+  },
+  {
+    "id": "f28a5a8f-a46c-4a84-add1-77af876e96ef",
+    "code": "STS",
+    "label": "Start Stop",
+    "ioType": "DO"
+  },
+  {
+    "id": "bc3058bc-f9c6-4f34-b4d5-63f2a11b7eec",
+    "code": "DMO",
+    "label": "Damper Output",
+    "ioType": "AO"
+  },
+  {
+    "id": "ff12c6a3-b103-4e8f-b217-9266ffadbda5",
+    "code": "LVL",
+    "label": "Level Sensor",
+    "ioType": "AI"
+  },
+  {
+    "id": "96243a08-4073-4dd0-b198-2d01cef6bdd6",
+    "code": "LSW",
+    "label": "Level Switch",
+    "ioType": "DI"
+  },
+  {
+    "id": "247ffa0a-3757-417b-995a-8bca451d503b",
+    "code": "PSW",
+    "label": "Pressure Switch",
+    "ioType": "DI"
+  },
+  {
+    "id": "585456f9-9c1d-41a1-9b83-1881d0f24ec3",
+    "code": "VLN",
+    "label": "Voltage Line",
+    "ioType": "AI"
+  },
+  {
+    "id": "cf138d2d-e9ed-468c-bcee-12517835e7bb",
+    "code": "CUR",
+    "label": "Current",
+    "ioType": "AI"
+  },
+  {
+    "id": "36fc12ab-3199-4489-bea4-cb15ff1f3cf0",
+    "code": "VPH",
+    "label": "Voltage Phase",
+    "ioType": "AI"
+  },
+  {
+    "id": "0f7808e7-6722-41b6-a783-b49f5385cccd",
+    "code": "PWR",
+    "label": "Power Reactive",
+    "ioType": "AI"
+  },
+  {
+    "id": "004a1eab-a91a-483f-b931-21346137603a",
+    "code": "KVA",
+    "label": "Power Apparent",
+    "ioType": "AI"
+  },
+  {
+    "id": "fdfc3105-b1cf-41fd-afec-1c6ab65f8ba2",
+    "code": "FIR",
+    "label": "Fire",
+    "ioType": "DI"
+  },
+  {
+    "id": "fba62b81-3673-4de9-af0f-e89feb973373",
+    "code": "OHS",
+    "label": "Overheat Stat",
+    "ioType": "DI"
+  },
+  {
+    "id": "04fcfd26-e2d5-43e7-9c6d-8abdf7e9d390",
+    "code": "PWF",
+    "label": "Power Factor",
+    "ioType": "AI"
+  },
+  {
+    "id": "4d21af5c-7c1a-4a57-a431-01712dee885e",
+    "code": "SWT",
+    "label": "Switch",
+    "ioType": "DI"
+  },
+  {
+    "id": "b2472189-5cf4-4659-9a50-fbee899e84a3",
+    "code": "ONO",
+    "label": "On Off",
+    "ioType": "DO"
+  },
+  {
+    "id": "5994cbf1-21a1-4ec2-97e0-7cbc64754baf",
+    "code": "TRP",
+    "label": "Trip",
+    "ioType": "DI"
+  },
+  {
+    "id": "38c9cd80-48cc-4655-bb86-b70c5c7f5f12",
+    "code": "FRQ",
+    "label": "Frequency - Hertz",
+    "ioType": "AI"
+  },
+  {
+    "id": "3436e969-ab83-4d6d-bde8-27f75980736f",
+    "code": "VLP",
+    "label": "Valve Modulating Position",
+    "ioType": "AI"
+  },
+  {
+    "id": "6aa365c4-9fbc-4930-b16f-c2e594e744b0",
+    "code": "VLO",
+    "label": "Valve On/Off",
+    "ioType": "DO"
+  },
+  {
+    "id": "6bb0dc9e-f410-4a9a-9068-ad3991bd96de",
+    "code": "DLS",
+    "label": "Damper Limit Switch",
+    "ioType": "DI"
+  },
+  {
+    "id": "585456f9-9c1d-41a1-9b83-1881d0f24ec3",
+    "code": "VLT",
+    "label": "Voltage",
+    "ioType": "AI"
+  },
+  {
+    "id": "140e74b8-e98d-4623-b229-cea2a15ebd11",
+    "code": "PHR",
+    "label": "Phase Rotation",
+    "ioType": "AI"
+  },
+  {
+    "id": "dde668f8-60e8-46da-96f9-92e049732325",
+    "code": "CON",
+    "label": "Consumption",
+    "ioType": "AI"
+  },
+  {
+    "id": "65d03e06-f6d9-4729-bbd6-76d65396be86",
+    "code": "OPS",
+    "label": "Operating State",
+    "ioType": "AI"
+  },
+  {
+    "id": "a4b2dd8c-76de-4037-99a9-b94a3602376c",
+    "code": "RNT",
+    "label": "Run Time (h)",
+    "ioType": "AI"
+  },
+  {
+    "id": "388ee0ee-c87d-45cc-bf66-c3c0e5884a31",
+    "code": "USD",
+    "label": "Used",
+    "ioType": "AI"
+  },
+  {
+    "id": "1ed74cc4-c587-4a0a-b439-a11d221a4406",
+    "code": "NUM",
+    "label": "Number",
+    "ioType": "AI"
+  },
+  {
+    "id": "39b4bace-c978-48c2-b77a-021d1973c7b1",
+    "code": "CHM",
+    "label": "Charger Mode",
+    "ioType": "AI"
+  }
+]

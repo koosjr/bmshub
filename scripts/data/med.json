@@ -1,0 +1,277 @@
+[
+  {
+    "id": "a0c8749f-ed52-4c00-afbc-a7744cf2365e",
+    "code": "SA",
+    "label": "Supply air"
+  },
+  {
+    "id": "d7c707fc-300e-46aa-a58a-9d31ca87e8a3",
+    "code": "RA",
+    "label": "Return air"
+  },
+  {
+    "id": "50082aae-9e95-48b8-9e71-18042d90c845",
+    "code": "OA",
+    "label": "Outside air"
+  },
+  {
+    "id": "a7c15393-0e18-484e-a117-e1b6d05c3b91",
+    "code": "EX",
+    "label": "Exhaust air"
+  },
+  {
+    "id": "e1f7fd14-fd87-4688-b2c3-a5fb87be28b5",
+    "code": "ZN",
+    "label": "Zone / room"
+  },
+  {
+    "id": "c865e17a-6441-4861-914f-f7890f88df4d",
+    "code": "CW",
+    "label": "Chilled water"
+  },
+  {
+    "id": "e6b8c834-6d24-4878-bd92-0f2d5d51d62a",
+    "code": "HW",
+    "label": "Hot water"
+  },
+  {
+    "id": "f537fedc-654e-4701-98bc-5fdf04816c43",
+    "code": "CO",
+    "label": "Condenser water"
+  },
+  {
+    "id": "12a4ede3-95c2-419d-9c74-31afff735bee",
+    "code": "GY",
+    "label": "Glycol circuit"
+  },
+  {
+    "id": "ed0aaa90-fc87-4dcf-b6c1-3ea03cf761bd",
+    "code": "FA",
+    "label": "Fan"
+  },
+  {
+    "id": "cde3b135-a9ea-4068-bc94-0c92e1b7802a",
+    "code": "RF",
+    "label": "Refrigerant"
+  },
+  {
+    "id": "4f69de70-7943-4238-ac31-03b7db3a3eca",
+    "code": "RM",
+    "label": "Room"
+  },
+  {
+    "id": "c57dd755-88ce-48d8-a23a-a55366a55d79",
+    "code": "SW",
+    "label": "Supply Water"
+  },
+  {
+    "id": "b4ef0c57-1a39-4792-af05-518254679d43",
+    "code": "RW",
+    "label": "Return Water"
+  },
+  {
+    "id": "b83ef9c1-80ea-4f0e-8599-3b58cb5db42c",
+    "code": "ES",
+    "label": "Emergency Stop"
+  },
+  {
+    "id": "6c3852ec-bf22-42a2-abdf-94a36d47bded",
+    "code": "EN",
+    "label": "Engine"
+  },
+  {
+    "id": "a5377f5d-cc86-4e9e-92a5-aa8f99c71bec",
+    "code": "OL",
+    "label": "Oil"
+  },
+  {
+    "id": "0987a0e7-a865-44d0-a077-73d547a17a25",
+    "code": "WA",
+    "label": "Water"
+  },
+  {
+    "id": "52271fe2-b945-4a0f-a4be-b39a03ec85f6",
+    "code": "EL",
+    "label": "Electric"
+  },
+  {
+    "id": "dbefa209-66ce-4b85-9293-2719b496e57b",
+    "code": "AL",
+    "label": "Alarm"
+  },
+  {
+    "id": "9084b164-e31a-4c9c-a783-8aeb38b39111",
+    "code": "IL",
+    "label": "Interlock - Hardwire"
+  },
+  {
+    "id": "83d0d5b6-e2a3-44d7-a7a9-a3de6e1cd069",
+    "code": "AR",
+    "label": "Air"
+  },
+  {
+    "id": "9797d933-aae2-451e-a3a6-66cede783ecf",
+    "code": "FU",
+    "label": "Fuel"
+  },
+  {
+    "id": "bcabd65f-f9ae-4a95-abac-9c22e35fcd25",
+    "code": "OX",
+    "label": "Oxygen"
+  },
+  {
+    "id": "ceb64207-303e-41fc-b085-cc51c7703f07",
+    "code": "NO",
+    "label": "Nitrogen Oxide"
+  },
+  {
+    "id": "986c7da4-2809-4f5e-99b4-cdaf9f1d3bd9",
+    "code": "MA",
+    "label": "Medical Air"
+  },
+  {
+    "id": "1453de3d-2447-494b-b643-cab8c67e52b7",
+    "code": "NI",
+    "label": "Nitrogen"
+  },
+  {
+    "id": "2a659682-0df6-46c6-b765-54be7f0fda07",
+    "code": "CP",
+    "label": "Compressor"
+  },
+  {
+    "id": "d17bab23-0857-42a1-bb96-552f21bdc7ba",
+    "code": "EV",
+    "label": "Expansion Valve"
+  },
+  {
+    "id": "e533511c-8ea5-4486-8066-ebb4a92c6c53",
+    "code": "DF",
+    "label": "Defrost"
+  },
+  {
+    "id": "9d376555-87bd-43b2-9dd7-7d95c00ad248",
+    "code": "ST",
+    "label": "Steam"
+  },
+  {
+    "id": "b763e872-2eef-4344-b14d-c27bd1f0fa39",
+    "code": "SP",
+    "label": "Speed"
+  },
+  {
+    "id": "9999881e-2c69-484b-9ef8-ec87dfcaa84e",
+    "code": "AU",
+    "label": "Auto"
+  },
+  {
+    "id": "45df687b-b8c3-4d4a-bc70-2e8d9261d80d",
+    "code": "MN",
+    "label": "Manual"
+  },
+  {
+    "id": "4ee36581-1c0e-4e67-954d-d94d557774a9",
+    "code": "FD",
+    "label": "Dirty Filter"
+  },
+  {
+    "id": "80d51652-5fbd-4ade-801d-31b9b10aa54c",
+    "code": "SG",
+    "label": "Signal"
+  },
+  {
+    "id": "6a4ab70a-44da-4e67-8d0e-502094a27522",
+    "code": "HE",
+    "label": "Heater"
+  },
+  {
+    "id": "f4ff8081-fd77-4883-93cb-2958cf98a983",
+    "code": "FI",
+    "label": "Fire"
+  },
+  {
+    "id": "8a57592a-8b22-473d-8d2c-1f1ff23b3a1f",
+    "code": "CL",
+    "label": "Coolant"
+  },
+  {
+    "id": "dc000796-c881-425a-baaa-29728c3d39d5",
+    "code": "BT",
+    "label": "Battery"
+  },
+  {
+    "id": "a4377ef9-1160-4363-9f43-918bcccfdcbd",
+    "code": "AC",
+    "label": "Alternating Current"
+  },
+  {
+    "id": "345149a7-9660-40cc-86c5-8c22c49fe318",
+    "code": "GN",
+    "label": "Generator Electrical"
+  },
+  {
+    "id": "83e4e530-3409-4289-8cca-7aa50dc8c267",
+    "code": "DC",
+    "label": "Direct Current"
+  },
+  {
+    "id": "586fd02c-a574-4da1-b878-efe82a21f923",
+    "code": "AN",
+    "label": "Alternator"
+  },
+  {
+    "id": "f85cce24-9a19-497e-a079-e16f7ad8d439",
+    "code": "MF",
+    "label": "Manifold"
+  },
+  {
+    "id": "0c71c27f-562b-4a86-a58d-2d3bfeeb2742",
+    "code": "AT",
+    "label": "Atmospheric"
+  },
+  {
+    "id": "e993c8c4-c7de-47da-b687-fe50cb0ab792",
+    "code": "TB",
+    "label": "Turbo"
+  },
+  {
+    "id": "3c35179f-65d9-4588-9f43-a97d128ae4f9",
+    "code": "IR",
+    "label": "Injector Rail"
+  },
+  {
+    "id": "4e7708da-928b-4499-b744-c1ed8cb74a35",
+    "code": "EC",
+    "label": "Engine Control Unit (ECU)"
+  },
+  {
+    "id": "f324f85a-683b-40b4-85cd-17377331890d",
+    "code": "IC",
+    "label": "Inter Cooler"
+  },
+  {
+    "id": "817361d2-d0d9-41cc-b354-2115ef601f71",
+    "code": "AV",
+    "label": "Average"
+  },
+  {
+    "id": "be1de84d-a776-4d69-a253-0f23a7263eda",
+    "code": "SC",
+    "label": "Starts"
+  },
+  {
+    "id": "63470e77-b3b7-4f0b-baf8-10fbecb5906e",
+    "code": "EG",
+    "label": "Exhaust Gas"
+  },
+  {
+    "id": "eecae80f-89d9-42ce-a437-feba260cda6f",
+    "code": "ME",
+    "label": "Mains Electrical"
+  },
+  {
+    "id": "bdf50c3f-8ea4-4da0-bc97-4e052a56fb05",
+    "code": "CM",
+    "label": "Control Mode"
+  }
+]

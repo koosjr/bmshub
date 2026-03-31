@@ -1,0 +1,51 @@
+{
+  "id": "a66c3110-d140-4c1f-ba2f-d8883372a33f",
+  "name": "Hot Water Pump - VSD",
+  "equipCode": "HWP",
+  "description": "Hot Water Pump with VSD",
+  "points": [
+    {
+      "id": "86eef824-49ea-4f16-ba17-033e173d95c4",
+      "med": "SW",
+      "qty": "PRS",
+      "mod": ""
+    },
+    {
+      "id": "381a18b6-9e69-45cc-ae50-eab8e41552f5",
+      "med": "RW",
+      "qty": "PRS",
+      "mod": ""
+    },
+    {
+      "id": "402871c3-b3cc-492f-bfdd-115328a619a5",
+      "med": "WA",
+      "qty": "FSW",
+      "mod": ""
+    },
+    {
+      "id": "d8e42d9e-76a5-405a-8249-fd2ccab4bc69",
+      "med": "WA",
+      "qty": "PRS",
+      "mod": "SP",
+      "ioOverride": "AV"
+    },
+    {
+      "id": "51d8cab5-4b72-4ff1-b51f-4744214bebea",
+      "med": "SP",
+      "qty": "VSD",
+      "mod": "OUT"
+    },
+    {
+      "id": "a3033764-83dc-4e04-ace3-c95e272a7810",
+      "med": "ES",
+      "qty": "SWT",
+      "mod": ""
+    },
+    {
+      "id": "a3ad14ae-8c66-41fc-955e-9e4ee2e9cc13",
+      "med": "AL",
+      "qty": "FLT",
+      "mod": ""
+    }
+  ]
+}

@@ -1,0 +1,113 @@
+{
+  "id": "22ed24bb-4c75-4f3e-bf82-4e8b66b04b61",
+  "name": "Generator",
+  "equipCode": "GEN",
+  "description": "Generator",
+  "points": [
+    {
+      "id": "eabe19fc-b57b-4a72-b1c1-f214948430c6",
+      "med": "WA",
+      "qty": "TMP",
+      "mod": "",
+      "ioOverride": "AV"
+    },
+    {
+      "id": "02f1e243-fd6a-40a2-9e8f-947b1e095658",
+      "med": "EN",
+      "qty": "SPD",
+      "mod": "",
+      "ioOverride": "AV"
+    },
+    {
+      "id": "2de5493c-af49-4a22-addc-223a41a52da0",
+      "med": "OL",
+      "qty": "PRS",
+      "mod": "",
+      "ioOverride": "AV"
+    },
+    {
+      "id": "3378064e-c0a3-4072-b548-df3726e3f46b",
+      "med": "FU",
+      "qty": "LVL",
+      "mod": "",
+      "ioOverride": "AV"
+    },
+    {
+      "id": "2a1e5bc6-f99b-48f7-ac58-5810ba246186",
+      "med": "EL",
+      "qty": "VLN",
+      "mod": "LN1",
+      "ioOverride": "AV"
+    },
+    {
+      "id": "d922188a-450b-4630-ac1f-5c4716203004",
+      "med": "EL",
+      "qty": "VLN",
+      "mod": "LN2",
+      "ioOverride": "AV"
+    },
+    {
+      "id": "2320a9e2-c4f6-4a11-b3d9-b7c1dd43fbb7",
+      "med": "EL",
+      "qty": "VLN",
+      "mod": "LN3",
+      "ioOverride": "AV"
+    },
+    {
+      "id": "deecfd85-f766-4435-a721-50f275b7f36f",
+      "med": "EL",
+      "qty": "CUR",
+      "mod": "LN1",
+      "ioOverride": "AV"
+    },
+    {
+      "id": "17178af2-2476-4f4a-851f-9c71ec42c8d1",
+      "med": "EL",
+      "qty": "CUR",
+      "mod": "LN2",
+      "ioOverride": "AV"
+    },
+    {
+      "id": "3083f83c-7e93-4fbb-8646-3b40977ee807",
+      "med": "EL",
+      "qty": "CUR",
+      "mod": "LN3",
+      "ioOverride": "AV"
+    },
+    {
+      "id": "a55c3bdd-341c-41e3-b8cd-723409610004",
+      "med": "OL",
+      "qty": "TMP",
+      "mod": "",
+      "ioOverride": "AV"
+    },
+    {
+      "id": "e8844cb2-e56f-4aa6-a355-e65781f8265b",
+      "med": "EL",
+      "qty": "FRQ",
+      "mod": "",
+      "ioOverride": "AV"
+    },
+    {
+      "id": "edb09dad-9fff-4875-b5e7-c435cbddb062",
+      "med": "OL",
+      "qty": "PSW",
+      "mod": "",
+      "ioOverride": "BV"
+    },
+    {
+      "id": "da83d615-01f8-48c0-9037-0ff1cbc2d468",
+      "med": "WA",
+      "qty": "LSW",
+      "mod": "",
+      "ioOverride": "BV"
+    },
+    {
+      "id": "4c00b0f7-c9fa-4b21-9e6d-22f30d86acaa",
+      "med": "OA",
+      "qty": "TMP",
+      "mod": "",
+      "ioOverride": "AV"
+    }
+  ]
+}

@@ -1,0 +1,107 @@
+[
+  {
+    "id": "4d5beca6-a847-426f-b6e4-e6567f25b8a2",
+    "code": "SP",
+    "label": "Setpoint"
+  },
+  {
+    "id": "1219476b-439a-4845-93a1-447c3ed04cc6",
+    "code": "HL",
+    "label": "High limit"
+  },
+  {
+    "id": "3fa71a50-0307-4a3b-ac25-adce4ce4e70d",
+    "code": "LL",
+    "label": "Low limit"
+  },
+  {
+    "id": "ddf0e3b8-f3f0-4db0-b17d-164caac79c98",
+    "code": "DP",
+    "label": "Differential"
+  },
+  {
+    "id": "9879b168-827f-4ca2-b84f-8e3b801cf9a1",
+    "code": "FB",
+    "label": "Feedback / actual"
+  },
+  {
+    "id": "2f17958e-9fed-4492-bd5c-1a9b9d830b80",
+    "code": "T",
+    "label": "Top position"
+  },
+  {
+    "id": "a5478c04-4178-4466-b16c-73fc4024e5df",
+    "code": "M",
+    "label": "Middle position"
+  },
+  {
+    "id": "b1182562-6435-4a1f-aed3-ea75abd0f19a",
+    "code": "B",
+    "label": "Bottom position"
+  },
+  {
+    "id": "bc193846-1620-4ba2-8544-933828db91ef",
+    "code": "1",
+    "label": "Step"
+  },
+  {
+    "id": "0105cda9-50d0-487d-ae14-0708cf5495be",
+    "code": "2",
+    "label": "Step"
+  },
+  {
+    "id": "ac51130a-82e2-4343-81ac-be63d97f5b81",
+    "code": "3",
+    "label": "Step"
+  },
+  {
+    "id": "8b5b0ab5-04cf-433b-9099-6917e4d5c343",
+    "code": "OUT",
+    "label": "Output"
+  },
+  {
+    "id": "5fba16d5-c65a-4c97-8f56-c114f628a302",
+    "code": "IN",
+    "label": "Input"
+  },
+  {
+    "id": "37e62057-0b6f-4980-b606-866d2201c1b8",
+    "code": "LN1",
+    "label": "Line L1"
+  },
+  {
+    "id": "dfdd44b4-4e07-4842-a8a3-fdf3ce801d89",
+    "code": "LN2",
+    "label": "Line L2"
+  },
+  {
+    "id": "84ab1bc3-3cb7-4b77-82b1-229425fe3eb2",
+    "code": "LN3",
+    "label": "Line L3"
+  },
+  {
+    "id": "73acccea-450b-4b5b-8c43-2d303c5a122e",
+    "code": "P12",
+    "label": "Phase 1-2"
+  },
+  {
+    "id": "62654d1c-d4d1-40da-8512-d05b72bd8421",
+    "code": "P13",
+    "label": "Phase 1-3"
+  },
+  {
+    "id": "62734e7f-4b11-485e-bf0a-6ee322067efb",
+    "code": "P23",
+    "label": "Phase 2-3"
+  },
+  {
+    "id": "efcfdc0e-458e-4bc3-91b1-2287042aed7d",
+    "code": "HI",
+    "label": "High"
+  },
+  {
+    "id": "33d7f2b6-9cda-4b63-a7a8-70d7a898032b",
+    "code": "LO",
+    "label": "Low"
+  }
+]

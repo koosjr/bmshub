@@ -1,0 +1,394 @@
+{
+  "": [
+    "STS"
+  ],
+  "FA": [
+    "STS",
+    "FLT",
+    "RUN",
+    "VSD",
+    "SPD",
+    "DPR",
+    "FSW",
+    "FD",
+    "TMP",
+    "HUM",
+    "CO2",
+    "PCT",
+    "ENB",
+    "FLW"
+  ],
+  "SA": [
+    "TMP",
+    "HUM",
+    "CO2",
+    "ALM",
+    "DMP",
+    "DMO"
+  ],
+  "RA": [
+    "TMP",
+    "HUM",
+    "CO2",
+    "ALM",
+    "DMP",
+    "DMO"
+  ],
+  "OA": [
+    "TMP",
+    "HUM",
+    "CO2",
+    "DMP",
+    "DMO"
+  ],
+  "EX": [
+    "TMP",
+    "HUM",
+    "CO2",
+    "DMP",
+    "DMO"
+  ],
+  "RM": [
+    "TMP",
+    "HUM",
+    "CO2",
+    "ALM"
+  ],
+  "ZN": [
+    "TMP",
+    "HUM",
+    "CO2",
+    "ALM",
+    "DMP",
+    "DMO"
+  ],
+  "CW": [
+    "TMP",
+    "STMP",
+    "RTMP",
+    "PRS",
+    "DPR",
+    "FSW",
+    "FLW",
+    "VLV",
+    "GLY",
+    "ALM",
+    "VLP"
+  ],
+  "HW": [
+    "TMP",
+    "STMP",
+    "RTMP",
+    "PRS",
+    "DPR",
+    "FSW",
+    "FLW",
+    "VLV",
+    "PSW",
+    "OHS",
+    "VLP"
+  ],
+  "CO": [
+    "TMP",
+    "STMP",
+    "RTMP",
+    "PRS",
+    "DPR",
+    "FSW",
+    "FLW",
+    "VLV",
+    "DMO",
+    "VLP"
+  ],
+  "GY": [
+    "LVL",
+    "LSW",
+    "PCT"
+  ],
+  "WA": [
+    "TMP",
+    "PRS",
+    "FSW",
+    "FLW",
+    "LVL",
+    "LSW",
+    "VLV",
+    "VLP"
+  ],
+  "RW": [
+    "TMP",
+    "PRS",
+    "FSW",
+    "FLW",
+    "VLV",
+    "VLP"
+  ],
+  "SW": [
+    "TMP",
+    "PRS",
+    "FSW",
+    "FLW",
+    "VLV",
+    "VLP"
+  ],
+  "RF": [
+    "TMP",
+    "PRS",
+    "PSW",
+    "VLV",
+    "ALM",
+    "VLP"
+  ],
+  "EV": [
+    "TMP",
+    "PRS",
+    "PCT",
+    "ONO",
+    "ENB"
+  ],
+  "DF": [
+    "TMP",
+    "PRS",
+    "SWT",
+    "ONO"
+  ],
+  "CP": [
+    "TMP",
+    "PRS",
+    "PSW",
+    "STS",
+    "FLT",
+    "RUN"
+  ],
+  "MA": [
+    "PRS",
+    "PSW",
+    "ALM",
+    "FLW",
+    "FSW"
+  ],
+  "OX": [
+    "PRS",
+    "PSW",
+    "FLW",
+    "FSW",
+    "ALM"
+  ],
+  "NI": [
+    "PRS",
+    "PSW",
+    "FLW",
+    "FSW",
+    "ALM"
+  ],
+  "NO": [
+    "PRS",
+    "PSW",
+    "FLW",
+    "FSW",
+    "ALM"
+  ],
+  "AR": [
+    "PRS",
+    "PSW",
+    "FLW",
+    "FSW",
+    "ALM"
+  ],
+  "EL": [
+    "CUR",
+    "PWA",
+    "PWF",
+    "PWR",
+    "KVA",
+    "VLN",
+    "VPH",
+    "FLT",
+    "ALM",
+    "FRQ"
+  ],
+  "EN": [
+    "TMP",
+    "PRS",
+    "FLT",
+    "SPD",
+    "SWT",
+    "ENB",
+    "ALM",
+    "PSW",
+    "OPS",
+    "PCT",
+    "RNT"
+  ],
+  "FU": [
+    "LVL",
+    "LSW",
+    "FLW",
+    "FSW",
+    "TMP",
+    "PRS",
+    "ALM",
+    "CON",
+    "USD",
+    "NUM"
+  ],
+  "OL": [
+    "TMP",
+    "PRS",
+    "LVL",
+    "LSW",
+    "PSW"
+  ],
+  "AL": [
+    "FLT",
+    "TRP",
+    "FIR",
+    "NUM",
+    "ALM"
+  ],
+  "ES": [
+    "SWT"
+  ],
+  "IL": [
+    "SWT",
+    "FIR",
+    "OHS",
+    "FSW",
+    "PSW",
+    "LSW"
+  ],
+  "ST": [
+    "TMP",
+    "PSW",
+    "PRS",
+    "DPR",
+    "ALM",
+    "OHS"
+  ],
+  "SP": [
+    "SPD",
+    "VSD"
+  ],
+  "MN": [
+    "SWT"
+  ],
+  "AU": [
+    "SWT"
+  ],
+  "FD": [
+    "SWT"
+  ],
+  "HE": [
+    "STG",
+    "ALM",
+    "ONO",
+    "TRP",
+    "FLT"
+  ],
+  "SG": [
+    "ONO",
+    "STS",
+    "PCT"
+  ],
+  "FI": [
+    "FLT",
+    "ALM",
+    "DMP",
+    "DLS",
+    "DMO"
+  ],
+  "CL": [
+    "TMP",
+    "PRS",
+    "LVL",
+    "LSW",
+    "PSW",
+    "ALM"
+  ],
+  "GN": [
+    "VLT",
+    "CUR",
+    "FRQ",
+    "PWA",
+    "PWR",
+    "KVA",
+    "PWF",
+    "PCT",
+    "PHR",
+    "USD"
+  ],
+  "ME": [
+    "VLT",
+    "CUR",
+    "FRQ",
+    "PWA",
+    "PWR",
+    "KVA",
+    "PWF",
+    "PCT",
+    "PHR"
+  ],
+  "BT": [
+    "VLT",
+    "CUR",
+    "ALM",
+    "FLT",
+    "CHM"
+  ],
+  "AN": [
+    "VLT",
+    "CUR",
+    "FRQ",
+    "FLT",
+    "PCT"
+  ],
+  "EC": [
+    "OPS",
+    "SPD",
+    "ALM",
+    "FLT",
+    "VLT"
+  ],
+  "TB": [
+    "PRS",
+    "TMP"
+  ],
+  "IC": [
+    "TMP",
+    "PRS"
+  ],
+  "EG": [
+    "TMP",
+    "PRS"
+  ],
+  "AT": [
+    "PRS",
+    "TMP"
+  ],
+  "IR": [
+    "PRS",
+    "TMP",
+    "PSW"
+  ],
+  "DC": [
+    "VLT",
+    "CUR"
+  ],
+  "MF": [
+    "PRS",
+    "TMP"
+  ],
+  "SC": [
+    "NUM"
+  ],
+  "CM": [
+    "NUM",
+    "OPS"
+  ],
+  "AV": [
+    "VLT",
+    "CUR",
+    "KVA",
+    "PRS"
+  ]
+}

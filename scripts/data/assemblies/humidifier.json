@@ -1,0 +1,39 @@
+{
+  "id": "da3255a4-0959-404d-9d08-f5a08c4a723e",
+  "name": "Humidifier",
+  "equipCode": "HUM",
+  "description": "Humidifier - Electrode",
+  "points": [
+    {
+      "id": "316c92ae-7d50-420d-a53e-c8ccf0a4373e",
+      "med": "RA",
+      "qty": "HUM",
+      "mod": ""
+    },
+    {
+      "id": "63fe288e-4120-4286-a09a-1d88b7e4edd0",
+      "med": "RA",
+      "qty": "HUM",
+      "mod": "SP",
+      "ioOverride": "AV"
+    },
+    {
+      "id": "49a3659a-d6c1-49ba-b37a-d31b5e821ce3",
+      "med": "AR",
+      "qty": "FSW",
+      "mod": ""
+    },
+    {
+      "id": "59e7331a-d762-4afe-ad43-4163e597ba32",
+      "med": "AL",
+      "qty": "FLT",
+      "mod": ""
+    },
+    {
+      "id": "7a6fa3aa-67c1-4e8c-98c1-54e6692905a2",
+      "med": "SG",
+      "qty": "PCT",
+      "mod": "OUT"
+    }
+  ]
+}

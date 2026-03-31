@@ -1,0 +1,145 @@
+[
+  {
+    "id": "eve-6000",
+    "name": "EVE6000",
+    "description": "Eliwell EVE — AI4, DI2, DO6",
+    "io": {
+      "ai": 4,
+      "ao": 0,
+      "di": 2,
+      "do": 6
+    }
+  },
+  {
+    "id": "eve-10200",
+    "name": "EVE10200",
+    "description": "Eliwell EVE — AI10, AO10, DI6, DO10",
+    "io": {
+      "ai": 10,
+      "ao": 10,
+      "di": 6,
+      "do": 10
+    }
+  },
+  {
+    "id": "eve-4200",
+    "name": "EVE4200",
+    "description": "Eliwell EVE — AI6, AO5, DI8, DO7",
+    "io": {
+      "ai": 6,
+      "ao": 5,
+      "di": 8,
+      "do": 7
+    }
+  },
+  {
+    "id": "eve-7500",
+    "name": "EVE7500",
+    "description": "Eliwell EVE — AI4, AO2, DI4, DO4",
+    "io": {
+      "ai": 4,
+      "ao": 2,
+      "di": 4,
+      "do": 4
+    }
+  },
+  {
+    "id": "isma-b-8i",
+    "name": "iSMA-B-8I",
+    "description": "iSMA expansion — DI8",
+    "io": {
+      "ai": 0,
+      "ao": 0,
+      "di": 8,
+      "do": 0
+    }
+  },
+  {
+    "id": "isma-b-8u",
+    "name": "iSMA-B-8U",
+    "description": "iSMA expansion — AI8 (universal)",
+    "io": {
+      "ai": 8,
+      "ao": 0,
+      "di": 0,
+      "do": 0
+    }
+  },
+  {
+    "id": "isma-b-4i4o-h",
+    "name": "iSMA-B-4I4O-H",
+    "description": "iSMA expansion — DI4, DO4",
+    "io": {
+      "ai": 0,
+      "ao": 0,
+      "di": 4,
+      "do": 4
+    }
+  },
+  {
+    "id": "isma-b-4u4o-h",
+    "name": "iSMA-B-4U4O-H",
+    "description": "iSMA expansion — AI4 (universal), DO4",
+    "io": {
+      "ai": 4,
+      "ao": 0,
+      "di": 0,
+      "do": 4
+    }
+  },
+  {
+    "id": "isma-b-4u4a-h",
+    "name": "iSMA-B-4U4A-H",
+    "description": "iSMA expansion — AI4 (universal), AO4",
+    "io": {
+      "ai": 4,
+      "ao": 4,
+      "di": 0,
+      "do": 0
+    }
+  },
+  {
+    "id": "isma-b-mix18",
+    "name": "iSMA-B-MIX18",
+    "description": "iSMA expansion — AI5, AO4, DI5, DO4",
+    "io": {
+      "ai": 5,
+      "ao": 4,
+      "di": 5,
+      "do": 4
+    }
+  },
+  {
+    "id": "isma-b-mix38",
+    "name": "iSMA-B-MIX38",
+    "description": "iSMA expansion — AI8, AO6, DI12, DO12",
+    "io": {
+      "ai": 8,
+      "ao": 6,
+      "di": 12,
+      "do": 12
+    }
+  },
+  {
+    "id": "isma-b-mix18-ip",
+    "name": "iSMA-B-MIX18-IP",
+    "description": "iSMA expansion — AI5, AO4, DI5, DO4 + LAN",
+    "io": {
+      "ai": 5,
+      "ao": 4,
+      "di": 5,
+      "do": 4
+    }
+  },
+  {
+    "id": "isma-b-mix38-ip",
+    "name": "iSMA-B-MIX38-IP",
+    "description": "iSMA expansion — AI8, AO6, DI12, DO12 + LAN",
+    "io": {
+      "ai": 8,
+      "ao": 6,
+      "di": 12,
+      "do": 12
+    }
+  }
+]

@@ -1,0 +1,45 @@
+{
+  "id": "0a52c5e2-5219-4af9-b232-a6545a8d4b0a",
+  "name": "Chilled Water Pump",
+  "equipCode": "CWP",
+  "description": "Chilled Water Pump",
+  "points": [
+    {
+      "id": "990edb18-b94a-4605-9e26-00cacc31d23d",
+      "med": "SW",
+      "qty": "TMP",
+      "mod": "",
+      "ioOverride": null
+    },
+    {
+      "id": "bb8ea2be-37c9-4eae-b9db-da302766d212",
+      "med": "RW",
+      "qty": "TMP",
+      "mod": ""
+    },
+    {
+      "id": "402871c3-b3cc-492f-bfdd-115328a619a5",
+      "med": "WA",
+      "qty": "FSW",
+      "mod": ""
+    },
+    {
+      "id": "1d867a67-7338-47c1-a586-4effa94a1e0f",
+      "med": "AL",
+      "qty": "TRP",
+      "mod": ""
+    },
+    {
+      "id": "f2edf4db-d18f-4378-9fbe-e296e51f0477",
+      "med": "ES",
+      "qty": "SWT",
+      "mod": ""
+    },
+    {
+      "id": "607a404f-e09e-4cbe-adf4-d351b77620bc",
+      "med": "SG",
+      "qty": "STS",
+      "mod": ""
+    }
+  ]
+}

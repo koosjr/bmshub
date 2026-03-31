@@ -1,0 +1,46 @@
+[
+  {
+    "id": "eliwell-fa6200",
+    "name": "Eliwell Free Advance 6200",
+    "description": "Small plant room controller — 2× RS-485",
+    "io": {
+      "ai": 8,
+      "ao": 2,
+      "di": 2,
+      "do": 6
+    }
+  },
+  {
+    "id": "eliwell-fa8400",
+    "name": "Eliwell Free Advance 8400",
+    "description": "Medium plant room controller — 2× RS-485",
+    "io": {
+      "ai": 8,
+      "ao": 4,
+      "di": 8,
+      "do": 8
+    }
+  },
+  {
+    "id": "eliwell-fa12600",
+    "name": "Eliwell Free Advance 12600",
+    "description": "Large plant room controller — 2× RS-485",
+    "io": {
+      "ai": 12,
+      "ao": 6,
+      "di": 12,
+      "do": 12
+    }
+  },
+  {
+    "id": "isma-aac20",
+    "name": "ISMA AAC20",
+    "description": "BACnet/IP DDC controller — RS-485, Dali, M-Bus, 2× LAN",
+    "io": {
+      "ai": 8,
+      "ao": 4,
+      "di": 4,
+      "do": 4
+    }
+  }
+]

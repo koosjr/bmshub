@@ -1,0 +1,32 @@
+{
+  "id": "20d3f8ca-c23b-4e52-a101-37c7671d0378",
+  "name": "Water Pump",
+  "equipCode": "PMP",
+  "description": "Water Pump",
+  "points": [
+    {
+      "id": "402871c3-b3cc-492f-bfdd-115328a619a5",
+      "med": "WA",
+      "qty": "FSW",
+      "mod": ""
+    },
+    {
+      "id": "31eaade7-d111-4cb2-abd2-86d827996b10",
+      "med": "SG",
+      "qty": "STS",
+      "mod": ""
+    },
+    {
+      "id": "f2edf4db-d18f-4378-9fbe-e296e51f0477",
+      "med": "ES",
+      "qty": "SWT",
+      "mod": ""
+    },
+    {
+      "id": "f328a863-86a5-4b39-9826-bee886734939",
+      "med": "AL",
+      "qty": "TRP",
+      "mod": ""
+    }
+  ]
+}

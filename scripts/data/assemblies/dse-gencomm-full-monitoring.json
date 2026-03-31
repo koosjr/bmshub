@@ -1,0 +1,589 @@
+{
+  "id": "dse-gencomm-full-2024-01",
+  "name": "DSE GenComm — Full Monitoring",
+  "equipCode": "GEN",
+  "description": "DSE 72xx/73xx/8xxx GenComm Modbus — complete monitoring point set. All points are Modbus holding registers (AV). Scale factors apply per DSE register map.",
+  "points": [
+    {
+      "id": "dse-g-001",
+      "med": "CM",
+      "qty": "NUM",
+      "mod": "",
+      "ioOverride": "AV"
+    },
+    {
+      "id": "dse-g-002",
+      "med": "BT",
+      "qty": "CHM",
+      "mod": "",
+      "ioOverride": "AV"
+    },
+    {
+      "id": "dse-g-003",
+      "med": "OL",
+      "qty": "PRS",
+      "mod": "",
+      "ioOverride": "AV"
+    },
+    {
+      "id": "dse-g-004",
+      "med": "CL",
+      "qty": "TMP",
+      "mod": "",
+      "ioOverride": "AV"
+    },
+    {
+      "id": "dse-g-005",
+      "med": "OL",
+      "qty": "TMP",
+      "mod": "",
+      "ioOverride": "AV"
+    },
+    {
+      "id": "dse-g-006",
+      "med": "FU",
+      "qty": "LVL",
+      "mod": "",
+      "ioOverride": "AV"
+    },
+    {
+      "id": "dse-g-007",
+      "med": "AN",
+      "qty": "VLT",
+      "mod": "",
+      "ioOverride": "AV"
+    },
+    {
+      "id": "dse-g-008",
+      "med": "BT",
+      "qty": "VLT",
+      "mod": "",
+      "ioOverride": "AV"
+    },
+    {
+      "id": "dse-g-009",
+      "med": "EN",
+      "qty": "SPD",
+      "mod": "",
+      "ioOverride": "AV"
+    },
+    {
+      "id": "dse-g-010",
+      "med": "GN",
+      "qty": "FRQ",
+      "mod": "",
+      "ioOverride": "AV"
+    },
+    {
+      "id": "dse-g-011",
+      "med": "GN",
+      "qty": "VLT",
+      "mod": "LN1",
+      "ioOverride": "AV"
+    },
+    {
+      "id": "dse-g-012",
+      "med": "GN",
+      "qty": "VLT",
+      "mod": "LN2",
+      "ioOverride": "AV"
+    },
+    {
+      "id": "dse-g-013",
+      "med": "GN",
+      "qty": "VLT",
+      "mod": "LN3",
+      "ioOverride": "AV"
+    },
+    {
+      "id": "dse-g-014",
+      "med": "GN",
+      "qty": "VLT",
+      "mod": "P12",
+      "ioOverride": "AV"
+    },
+    {
+      "id": "dse-g-015",
+      "med": "GN",
+      "qty": "VLT",
+      "mod": "P23",
+      "ioOverride": "AV"
+    },
+    {
+      "id": "dse-g-016",
+      "med": "GN",
+      "qty": "VLT",
+      "mod": "P13",
+      "ioOverride": "AV"
+    },
+    {
+      "id": "dse-g-017",
+      "med": "GN",
+      "qty": "CUR",
+      "mod": "LN1",
+      "ioOverride": "AV"
+    },
+    {
+      "id": "dse-g-018",
+      "med": "GN",
+      "qty": "CUR",
+      "mod": "LN2",
+      "ioOverride": "AV"
+    },
+    {
+      "id": "dse-g-019",
+      "med": "GN",
+      "qty": "CUR",
+      "mod": "LN3",
+      "ioOverride": "AV"
+    },
+    {
+      "id": "dse-g-020",
+      "med": "GN",
+      "qty": "PWA",
+      "mod": "LN1",
+      "ioOverride": "AV"
+    },
+    {
+      "id": "dse-g-021",
+      "med": "GN",
+      "qty": "PWA",
+      "mod": "LN2",
+      "ioOverride": "AV"
+    },
+    {
+      "id": "dse-g-022",
+      "med": "GN",
+      "qty": "PWA",
+      "mod": "LN3",
+      "ioOverride": "AV"
+    },
+    {
+      "id": "dse-g-023",
+      "med": "GN",
+      "qty": "PHR",
+      "mod": "",
+      "ioOverride": "AV"
+    },
+    {
+      "id": "dse-g-024",
+      "med": "ME",
+      "qty": "FRQ",
+      "mod": "",
+      "ioOverride": "AV"
+    },
+    {
+      "id": "dse-g-025",
+      "med": "ME",
+      "qty": "VLT",
+      "mod": "LN1",
+      "ioOverride": "AV"
+    },
+    {
+      "id": "dse-g-026",
+      "med": "ME",
+      "qty": "VLT",
+      "mod": "LN2",
+      "ioOverride": "AV"
+    },
+    {
+      "id": "dse-g-027",
+      "med": "ME",
+      "qty": "VLT",
+      "mod": "LN3",
+      "ioOverride": "AV"
+    },
+    {
+      "id": "dse-g-028",
+      "med": "ME",
+      "qty": "VLT",
+      "mod": "P12",
+      "ioOverride": "AV"
+    },
+    {
+      "id": "dse-g-029",
+      "med": "ME",
+      "qty": "VLT",
+      "mod": "P23",
+      "ioOverride": "AV"
+    },
+    {
+      "id": "dse-g-030",
+      "med": "ME",
+      "qty": "VLT",
+      "mod": "P13",
+      "ioOverride": "AV"
+    },
+    {
+      "id": "dse-g-031",
+      "med": "ME",
+      "qty": "CUR",
+      "mod": "LN1",
+      "ioOverride": "AV"
+    },
+    {
+      "id": "dse-g-032",
+      "med": "ME",
+      "qty": "CUR",
+      "mod": "LN2",
+      "ioOverride": "AV"
+    },
+    {
+      "id": "dse-g-033",
+      "med": "ME",
+      "qty": "CUR",
+      "mod": "LN3",
+      "ioOverride": "AV"
+    },
+    {
+      "id": "dse-g-034",
+      "med": "ME",
+      "qty": "PWA",
+      "mod": "LN1",
+      "ioOverride": "AV"
+    },
+    {
+      "id": "dse-g-035",
+      "med": "ME",
+      "qty": "PWA",
+      "mod": "LN2",
+      "ioOverride": "AV"
+    },
+    {
+      "id": "dse-g-036",
+      "med": "ME",
+      "qty": "PWA",
+      "mod": "LN3",
+      "ioOverride": "AV"
+    },
+    {
+      "id": "dse-g-037",
+      "med": "ME",
+      "qty": "PHR",
+      "mod": "",
+      "ioOverride": "AV"
+    },
+    {
+      "id": "dse-g-038",
+      "med": "EN",
+      "qty": "PCT",
+      "mod": "",
+      "ioOverride": "AV"
+    },
+    {
+      "id": "dse-g-039",
+      "med": "AN",
+      "qty": "PCT",
+      "mod": "",
+      "ioOverride": "AV"
+    },
+    {
+      "id": "dse-g-040",
+      "med": "DC",
+      "qty": "VLT",
+      "mod": "",
+      "ioOverride": "AV"
+    },
+    {
+      "id": "dse-g-041",
+      "med": "CL",
+      "qty": "PRS",
+      "mod": "",
+      "ioOverride": "AV"
+    },
+    {
+      "id": "dse-g-042",
+      "med": "FU",
+      "qty": "PRS",
+      "mod": "",
+      "ioOverride": "AV"
+    },
+    {
+      "id": "dse-g-043",
+      "med": "TB",
+      "qty": "PRS",
+      "mod": "",
+      "ioOverride": "AV"
+    },
+    {
+      "id": "dse-g-044",
+      "med": "MF",
+      "qty": "TMP",
+      "mod": "",
+      "ioOverride": "AV"
+    },
+    {
+      "id": "dse-g-045",
+      "med": "EG",
+      "qty": "TMP",
+      "mod": "",
+      "ioOverride": "AV"
+    },
+    {
+      "id": "dse-g-046",
+      "med": "FU",
+      "qty": "CON",
+      "mod": "",
+      "ioOverride": "AV"
+    },
+    {
+      "id": "dse-g-047",
+      "med": "AT",
+      "qty": "PRS",
+      "mod": "",
+      "ioOverride": "AV"
+    },
+    {
+      "id": "dse-g-048",
+      "med": "FU",
+      "qty": "TMP",
+      "mod": "",
+      "ioOverride": "AV"
+    },
+    {
+      "id": "dse-g-049",
+      "med": "OL",
+      "qty": "LVL",
+      "mod": "",
+      "ioOverride": "AV"
+    },
+    {
+      "id": "dse-g-050",
+      "med": "CL",
+      "qty": "LVL",
+      "mod": "",
+      "ioOverride": "AV"
+    },
+    {
+      "id": "dse-g-051",
+      "med": "IR",
+      "qty": "PRS",
+      "mod": "LN1",
+      "ioOverride": "AV"
+    },
+    {
+      "id": "dse-g-052",
+      "med": "IR",
+      "qty": "PRS",
+      "mod": "LN2",
+      "ioOverride": "AV"
+    },
+    {
+      "id": "dse-g-053",
+      "med": "IC",
+      "qty": "TMP",
+      "mod": "",
+      "ioOverride": "AV"
+    },
+    {
+      "id": "dse-g-054",
+      "med": "TB",
+      "qty": "TMP",
+      "mod": "",
+      "ioOverride": "AV"
+    },
+    {
+      "id": "dse-g-055",
+      "med": "EC",
+      "qty": "OPS",
+      "mod": "",
+      "ioOverride": "AV"
+    },
+    {
+      "id": "dse-g-056",
+      "med": "EN",
+      "qty": "OPS",
+      "mod": "",
+      "ioOverride": "AV"
+    },
+    {
+      "id": "dse-g-057",
+      "med": "EC",
+      "qty": "SPD",
+      "mod": "HI",
+      "ioOverride": "AV"
+    },
+    {
+      "id": "dse-g-058",
+      "med": "EC",
+      "qty": "SPD",
+      "mod": "LO",
+      "ioOverride": "AV"
+    },
+    {
+      "id": "dse-g-059",
+      "med": "GN",
+      "qty": "PWA",
+      "mod": "",
+      "ioOverride": "AV"
+    },
+    {
+      "id": "dse-g-060",
+      "med": "GN",
+      "qty": "KVA",
+      "mod": "LN1",
+      "ioOverride": "AV"
+    },
+    {
+      "id": "dse-g-061",
+      "med": "GN",
+      "qty": "KVA",
+      "mod": "LN2",
+      "ioOverride": "AV"
+    },
+    {
+      "id": "dse-g-062",
+      "med": "GN",
+      "qty": "KVA",
+      "mod": "LN3",
+      "ioOverride": "AV"
+    },
+    {
+      "id": "dse-g-063",
+      "med": "GN",
+      "qty": "KVA",
+      "mod": "",
+      "ioOverride": "AV"
+    },
+    {
+      "id": "dse-g-064",
+      "med": "GN",
+      "qty": "PWR",
+      "mod": "LN1",
+      "ioOverride": "AV"
+    },
+    {
+      "id": "dse-g-065",
+      "med": "GN",
+      "qty": "PWR",
+      "mod": "LN2",
+      "ioOverride": "AV"
+    },
+    {
+      "id": "dse-g-066",
+      "med": "GN",
+      "qty": "PWR",
+      "mod": "LN3",
+      "ioOverride": "AV"
+    },
+    {
+      "id": "dse-g-067",
+      "med": "GN",
+      "qty": "PWR",
+      "mod": "",
+      "ioOverride": "AV"
+    },
+    {
+      "id": "dse-g-068",
+      "med": "GN",
+      "qty": "PWF",
+      "mod": "LN1",
+      "ioOverride": "AV"
+    },
+    {
+      "id": "dse-g-069",
+      "med": "GN",
+      "qty": "PWF",
+      "mod": "LN2",
+      "ioOverride": "AV"
+    },
+    {
+      "id": "dse-g-070",
+      "med": "GN",
+      "qty": "PWF",
+      "mod": "LN3",
+      "ioOverride": "AV"
+    },
+    {
+      "id": "dse-g-071",
+      "med": "GN",
+      "qty": "PWF",
+      "mod": "",
+      "ioOverride": "AV"
+    },
+    {
+      "id": "dse-g-072",
+      "med": "GN",
+      "qty": "PCT",
+      "mod": "",
+      "ioOverride": "AV"
+    },
+    {
+      "id": "dse-g-073",
+      "med": "ME",
+      "qty": "PWA",
+      "mod": "",
+      "ioOverride": "AV"
+    },
+    {
+      "id": "dse-g-074",
+      "med": "ME",
+      "qty": "KVA",
+      "mod": "",
+      "ioOverride": "AV"
+    },
+    {
+      "id": "dse-g-075",
+      "med": "ME",
+      "qty": "PWR",
+      "mod": "",
+      "ioOverride": "AV"
+    },
+    {
+      "id": "dse-g-076",
+      "med": "ME",
+      "qty": "PWF",
+      "mod": "",
+      "ioOverride": "AV"
+    },
+    {
+      "id": "dse-g-077",
+      "med": "ME",
+      "qty": "PCT",
+      "mod": "",
+      "ioOverride": "AV"
+    },
+    {
+      "id": "dse-g-078",
+      "med": "EN",
+      "qty": "RNT",
+      "mod": "",
+      "ioOverride": "AV"
+    },
+    {
+      "id": "dse-g-079",
+      "med": "SC",
+      "qty": "NUM",
+      "mod": "",
+      "ioOverride": "AV"
+    },
+    {
+      "id": "dse-g-080",
+      "med": "FU",
+      "qty": "USD",
+      "mod": "",
+      "ioOverride": "AV"
+    },
+    {
+      "id": "dse-g-081",
+      "med": "GN",
+      "qty": "USD",
+      "mod": "HI",
+      "ioOverride": "AV"
+    },
+    {
+      "id": "dse-g-082",
+      "med": "GN",
+      "qty": "USD",
+      "mod": "LO",
+      "ioOverride": "AV"
+    },
+    {
+      "id": "dse-g-083",
+      "med": "AL",
+      "qty": "NUM",
+      "mod": "",
+      "ioOverride": "AV"
+    }
+  ]
+}

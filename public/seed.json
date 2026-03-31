@@ -954,17 +954,9 @@
         "AR"
       ],
       "GEN": [
-        "EL",
-        "FU",
-        "EN",
-        "OL",
-        "WA",
-        "AL",
-        "IL",
-        "SG",
-        "HE",
-        "FA",
-        "OA"
+        "EL", "FU", "EN", "OL", "WA", "AL", "IL", "SG", "HE", "FA", "OA",
+        "SP", "AN", "BT", "TB", "IC", "AV", "SC", "DC", "AC", "CM", "CL",
+        "EC", "EG", "AU", "AR", "AT", "FD", "IR", "ME", "MF", "GN"
       ],
       "GSB": [
         "MA",
@@ -1322,23 +1314,11 @@
         "FRQ"
       ],
       "EN": [
-        "TMP",
-        "PRS",
-        "FLT",
-        "SPD",
-        "SWT",
-        "ENB",
-        "ALM",
-        "PSW"
+        "TMP", "PRS", "FLT", "SPD", "SWT", "ENB", "ALM", "PSW",
+        "OPS", "PCT", "RNT"
       ],
       "FU": [
-        "LVL",
-        "LSW",
-        "FLW",
-        "FSW",
-        "TMP",
-        "PRS",
-        "ALM"
+        "LVL", "LSW", "FLW", "FSW", "TMP", "PRS", "ALM", "CON", "USD", "NUM"
       ],
       "OL": [
         "TMP",
@@ -1348,9 +1328,7 @@
         "PSW"
       ],
       "AL": [
-        "FLT",
-        "TRP",
-        "FIR"
+        "FLT", "TRP", "FIR", "NUM", "ALM"
       ],
       "ES": [
         "SWT"
@@ -1397,11 +1375,55 @@
         "PCT"
       ],
       "FI": [
-        "FLT",
-        "ALM",
-        "DMP",
-        "DLS",
-        "DMO"
+        "FLT", "ALM", "DMP", "DLS", "DMO"
+      ],
+      "CL": [
+        "TMP", "PRS", "LVL", "LSW", "PSW", "ALM"
+      ],
+      "GN": [
+        "VLT", "CUR", "FRQ", "PWA", "PWR", "KVA", "PWF", "PCT", "PHR", "USD"
+      ],
+      "ME": [
+        "VLT", "CUR", "FRQ", "PWA", "PWR", "KVA", "PWF", "PCT", "PHR"
+      ],
+      "BT": [
+        "VLT", "CUR", "ALM", "FLT", "CHM"
+      ],
+      "AN": [
+        "VLT", "CUR", "FRQ", "FLT", "PCT"
+      ],
+      "EC": [
+        "OPS", "SPD", "ALM", "FLT", "VLT"
+      ],
+      "TB": [
+        "PRS", "TMP"
+      ],
+      "IC": [
+        "TMP", "PRS"
+      ],
+      "EG": [
+        "TMP", "PRS"
+      ],
+      "AT": [
+        "PRS", "TMP"
+      ],
+      "IR": [
+        "PRS", "TMP", "PSW"
+      ],
+      "DC": [
+        "VLT", "CUR"
+      ],
+      "MF": [
+        "PRS", "TMP"
+      ],
+      "SC": [
+        "NUM"
+      ],
+      "CM": [
+        "NUM", "OPS"
+      ],
+      "AV": [
+        "VLT", "CUR", "KVA", "PRS"
       ]
     },
     "qtyMods": {
@@ -1491,9 +1513,7 @@
         "LL"
       ],
       "SPD": [
-        "",
-        "SP",
-        "FB"
+        "", "SP", "FB", "HI", "LO", "RPM"
       ],
       "FSW": [
         ""
@@ -1597,17 +1617,42 @@
         "P23"
       ],
       "PWA": [
-        "",
-        "HI",
-        "LO"
+        "", "LN1", "LN2", "LN3", "HI", "LO"
       ],
       "PWF": [
-        ""
+        "", "LN1", "LN2", "LN3"
       ],
       "PWR": [
-        ""
+        "", "LN1", "LN2", "LN3"
       ],
       "KVA": [
+        "", "LN1", "LN2", "LN3"
+      ],
+      "VLT": [
+        "", "LN1", "LN2", "LN3", "P12", "P13", "P23"
+      ],
+      "FRQ": [
+        ""
+      ],
+      "PHR": [
+        ""
+      ],
+      "OPS": [
+        ""
+      ],
+      "RNT": [
+        ""
+      ],
+      "USD": [
+        "", "HI", "LO"
+      ],
+      "CHM": [
+        ""
+      ],
+      "NUM": [
+        ""
+      ],
+      "CON": [
         ""
       ]
     }
@@ -4091,5 +4136,5 @@
       "updatedAt": "2026-03-29T17:39:59.611Z"
     }
   ],
-  "seed_version": 7
+  "seed_version": 8
 }

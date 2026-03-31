@@ -162,6 +162,11 @@ function EquipSection({ equip, controllers, onUpdate }: {
     }
     if (!confirm(`Delete EQUIP "${e.code}"?`)) return;
     onUpdate(equip.filter(x => x.id !== e.id));
+    // Remove from semantic config — drop equipMeds row for this code
+    const cfg = props.semanticConfig;
+    const newEquipMeds = { ...cfg.equipMeds };
+    delete newEquipMeds[e.code];
+    props.onUpdateSemanticConfig({ ...cfg, equipMeds: newEquipMeds });
   }
 
   return (
@@ -298,6 +303,15 @@ function MedSection({ med, controllers, onUpdate }: {
     }
     if (!confirm(`Delete MED "${e.code}"?`)) return;
     onUpdate(med.filter(x => x.id !== e.id));
+    // Remove from semantic config — drop medQtys row + remove from all equipMeds values
+    const cfg = props.semanticConfig;
+    const newMedQtys = { ...cfg.medQtys };
+    delete newMedQtys[e.code];
+    const newEquipMeds: Record<string, string[]> = {};
+    for (const [k, vals] of Object.entries(cfg.equipMeds)) {
+      newEquipMeds[k] = vals.filter(v => v !== e.code);
+    }
+    props.onUpdateSemanticConfig({ ...cfg, medQtys: newMedQtys, equipMeds: newEquipMeds });
   }
 
   return (
@@ -396,6 +410,15 @@ function QtySection({ qty, controllers, onUpdate }: {
     }
     if (!confirm(`Delete QTY "${e.code}"?`)) return;
     onUpdate(qty.filter(x => x.id !== e.id));
+    // Remove from semantic config — drop qtyMods row + remove from all medQtys values
+    const cfg = props.semanticConfig;
+    const newQtyMods = { ...cfg.qtyMods };
+    delete newQtyMods[e.code];
+    const newMedQtys: Record<string, string[]> = {};
+    for (const [k, vals] of Object.entries(cfg.medQtys)) {
+      newMedQtys[k] = vals.filter(v => v !== e.code);
+    }
+    props.onUpdateSemanticConfig({ ...cfg, qtyMods: newQtyMods, medQtys: newMedQtys });
   }
 
   return (
@@ -506,6 +529,13 @@ function ModSection({ mod, controllers, onUpdate }: {
     }
     if (!confirm(`Delete MOD "${e.code}"?`)) return;
     onUpdate(mod.filter(x => x.id !== e.id));
+    // Remove from semantic config — remove from all qtyMods values
+    const cfg = props.semanticConfig;
+    const newQtyMods: Record<string, string[]> = {};
+    for (const [k, vals] of Object.entries(cfg.qtyMods)) {
+      newQtyMods[k] = vals.filter(v => v !== e.code);
+    }
+    props.onUpdateSemanticConfig({ ...cfg, qtyMods: newQtyMods });
   }
 
   return (
@@ -685,11 +715,13 @@ function SemanticConfigSection({ cfg, equip, med, qty, mod, onUpdate }: {
               onChange={e => { if (e.target.value) { add(e.target.value); e.target.value = ''; } }}
             >
               <option value="">+ add value…</option>
-              {available.map(o => (
-                <option key={o === '' ? NONE_SENTINEL : o} value={o === '' ? NONE_SENTINEL : o}>
-                  {o === '' ? '∅ (none) — no medium' : `${o} — ${labelFn(o)}`}
-                </option>
-              ))}
+              {[...available]
+                .sort((a, b) => a === '' ? -1 : b === '' ? 1 : a.localeCompare(b))
+                .map(o => (
+                  <option key={o === '' ? NONE_SENTINEL : o} value={o === '' ? NONE_SENTINEL : o}>
+                    {o === '' ? '∅ (none) — no medium' : `${o} — ${labelFn(o)}`}
+                  </option>
+                ))}
             </select>
           </div>
         )}

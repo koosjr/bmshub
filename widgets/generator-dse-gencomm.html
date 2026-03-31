@@ -7,38 +7,38 @@
 <style>
 /* ── THEME ──────────────────────────────────────────────────── */
 :root {
-  --bg:       #0a0f1a;
-  --panel:    #111827;
-  --panel-alt:#0d1117;
-  --border:   #1f2937;
-  --border2:  #374151;
+  --bg:       #f5f5f5;
+  --panel:    #ffffff;
+  --panel-alt:#f9fafb;
+  --border:   #e5e7eb;
+  --border2:  #d1d5db;
 
-  /* Section accent colors */
-  --eng-border:  #065f46;  --eng-text:  #34d399;
-  --fuel-border: #1e40af;  --fuel-text: #60a5fa;
-  --mains-border:#92400e;  --mains-text:#fbbf24;
-  --elec-border: #7c3aed;  --elec-text: #a78bfa;
-  --alm-border:  #7f1d1d;  --alm-text:  #f87171;
+  /* Section accent colors (darker for light bg) */
+  --eng-border:  #059669;  --eng-text:  #047857;
+  --fuel-border: #2563eb;  --fuel-text: #1d4ed8;
+  --mains-border:#d97706;  --mains-text:#b45309;
+  --elec-border: #7c3aed;  --elec-text: #6d28d9;
+  --alm-border:  #dc2626;  --alm-text:  #b91c1c;
 
   /* Alarm severity */
-  --sev-warn:  #fbbf24;
-  --sev-shut:  #f87171;
-  --sev-trip:  #f87171;
-  --sev-ind:   #60a5fa;
-  --sev-inact: #6b7280;
+  --sev-warn:  #d97706;
+  --sev-shut:  #dc2626;
+  --sev-trip:  #dc2626;
+  --sev-ind:   #2563eb;
+  --sev-inact: #9ca3af;
 
   /* Text */
-  --t1: #f9fafb;
-  --t2: #e5e7eb;
-  --t3: #9ca3af;
-  --t4: #6b7280;
+  --t1: #111827;
+  --t2: #374151;
+  --t3: #6b7280;
+  --t4: #9ca3af;
 
   /* Badges */
-  --bdg-green-bg: #065f46;  --bdg-green-fg: #34d399;
-  --bdg-amber-bg: #92400e;  --bdg-amber-fg: #fbbf24;
-  --bdg-red-bg:   #7f1d1d;  --bdg-red-fg:   #f87171;
-  --bdg-grey-bg:  #1f2937;  --bdg-grey-fg:  #6b7280;
-  --bdg-blue-bg:  #1e3a5f;  --bdg-blue-fg:  #60a5fa;
+  --bdg-green-bg: #d1fae5;  --bdg-green-fg: #047857;
+  --bdg-amber-bg: #fef3c7;  --bdg-amber-fg: #b45309;
+  --bdg-red-bg:   #fee2e2;  --bdg-red-fg:   #b91c1c;
+  --bdg-grey-bg:  #f3f4f6;  --bdg-grey-fg:  #6b7280;
+  --bdg-blue-bg:  #dbeafe;  --bdg-blue-fg:  #1d4ed8;
 
   --fm: 'Segoe UI', system-ui, -apple-system, sans-serif;
   --stale-opacity: 0.4;
@@ -77,14 +77,14 @@ body { padding: 8px; }
 }
 .status-bar__label {
   color: var(--t3);
-  font-size: 10px;
+  font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
 .status-bar__value {
   color: var(--t2);
   font-weight: 600;
-  font-size: 12px;
+  font-size: 14px;
 }
 
 /* ── BADGE ──────────────────────────────────────────────────── */
@@ -92,7 +92,7 @@ body { padding: 8px; }
   padding: 2px 10px;
   border-radius: 10px;
   font-weight: 600;
-  font-size: 11px;
+  font-size: 13px;
   display: inline-block;
 }
 .bdg--green { background: var(--bdg-green-bg); color: var(--bdg-green-fg); }
@@ -113,10 +113,11 @@ body { padding: 8px; }
   background: var(--panel);
   border-radius: 8px;
   padding: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
 }
 .panel__title {
   font-weight: 700;
-  font-size: 13px;
+  font-size: 15px;
   margin-bottom: 10px;
   padding-bottom: 6px;
   border-bottom: 1px solid var(--border);
@@ -146,7 +147,7 @@ body { padding: 8px; }
 .val-cell {}
 .val-cell__label {
   color: var(--t4);
-  font-size: 9px;
+  font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.03em;
 }
@@ -155,10 +156,10 @@ body { padding: 8px; }
   font-weight: 700;
   line-height: 1.2;
 }
-.val-cell__value--lg { font-size: 18px; }
-.val-cell__value--md { font-size: 14px; }
+.val-cell__value--lg { font-size: 20px; }
+.val-cell__value--md { font-size: 16px; }
 .val-cell__unit {
-  font-size: 10px;
+  font-size: 12px;
   color: var(--t4);
   font-weight: 400;
 }
@@ -169,7 +170,7 @@ body { padding: 8px; }
 }
 .val-cell--stale::after {
   content: '⏱';
-  font-size: 9px;
+  font-size: 11px;
   margin-left: 4px;
   opacity: 0.5;
 }
@@ -190,7 +191,7 @@ body { padding: 8px; }
 .tabs__btn {
   padding: 8px 16px;
   color: var(--t4);
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 600;
   cursor: pointer;
   border: none;
@@ -214,14 +215,14 @@ body { padding: 8px; }
 .elec-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 11px;
+  font-size: 13px;
 }
 .elec-table thead th {
   text-align: right;
   padding: 4px 8px;
   border-bottom: 1px solid var(--border);
   color: var(--t3);
-  font-size: 9px;
+  font-size: 11px;
   text-transform: uppercase;
   font-weight: 600;
 }
@@ -250,7 +251,7 @@ body { padding: 8px; }
   flex-wrap: wrap;
   gap: 16px;
   color: var(--t4);
-  font-size: 10px;
+  font-size: 12px;
 }
 .elec-supplementary span { color: var(--t1); }
 
@@ -268,18 +269,18 @@ body { padding: 8px; }
 }
 .diag-card__label {
   color: var(--t4);
-  font-size: 9px;
+  font-size: 11px;
   text-transform: uppercase;
   margin-bottom: 2px;
 }
 .diag-card__value {
   color: var(--t1);
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 600;
 }
 .diag-card__unit {
   color: var(--t4);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 400;
 }
 .diag-card--stale .diag-card__value { opacity: var(--stale-opacity); }
@@ -299,18 +300,18 @@ body { padding: 8px; }
 }
 .accum-card__label {
   color: var(--t4);
-  font-size: 10px;
+  font-size: 12px;
   text-transform: uppercase;
   margin-bottom: 4px;
 }
 .accum-card__value {
   color: var(--t1);
-  font-size: 20px;
+  font-size: 22px;
   font-weight: 700;
 }
 .accum-card__unit {
   color: var(--t4);
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 400;
 }
 
@@ -330,7 +331,7 @@ body { padding: 8px; }
 .alarm-bar__title {
   color: var(--alm-text);
   font-weight: 700;
-  font-size: 12px;
+  font-size: 14px;
 }
 .alarm-bar__table-wrap {
   background: var(--panel-alt);
@@ -343,7 +344,7 @@ body { padding: 8px; }
 .alarm-bar__hdr-row,
 .alarm-bar__row {
   display: flex;
-  font-size: 10px;
+  font-size: 12px;
   padding: 2px 0;
 }
 .alarm-bar__hdr-row {
@@ -359,7 +360,7 @@ body { padding: 8px; }
 .alarm-bar__col-state    { width: 70px; text-align: right; }
 .alarm-bar__empty {
   color: var(--t4);
-  font-size: 11px;
+  font-size: 13px;
   text-align: center;
   padding: 8px;
 }

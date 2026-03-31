@@ -180,7 +180,7 @@ body { padding: 8px; }
 /* ── TABS ───────────────────────────────────────────────────── */
 .tabs {
   background: var(--panel);
-  border: 1px solid var(--border2);
+  border: 1px solid var(--elec-border);
   border-radius: 8px;
 }
 .tabs__bar {
@@ -742,7 +742,7 @@ const KEY_MAP = {
 
 const CONTROL_MODE = {
   0: 'Stop', 1: 'Auto', 2: 'Manual', 3: 'Test on Load',
-  4: 'Auto + Restore', 5: 'User Config', 6: 'Test off Load', 7: 'Off'
+  4: 'Auto + Manual Restore', 5: 'User Config', 6: 'Test off Load', 7: 'Off'
 };
 const CONTROL_MODE_BADGE = {
   0: 'grey', 1: 'green', 2: 'amber', 3: 'blue',
@@ -833,8 +833,8 @@ const DIAG_FIELDS = [
   { key: 'injectorRail1',      label: 'Injector Rail 1',     unit: 'MPa',  scale: 0.01 },
   { key: 'injectorRail2',      label: 'Injector Rail 2',     unit: 'MPa',  scale: 0.01 },
   { key: 'accelPosition',      label: 'Accel Position',      unit: '%',    scale: 1 },
-  { key: 'dcVoltage',          label: 'DC Voltage',          unit: 'V',    scale: 0.1 },
-  { key: 'backupSupplyV',      label: 'Backup Supply',       unit: 'V',    scale: 0.1 },
+  { key: 'dcVoltage',          label: 'DC Voltage',          unit: 'V',    scale: 1 },
+  { key: 'backupSupplyV',      label: 'Backup Supply',       unit: 'V',    scale: 1 },
   { key: 'chargerMode',        label: 'Charger Mode',        unit: '',     scale: 1, enum: BATTERY_CHARGER_MODE },
   { key: 'ecuRatedSpeed',      label: 'ECU Rated Speed',     unit: 'RPM',  scale: 1 },
   { key: 'ecuIdleSpeed',       label: 'ECU Idle Speed',      unit: 'RPM',  scale: 1 },
@@ -842,10 +842,10 @@ const DIAG_FIELDS = [
 
 // ── ACCUMULATOR FIELD DEFINITIONS ──────────────────────────────
 const ACCUM_FIELDS = [
-  { key: 'genPosKwh',  label: 'Gen +kWh',         unit: 'kWh',   scale: 0.1 },
-  { key: 'genNegKwh',  label: 'Gen -kWh',         unit: 'kWh',   scale: 0.1 },
-  { key: 'genKvah',    label: 'Gen kVAh',         unit: 'kVAh',  scale: 0.1 },
-  { key: 'genKvarh',   label: 'Gen kVArh',        unit: 'kVArh', scale: 0.1 },
+  { key: 'genPosKwh',  label: 'Gen +kWh',         unit: 'kWh',   scale: 1 },
+  { key: 'genNegKwh',  label: 'Gen -kWh',         unit: 'kWh',   scale: 1 },
+  { key: 'genKvah',    label: 'Gen kVAh',         unit: 'kVAh',  scale: 1 },
+  { key: 'genKvarh',   label: 'Gen kVArh',        unit: 'kVArh', scale: 1 },
   { key: 'fuelUsed',   label: 'Total Fuel Used',  unit: 'L',     scale: 1 },
   { key: 'runTime',    label: 'Run Hours',         unit: 'h',     scale: 1/3600 },
   { key: 'numStarts',  label: 'Number of Starts',  unit: '',      scale: 1 },
@@ -1004,12 +1004,23 @@ function updateAlarmBar() {
   const sevOrder = { 3: 0, 4: 0, 2: 1, 10: 2, 9: 3 };
   alarms.sort((a, b) => (sevOrder[a.code] ?? 9) - (sevOrder[b.code] ?? 9));
 
-  rowsEl.innerHTML = alarms.map(a => `
+  // Severity-9 alarms only show when there are no active alarms (codes 2,3,4,10)
+  const activeAlarms = alarms.filter(a => [2, 3, 4, 10].includes(a.code));
+  const displayAlarms = activeAlarms.length > 0
+    ? alarms.filter(a => a.code !== 9)
+    : alarms;
+
+  if (displayAlarms.length === 0) {
+    rowsEl.innerHTML = '<div class="alarm-bar__empty">No active alarms</div>';
+    return;
+  }
+
+  rowsEl.innerHTML = displayAlarms.map(a => `
     <div class="alarm-bar__row">
       <span class="alarm-bar__col-time">${new Date().toLocaleString()}</span>
       <span class="alarm-bar__col-severity" style="color:${a.color}">${a.severity}</span>
       <span class="alarm-bar__col-name">${a.name}</span>
-      <span class="alarm-bar__col-state" style="color:${a.color}">Active</span>
+      <span class="alarm-bar__col-state" style="color:${a.code === 9 ? 'var(--sev-inact)' : a.color}">${a.code === 9 ? 'Inactive' : 'Active'}</span>
     </div>
   `).join('');
 }
@@ -1154,7 +1165,7 @@ function updateAccumulatorsTab() {
     if (f.derived && f.key === '_lifetimeSFC') {
       // Lifetime SFC = Total Fuel Used / +kWh
       if (D.fuelUsed != null && D.genPosKwh != null && D.genPosKwh > 0) {
-        display = fmt(D.fuelUsed / (D.genPosKwh * 0.1), 2);
+        display = fmt(D.fuelUsed / D.genPosKwh, 2);
       } else {
         display = '--';
       }

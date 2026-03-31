@@ -51,25 +51,28 @@ function AssemblyPointRow({
   const suffix = point.med + point.qty + point.mod;
   const qtyEntry = qtyList.find(q => q.code === point.qty);
 
-  // Filter MED: only show media allowed for this EQUIP
+  // Filter MED: only show media allowed for this EQUIP, sorted A→Z
   const filteredMeds = useMemo(() =>
-    medList.filter(m => isMedAllowed(equipCode, m.code, semanticConfig)),
+    medList.filter(m => isMedAllowed(equipCode, m.code, semanticConfig))
+           .sort((a, b) => a.code.localeCompare(b.code)),
     [medList, equipCode, semanticConfig]
   );
 
-  // Filter QTY: only show QTYs allowed for the selected MED
+  // Filter QTY: only show QTYs allowed for the selected MED, sorted A→Z
   const filteredQtys = useMemo(() =>
-    qtyList.filter(q => isQtyAllowed(point.med, q.code, semanticConfig)),
+    qtyList.filter(q => isQtyAllowed(point.med, q.code, semanticConfig))
+           .sort((a, b) => a.code.localeCompare(b.code)),
     [qtyList, point.med, semanticConfig]
   );
 
-  // Filter MOD: use semanticConfig if defined, otherwise show all
+  // Filter MOD: use semanticConfig if defined, otherwise show all; sorted A→Z
   const availableMods = useMemo(() => {
     if (!point.qty) return [];
     const valid = getValidMods(point.qty, semanticConfig);
-    return valid !== null
+    const list = valid !== null
       ? modList.filter(m => valid.includes(m.code))
       : modList;
+    return [...list].sort((a, b) => a.code.localeCompare(b.code));
   }, [point.qty, modList, semanticConfig]);
 
   function handleMedChange(code: string) {
@@ -298,7 +301,7 @@ function AssemblyModal({
               value={equipCode}
               onChange={e => { setEquipCode(e.target.value); setPoints([]); }}
             >
-              {equipList.map(e => (
+              {[...equipList].sort((a, b) => a.code.localeCompare(b.code)).map(e => (
                 <option key={e.id} value={e.code}>{e.code} — {e.label}</option>
               ))}
             </select>
@@ -866,7 +869,7 @@ export default function AssembliesTab({
               value={cloneEquip}
               onChange={e => setCloneEquip(e.target.value)}
             >
-              {equip.map(e => (
+              {[...equip].sort((a, b) => a.code.localeCompare(b.code)).map(e => (
                 <option key={e.id} value={e.code}>{e.code} — {e.label}</option>
               ))}
             </select>

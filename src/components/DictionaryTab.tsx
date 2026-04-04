@@ -364,7 +364,7 @@ function MedSection({ med, controllers, onUpdate, semanticConfig, onUpdateSemant
 
   function validate(): string | null {
     const code = form.code.toUpperCase().trim();
-    if (!/^[A-Z]{2,3}$/.test(code)) return 'MED code must be 2 or 3 uppercase letters';
+    if (!/^[A-Z0-9]{2,3}$/.test(code)) return 'MED code must be 2–3 uppercase alphanumeric characters';
     if (!form.label.trim()) return 'Label is required';
     const dupe = med.find(e => e.code === code && (!editing || e.id !== editing.id));
     if (dupe) return `Code "${code}" already exists`;
@@ -447,7 +447,7 @@ function MedSection({ med, controllers, onUpdate, semanticConfig, onUpdateSemant
         <div className="p-3 rounded-lg mb-3 border" style={{ background: '#F1EFE8', borderColor: '#D3D1C7' }}>
           <div className="flex gap-3 flex-wrap items-end">
             <div>
-              <label className="text-xs font-medium block mb-1" style={{ color: '#888780' }}>Code (2–3 chars)</label>
+              <label className="text-xs font-medium block mb-1" style={{ color: '#888780' }}>Code (2–3 chars, A–Z 0–9)</label>
               <input className="border rounded px-2 py-1 text-sm font-mono w-20 uppercase" style={{ borderColor: '#D3D1C7' }}
                 maxLength={3} value={form.code} onChange={e => setForm(f => ({ ...f, code: e.target.value.toUpperCase() }))} />
             </div>

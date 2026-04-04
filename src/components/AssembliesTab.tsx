@@ -275,8 +275,9 @@ function AssemblyModal({
     setPoints(p => {
       const pt = p[index];
       if (!pt.med) return p;
-      // Find all sibling points sharing the same MED
-      const siblings = p.filter(x => x.med === pt.med);
+      // Find siblings sharing the same MED + QTY + MOD — each combination numbers independently
+      const isSibling = (x: AssemblyPoint) => x.med === pt.med && x.qty === pt.qty && x.mod === pt.mod;
+      const siblings = p.filter(isSibling);
       const usedNums = siblings.map(x => parseInt(x.medNum ?? '0') || 0);
       const maxNum = Math.max(0, ...usedNums);
       if (maxNum >= 9) return p; // already at limit
@@ -287,8 +288,8 @@ function AssemblyModal({
         arr[index] = { ...pt, medNum: '1' };
         arr.splice(index + 1, 0, { ...pt, id: uuidv4(), medNum: '2' });
       } else {
-        // Insert a new clone at next number, right after the last sibling
-        const lastIdx = arr.reduce((best, x, i) => x.med === pt.med ? i : best, index);
+        // Insert after the last sibling with the same MED+QTY+MOD
+        const lastIdx = arr.reduce((best, x, i) => isSibling(x) ? i : best, index);
         arr.splice(lastIdx + 1, 0, { ...pt, id: uuidv4(), medNum: String(maxNum + 1) });
       }
       return arr;

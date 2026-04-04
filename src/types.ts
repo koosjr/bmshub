@@ -17,6 +17,7 @@ export interface MedEntry {
   id: string;
   code: string;
   label: string;
+  takesNum: boolean;   // true when this medium can have an instance number (e.g. TB1, TB2)
 }
 
 export interface QtyEntry {
@@ -59,9 +60,10 @@ export interface ControllerVariable {
   equip: string;
   num: string;        // '1'-'9' or '' for SYS
   med: string;        // '' if not used
+  medNum: string;     // '' or digit 1-9 — instance number for the MED segment
   qty: string;
   mod: string;        // '' if not used
-  name: string;       // computed: equip+num+med+qty+mod
+  name: string;       // computed: EQUIP+NUM_MED+MEDNUM_QTY+MOD with _ separators
   description: string;
   ioOverride?: 'AV' | 'BV' | null; // overrides physical IO type to a soft value
   device?: DeviceSupply;
@@ -70,6 +72,7 @@ export interface ControllerVariable {
 export interface AssemblyPoint {
   id: string;
   med: string;             // '' if no medium
+  medNum: string;          // '' or digit 1-9
   qty: string;             // QTY code
   mod: string;             // '' if no modifier
   ioOverride?: 'AV' | 'BV' | null;  // soft value override

@@ -2,6 +2,7 @@ import {
   ValidationResult, ValidationError,
   SemanticConfig, EquipEntry, MedEntry, QtyEntry, ModEntry
 } from './types';
+import { buildName } from './nameBuilder';
 
 // ── Allowlist helpers ──────────────────────────────────────────────────────────
 
@@ -56,6 +57,7 @@ export function validateVariable(
   equip: string,
   num: string,
   med: string,
+  medNum: string,
   qty: string,
   mod: string,
   existingNames: string[],
@@ -66,23 +68,23 @@ export function validateVariable(
   modList: ModEntry[]
 ): ValidationResult {
   const errors: ValidationError[] = [];
-  const name = equip + num + med + qty + mod;
+  const name = buildName(equip, num, med, medNum, qty, mod);
 
-  // S1: Total length <= 12
-  if (name.length > 12) {
+  // S1: Total length <= 20
+  if (name.length > 20) {
     errors.push({
       layer: 'structural',
       rule: 'S1',
-      message: `Name "${name}" is ${name.length} characters — maximum is 12`,
+      message: `Name "${name}" is ${name.length} characters — maximum is 20`,
     });
   }
 
-  // S2: Only [A-Z0-9] characters
-  if (!/^[A-Z0-9]*$/.test(name)) {
+  // S2: Only [A-Z0-9_] characters
+  if (!/^[A-Z0-9_]*$/.test(name)) {
     errors.push({
       layer: 'structural',
       rule: 'S2',
-      message: 'Name must contain only uppercase alphanumeric characters (A–Z, 0–9)',
+      message: 'Name must contain only uppercase alphanumeric characters and underscores (A–Z, 0–9, _)',
     });
   }
 
@@ -136,12 +138,29 @@ export function validateVariable(
     });
   }
 
-  // S7: If MED present, must exist in dictionary
-  if (med && !medList.some(m => m.code === med)) {
+  // S7: If MED present, must exist in dictionary (2 or 3 chars)
+  if (med) {
+    if (med.length < 2 || med.length > 3) {
+      errors.push({
+        layer: 'structural',
+        rule: 'S7',
+        message: `MED code must be 2 or 3 characters (got "${med}")`,
+      });
+    } else if (!medList.some(m => m.code === med)) {
+      errors.push({
+        layer: 'structural',
+        rule: 'S7',
+        message: `MED code "${med}" is not in the dictionary`,
+      });
+    }
+  }
+
+  // S7b: MEDNUM, if present, must be a digit 1–9
+  if (medNum && !/^[1-9]$/.test(medNum)) {
     errors.push({
       layer: 'structural',
-      rule: 'S7',
-      message: `MED code "${med}" is not in the dictionary`,
+      rule: 'S7b',
+      message: `MED instance number must be a digit 1–9 (got "${medNum}")`,
     });
   }
 

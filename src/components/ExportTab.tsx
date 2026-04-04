@@ -184,6 +184,7 @@ export default function ExportTab({ controllers, qty: qtyList, projects, onExpor
     URL.revokeObjectURL(url);
   }
 
+
   if (controllers.length === 0) {
     return (
       <div className="max-w-3xl mx-auto">
@@ -241,6 +242,9 @@ export default function ExportTab({ controllers, qty: qtyList, projects, onExpor
           </div>
 
           <CopyBlock title="ThingsBoard Key List" content={tbKeys} lang="mono" />
+          <p className="text-xs mb-2 px-2 py-1 rounded border" style={{ background: '#FAEEDA', color: '#854F0B', borderColor: '#EF9F27' }}>
+            Note: verify your Eliwell IDE accepts underscores in variable names.
+          </p>
           <CopyBlock title="Eliwell Variable Declarations" content={eliwellDecl} lang="mono" />
           <CopyBlock title="Human-Readable Table" content={humanTable} lang="mono" />
         </>
@@ -298,6 +302,7 @@ export default function ExportTab({ controllers, qty: qtyList, projects, onExpor
           Useful for backups and transferring to another browser.
         </p>
       </div>
+
     </div>
   );
 }

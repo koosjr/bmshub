@@ -12,6 +12,7 @@ import {
   isFirstRun, getSeedVersion, setSeedVersion, CURRENT_SEED_VERSION,
   exportAll, importAll,
 } from './storage';
+import { buildName } from './nameBuilder';
 import {
   seedEquip, seedMed, seedQty, seedMod, seedSemanticConfig,
   seedAssemblies, seedControllerModels, seedExpansionModules,
@@ -25,6 +26,17 @@ import AboutTab from './components/AboutTab';
 import WikiTab from './components/WikiTab';
 
 type Tab = 'dictionary' | 'assemblies' | 'builder' | 'export' | 'about' | 'wiki';
+
+function migrateControllers(ctrlList: Controller[]): Controller[] {
+  return ctrlList.map(ctrl => ({
+    ...ctrl,
+    variables: ctrl.variables.map(v => ({
+      ...v,
+      medNum: v.medNum ?? '',
+      name: buildName(v.equip, v.num, v.med, v.medNum ?? '', v.qty, v.mod),
+    })),
+  }));
+}
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<Tab>('about');
@@ -115,7 +127,7 @@ export default function App() {
           setControllerModels(loadControllerModels());
           setExpansionModules(loadExpansionModules());
         }
-        setControllers(loadControllers());
+        setControllers(migrateControllers(loadControllers()));
         const existingProjects = loadProjects();
         setProjects(existingProjects);
       }
@@ -178,7 +190,7 @@ export default function App() {
     setMod(loadMod());
     const importedCfg = loadSemanticConfig();
     setSemanticConfig(importedCfg ?? seedSemanticConfig);
-    setControllers(loadControllers());
+    setControllers(migrateControllers(loadControllers()));
     setAssemblies(loadAssemblies());
     setControllerModels(loadControllerModels());
     setExpansionModules(loadExpansionModules());
@@ -247,6 +259,7 @@ export default function App() {
             onUpdateQty={updateQty}
             onUpdateMod={updateMod}
             onUpdateSemanticConfig={updateSemanticConfig}
+            onUpdateControllers={updateControllers}
           />
         )}
         {loaded && activeTab === 'assemblies' && (

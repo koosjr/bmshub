@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { EquipEntry, MedEntry, QtyEntry, ModEntry, SemanticConfig, Controller } from '../types';
+import { buildName } from '../nameBuilder';
 
 interface Props {
   equip: EquipEntry[];
@@ -14,6 +15,70 @@ interface Props {
   onUpdateQty:           (d: QtyEntry[]) => void;
   onUpdateMod:           (d: ModEntry[]) => void;
   onUpdateSemanticConfig:(d: SemanticConfig) => void;
+  onUpdateControllers:   (d: Controller[]) => void;
+}
+
+function cascadeSemanticConfig(
+  segment: 'equip' | 'med' | 'qty' | 'mod',
+  oldCode: string,
+  newCode: string,
+  cfg: SemanticConfig
+): SemanticConfig {
+  let { equipMeds, medQtys, qtyMods } = cfg;
+
+  function renameKey(rec: Record<string, string[]>): Record<string, string[]> {
+    if (!(oldCode in rec)) return rec;
+    const r = { ...rec };
+    r[newCode] = r[oldCode];
+    delete r[oldCode];
+    return r;
+  }
+  function replaceVal(rec: Record<string, string[]>): Record<string, string[]> {
+    const r: Record<string, string[]> = {};
+    for (const [k, vals] of Object.entries(rec)) r[k] = vals.map(v => v === oldCode ? newCode : v);
+    return r;
+  }
+
+  if (segment === 'equip') { equipMeds = renameKey(equipMeds); }
+  if (segment === 'med')   { equipMeds = replaceVal(equipMeds); medQtys = renameKey(medQtys); }
+  if (segment === 'qty')   { medQtys   = replaceVal(medQtys);   qtyMods = renameKey(qtyMods); }
+  if (segment === 'mod')   { qtyMods   = replaceVal(qtyMods); }
+
+  return { equipMeds, medQtys, qtyMods };
+}
+
+function cascadeCodeRename(
+  segment: 'equip' | 'med' | 'qty' | 'mod',
+  oldCode: string,
+  newCode: string,
+  controllers: Controller[]
+): { updated: Controller[]; varCount: number; ctrlCount: number } {
+  let varCount = 0;
+  const ctrlsUpdated: string[] = [];
+  const updated = controllers.map(ctrl => {
+    const newVars = ctrl.variables.map(v => {
+      const changed =
+        (segment === 'equip' && v.equip === oldCode) ||
+        (segment === 'med'   && v.med   === oldCode) ||
+        (segment === 'qty'   && v.qty   === oldCode) ||
+        (segment === 'mod'   && v.mod   === oldCode);
+      if (!changed) return v;
+      const newV = { ...v };
+      if (segment === 'equip') newV.equip = newCode;
+      if (segment === 'med')   newV.med   = newCode;
+      if (segment === 'qty')   newV.qty   = newCode;
+      if (segment === 'mod')   newV.mod   = newCode;
+      newV.name = buildName(newV.equip, newV.num, newV.med, newV.medNum, newV.qty, newV.mod);
+      varCount++;
+      return newV;
+    });
+    if (newVars.some((v, i) => v !== ctrl.variables[i])) {
+      ctrlsUpdated.push(ctrl.id);
+      return { ...ctrl, variables: newVars, updatedAt: new Date().toISOString() };
+    }
+    return ctrl;
+  });
+  return { updated, varCount, ctrlCount: ctrlsUpdated.length };
 }
 
 type IOType = 'AI' | 'AO' | 'DI' | 'DO';
@@ -102,21 +167,24 @@ function SectionCard({ title, children }: SectionCardProps) {
 }
 
 // ---- EQUIP Section ----
-function EquipSection({ equip, controllers, onUpdate, semanticConfig, onUpdateSemanticConfig }: {
+function EquipSection({ equip, controllers, onUpdate, semanticConfig, onUpdateSemanticConfig, onUpdateControllers }: {
   equip: EquipEntry[];
   controllers: Controller[];
   onUpdate: (d: EquipEntry[]) => void;
   semanticConfig: SemanticConfig;
   onUpdateSemanticConfig: (d: SemanticConfig) => void;
+  onUpdateControllers: (d: Controller[]) => void;
 }) {
   const [editing, setEditing] = useState<EquipEntry | null>(null);
   const [adding, setAdding] = useState(false);
   const [form, setForm] = useState({ code: '', label: '', takesNum: true });
   const [error, setError] = useState('');
+  const [cascadeMsg, setCascadeMsg] = useState('');
 
   function startAdd() {
     setForm({ code: '', label: '', takesNum: true });
     setError('');
+    setCascadeMsg('');
     setAdding(true);
     setEditing(null);
   }
@@ -124,11 +192,12 @@ function EquipSection({ equip, controllers, onUpdate, semanticConfig, onUpdateSe
   function startEdit(e: EquipEntry) {
     setForm({ code: e.code, label: e.label, takesNum: e.takesNum });
     setError('');
+    setCascadeMsg('');
     setEditing(e);
     setAdding(false);
   }
 
-  function cancel() { setAdding(false); setEditing(null); setError(''); }
+  function cancel() { setAdding(false); setEditing(null); setError(''); setCascadeMsg(''); }
 
   function validate(): string | null {
     const code = form.code.toUpperCase().trim();
@@ -148,10 +217,20 @@ function EquipSection({ equip, controllers, onUpdate, semanticConfig, onUpdateSe
     if (adding) {
       onUpdate([...equip, { id: uuidv4(), code, label: form.label.trim(), takesNum: form.takesNum }]);
     } else if (editing) {
+      const oldCode = editing.code;
       onUpdate(equip.map(e => e.id === editing.id
         ? { ...e, code, label: form.label.trim(), takesNum: form.takesNum }
         : e
       ));
+      if (oldCode !== code) {
+        onUpdateSemanticConfig(cascadeSemanticConfig('equip', oldCode, code, semanticConfig));
+        const { updated, varCount, ctrlCount } = cascadeCodeRename('equip', oldCode, code, controllers);
+        if (varCount > 0) {
+          onUpdateControllers(updated);
+          setCascadeMsg(`Renamed across ${varCount} variable${varCount !== 1 ? 's' : ''} in ${ctrlCount} controller${ctrlCount !== 1 ? 's' : ''}.`);
+          setTimeout(() => setCascadeMsg(''), 4000);
+        }
+      }
     }
     cancel();
   }
@@ -253,6 +332,10 @@ function EquipSection({ equip, controllers, onUpdate, semanticConfig, onUpdateSe
         </div>
       )}
 
+      {cascadeMsg && (
+        <p className="text-xs mb-2 px-2 py-1 rounded" style={{ background: '#E1F5EE', color: '#085041' }}>{cascadeMsg}</p>
+      )}
+
       <button onClick={startAdd} className="text-sm px-3 py-1.5 rounded border" style={{ borderColor: '#1D9E75', color: '#1D9E75' }}>
         + Add EQUIP
       </button>
@@ -261,25 +344,27 @@ function EquipSection({ equip, controllers, onUpdate, semanticConfig, onUpdateSe
 }
 
 // ---- MED Section ----
-function MedSection({ med, controllers, onUpdate, semanticConfig, onUpdateSemanticConfig }: {
+function MedSection({ med, controllers, onUpdate, semanticConfig, onUpdateSemanticConfig, onUpdateControllers }: {
   med: MedEntry[];
   controllers: Controller[];
   onUpdate: (d: MedEntry[]) => void;
   semanticConfig: SemanticConfig;
   onUpdateSemanticConfig: (d: SemanticConfig) => void;
+  onUpdateControllers: (d: Controller[]) => void;
 }) {
   const [editing, setEditing] = useState<MedEntry | null>(null);
   const [adding, setAdding] = useState(false);
-  const [form, setForm] = useState({ code: '', label: '' });
+  const [form, setForm] = useState({ code: '', label: '', takesNum: false });
   const [error, setError] = useState('');
+  const [cascadeMsg, setCascadeMsg] = useState('');
 
-  function startAdd() { setForm({ code: '', label: '' }); setError(''); setAdding(true); setEditing(null); }
-  function startEdit(e: MedEntry) { setForm({ code: e.code, label: e.label }); setError(''); setEditing(e); setAdding(false); }
-  function cancel() { setAdding(false); setEditing(null); setError(''); }
+  function startAdd() { setForm({ code: '', label: '', takesNum: false }); setError(''); setCascadeMsg(''); setAdding(true); setEditing(null); }
+  function startEdit(e: MedEntry) { setForm({ code: e.code, label: e.label, takesNum: e.takesNum }); setError(''); setCascadeMsg(''); setEditing(e); setAdding(false); }
+  function cancel() { setAdding(false); setEditing(null); setError(''); setCascadeMsg(''); }
 
   function validate(): string | null {
     const code = form.code.toUpperCase().trim();
-    if (!/^[A-Z]{2}$/.test(code)) return 'MED code must be exactly 2 uppercase letters';
+    if (!/^[A-Z]{2,3}$/.test(code)) return 'MED code must be 2 or 3 uppercase letters';
     if (!form.label.trim()) return 'Label is required';
     const dupe = med.find(e => e.code === code && (!editing || e.id !== editing.id));
     if (dupe) return `Code "${code}" already exists`;
@@ -291,9 +376,19 @@ function MedSection({ med, controllers, onUpdate, semanticConfig, onUpdateSemant
     if (err) { setError(err); return; }
     const code = form.code.toUpperCase().trim();
     if (adding) {
-      onUpdate([...med, { id: uuidv4(), code, label: form.label.trim() }]);
+      onUpdate([...med, { id: uuidv4(), code, label: form.label.trim(), takesNum: form.takesNum }]);
     } else if (editing) {
-      onUpdate(med.map(e => e.id === editing.id ? { ...e, code, label: form.label.trim() } : e));
+      const oldCode = editing.code;
+      onUpdate(med.map(e => e.id === editing.id ? { ...e, code, label: form.label.trim(), takesNum: form.takesNum } : e));
+      if (oldCode !== code) {
+        onUpdateSemanticConfig(cascadeSemanticConfig('med', oldCode, code, semanticConfig));
+        const { updated, varCount, ctrlCount } = cascadeCodeRename('med', oldCode, code, controllers);
+        if (varCount > 0) {
+          onUpdateControllers(updated);
+          setCascadeMsg(`Renamed across ${varCount} variable${varCount !== 1 ? 's' : ''} in ${ctrlCount} controller${ctrlCount !== 1 ? 's' : ''}.`);
+          setTimeout(() => setCascadeMsg(''), 4000);
+        }
+      }
     }
     cancel();
   }
@@ -323,6 +418,7 @@ function MedSection({ med, controllers, onUpdate, semanticConfig, onUpdateSemant
           <tr style={{ color: '#888780' }} className="text-xs uppercase">
             <th className="text-left pb-2 font-medium">Code</th>
             <th className="text-left pb-2 font-medium">Label</th>
+            <th className="text-left pb-2 font-medium">No.</th>
             <th className="text-left pb-2 font-medium">In Use</th>
             <th className="text-left pb-2 font-medium">Actions</th>
           </tr>
@@ -334,6 +430,9 @@ function MedSection({ med, controllers, onUpdate, semanticConfig, onUpdateSemant
               <tr key={e.id} className="border-t" style={{ borderColor: '#F1EFE8' }}>
                 <td className="py-2 pr-4"><span className="font-mono font-bold">{e.code}</span></td>
                 <td className="py-2 pr-4">{e.label}</td>
+                <td className="py-2 pr-4">
+                  <span className="text-sm">{e.takesNum ? '✓' : '—'}</span>
+                </td>
                 <td className="py-2 pr-4"><span style={{ color: usage.length > 0 ? '#1D9E75' : '#888780' }} className="text-xs">{usage.length}</span></td>
                 <td className="py-2">
                   <button onClick={() => startEdit(e)} className="text-xs mr-2" style={{ color: '#1D9E75' }}>Edit</button>
@@ -348,14 +447,25 @@ function MedSection({ med, controllers, onUpdate, semanticConfig, onUpdateSemant
         <div className="p-3 rounded-lg mb-3 border" style={{ background: '#F1EFE8', borderColor: '#D3D1C7' }}>
           <div className="flex gap-3 flex-wrap items-end">
             <div>
-              <label className="text-xs font-medium block mb-1" style={{ color: '#888780' }}>Code (2 chars)</label>
+              <label className="text-xs font-medium block mb-1" style={{ color: '#888780' }}>Code (2–3 chars)</label>
               <input className="border rounded px-2 py-1 text-sm font-mono w-20 uppercase" style={{ borderColor: '#D3D1C7' }}
-                maxLength={2} value={form.code} onChange={e => setForm(f => ({ ...f, code: e.target.value.toUpperCase() }))} />
+                maxLength={3} value={form.code} onChange={e => setForm(f => ({ ...f, code: e.target.value.toUpperCase() }))} />
             </div>
             <div className="flex-1 min-w-40">
               <label className="text-xs font-medium block mb-1" style={{ color: '#888780' }}>Label</label>
               <input className="border rounded px-2 py-1 text-sm w-full" style={{ borderColor: '#D3D1C7' }}
                 value={form.label} onChange={e => setForm(f => ({ ...f, label: e.target.value }))} />
+            </div>
+            <div className="flex items-center gap-2 self-end pb-1.5">
+              <input
+                type="checkbox"
+                id="med-takes-num"
+                checked={form.takesNum}
+                onChange={e => setForm(f => ({ ...f, takesNum: e.target.checked }))}
+              />
+              <label htmlFor="med-takes-num" className="text-xs" style={{ color: '#2C2C2A' }}>
+                Can have instance number (e.g. TB1, TB2)
+              </label>
             </div>
             <button onClick={save} className="px-3 py-1.5 rounded text-sm text-white" style={{ background: '#1D9E75' }}>Save</button>
             <button onClick={cancel} className="px-3 py-1.5 rounded text-sm" style={{ background: '#D3D1C7', color: '#2C2C2A' }}>Cancel</button>
@@ -363,27 +473,32 @@ function MedSection({ med, controllers, onUpdate, semanticConfig, onUpdateSemant
           {error && <p className="text-xs mt-2" style={{ color: '#E24B4A' }}>{error}</p>}
         </div>
       )}
+      {cascadeMsg && (
+        <p className="text-xs mb-2 px-2 py-1 rounded" style={{ background: '#E1F5EE', color: '#085041' }}>{cascadeMsg}</p>
+      )}
       <button onClick={startAdd} className="text-sm px-3 py-1.5 rounded border" style={{ borderColor: '#1D9E75', color: '#1D9E75' }}>+ Add MED</button>
     </SectionCard>
   );
 }
 
 // ---- QTY Section ----
-function QtySection({ qty, controllers, onUpdate, semanticConfig, onUpdateSemanticConfig }: {
+function QtySection({ qty, controllers, onUpdate, semanticConfig, onUpdateSemanticConfig, onUpdateControllers }: {
   qty: QtyEntry[];
   controllers: Controller[];
   onUpdate: (d: QtyEntry[]) => void;
   semanticConfig: SemanticConfig;
   onUpdateSemanticConfig: (d: SemanticConfig) => void;
+  onUpdateControllers: (d: Controller[]) => void;
 }) {
   const [editing, setEditing] = useState<QtyEntry | null>(null);
   const [adding, setAdding] = useState(false);
   const [form, setForm] = useState({ code: '', label: '', ioType: 'AI' as IOType });
   const [error, setError] = useState('');
+  const [cascadeMsg, setCascadeMsg] = useState('');
 
-  function startAdd() { setForm({ code: '', label: '', ioType: 'AI' }); setError(''); setAdding(true); setEditing(null); }
-  function startEdit(e: QtyEntry) { setForm({ code: e.code, label: e.label, ioType: e.ioType }); setError(''); setEditing(e); setAdding(false); }
-  function cancel() { setAdding(false); setEditing(null); setError(''); }
+  function startAdd() { setForm({ code: '', label: '', ioType: 'AI' }); setError(''); setCascadeMsg(''); setAdding(true); setEditing(null); }
+  function startEdit(e: QtyEntry) { setForm({ code: e.code, label: e.label, ioType: e.ioType }); setError(''); setCascadeMsg(''); setEditing(e); setAdding(false); }
+  function cancel() { setAdding(false); setEditing(null); setError(''); setCascadeMsg(''); }
 
   function validate(): string | null {
     const code = form.code.toUpperCase().trim();
@@ -401,7 +516,17 @@ function QtySection({ qty, controllers, onUpdate, semanticConfig, onUpdateSemant
     if (adding) {
       onUpdate([...qty, { id: uuidv4(), code, label: form.label.trim(), ioType: form.ioType }]);
     } else if (editing) {
+      const oldCode = editing.code;
       onUpdate(qty.map(e => e.id === editing.id ? { ...e, code, label: form.label.trim(), ioType: form.ioType } : e));
+      if (oldCode !== code) {
+        onUpdateSemanticConfig(cascadeSemanticConfig('qty', oldCode, code, semanticConfig));
+        const { updated, varCount, ctrlCount } = cascadeCodeRename('qty', oldCode, code, controllers);
+        if (varCount > 0) {
+          onUpdateControllers(updated);
+          setCascadeMsg(`Renamed across ${varCount} variable${varCount !== 1 ? 's' : ''} in ${ctrlCount} controller${ctrlCount !== 1 ? 's' : ''}.`);
+          setTimeout(() => setCascadeMsg(''), 4000);
+        }
+      }
     }
     cancel();
   }
@@ -483,16 +608,20 @@ function QtySection({ qty, controllers, onUpdate, semanticConfig, onUpdateSemant
           {error && <p className="text-xs mt-2" style={{ color: '#E24B4A' }}>{error}</p>}
         </div>
       )}
+      {cascadeMsg && (
+        <p className="text-xs mb-2 px-2 py-1 rounded" style={{ background: '#E1F5EE', color: '#085041' }}>{cascadeMsg}</p>
+      )}
       <button onClick={startAdd} className="text-sm px-3 py-1.5 rounded border" style={{ borderColor: '#1D9E75', color: '#1D9E75' }}>+ Add QTY</button>
     </SectionCard>
   );
 }
 
 // ---- MOD Section ----
-function ModSection({ mod, controllers, onUpdate, semanticConfig, onUpdateSemanticConfig }: {
+function ModSection({ mod, controllers, onUpdate, onUpdateControllers, semanticConfig, onUpdateSemanticConfig }: {
   mod: ModEntry[];
   controllers: Controller[];
   onUpdate: (d: ModEntry[]) => void;
+  onUpdateControllers: (d: Controller[]) => void;
   semanticConfig: SemanticConfig;
   onUpdateSemanticConfig: (d: SemanticConfig) => void;
 }) {
@@ -500,6 +629,7 @@ function ModSection({ mod, controllers, onUpdate, semanticConfig, onUpdateSemant
   const [adding, setAdding] = useState(false);
   const [form, setForm] = useState({ code: '', label: '' });
   const [error, setError] = useState('');
+  const [cascadeMsg, setCascadeMsg] = useState('');
 
   function startAdd() { setForm({ code: '', label: '' }); setError(''); setAdding(true); setEditing(null); }
   function startEdit(e: ModEntry) { setForm({ code: e.code, label: e.label }); setError(''); setEditing(e); setAdding(false); }
@@ -521,7 +651,17 @@ function ModSection({ mod, controllers, onUpdate, semanticConfig, onUpdateSemant
     if (adding) {
       onUpdate([...mod, { id: uuidv4(), code, label: form.label.trim() }]);
     } else if (editing) {
+      const oldCode = editing.code;
       onUpdate(mod.map(e => e.id === editing.id ? { ...e, code, label: form.label.trim() } : e));
+      if (oldCode !== code) {
+        onUpdateSemanticConfig(cascadeSemanticConfig('mod', oldCode, code, semanticConfig));
+        const { updated, varCount, ctrlCount } = cascadeCodeRename('mod', oldCode, code, controllers);
+        if (varCount > 0) {
+          onUpdateControllers(updated);
+          setCascadeMsg(`Renamed across ${varCount} variable${varCount !== 1 ? 's' : ''} in ${ctrlCount} controller${ctrlCount !== 1 ? 's' : ''}.`);
+          setTimeout(() => setCascadeMsg(''), 4000);
+        }
+      }
     }
     cancel();
   }
@@ -588,6 +728,9 @@ function ModSection({ mod, controllers, onUpdate, semanticConfig, onUpdateSemant
           </div>
           {error && <p className="text-xs mt-2" style={{ color: '#E24B4A' }}>{error}</p>}
         </div>
+      )}
+      {cascadeMsg && (
+        <p className="text-xs mb-2 px-2 py-1 rounded" style={{ background: '#E1F5EE', color: '#085041' }}>{cascadeMsg}</p>
       )}
       <button onClick={startAdd} className="text-sm px-3 py-1.5 rounded border" style={{ borderColor: '#1D9E75', color: '#1D9E75' }}>+ Add MOD</button>
     </SectionCard>
@@ -967,10 +1110,10 @@ export default function DictionaryTab(props: Props) {
   return (
     <div className="max-w-5xl mx-auto">
       <h1 className="text-xl font-bold mb-4" style={{ color: '#2C2C2A' }}>Dictionary</h1>
-      <EquipSection equip={props.equip} controllers={props.controllers} onUpdate={props.onUpdateEquip} semanticConfig={props.semanticConfig} onUpdateSemanticConfig={props.onUpdateSemanticConfig} />
-      <MedSection med={props.med} controllers={props.controllers} onUpdate={props.onUpdateMed} semanticConfig={props.semanticConfig} onUpdateSemanticConfig={props.onUpdateSemanticConfig} />
-      <QtySection qty={props.qty} controllers={props.controllers} onUpdate={props.onUpdateQty} semanticConfig={props.semanticConfig} onUpdateSemanticConfig={props.onUpdateSemanticConfig} />
-      <ModSection mod={props.mod} controllers={props.controllers} onUpdate={props.onUpdateMod} semanticConfig={props.semanticConfig} onUpdateSemanticConfig={props.onUpdateSemanticConfig} />
+      <EquipSection equip={props.equip} controllers={props.controllers} onUpdate={props.onUpdateEquip} semanticConfig={props.semanticConfig} onUpdateSemanticConfig={props.onUpdateSemanticConfig} onUpdateControllers={props.onUpdateControllers} />
+      <MedSection med={props.med} controllers={props.controllers} onUpdate={props.onUpdateMed} semanticConfig={props.semanticConfig} onUpdateSemanticConfig={props.onUpdateSemanticConfig} onUpdateControllers={props.onUpdateControllers} />
+      <QtySection qty={props.qty} controllers={props.controllers} onUpdate={props.onUpdateQty} semanticConfig={props.semanticConfig} onUpdateSemanticConfig={props.onUpdateSemanticConfig} onUpdateControllers={props.onUpdateControllers} />
+      <ModSection mod={props.mod} controllers={props.controllers} onUpdate={props.onUpdateMod} onUpdateControllers={props.onUpdateControllers} semanticConfig={props.semanticConfig} onUpdateSemanticConfig={props.onUpdateSemanticConfig} />
       <SemanticConfigSection cfg={props.semanticConfig} equip={props.equip} med={props.med} qty={props.qty} mod={props.mod} onUpdate={props.onUpdateSemanticConfig} />
     </div>
   );

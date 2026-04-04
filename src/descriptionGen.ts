@@ -4,6 +4,7 @@ export function generateDescription(
   equip: string,
   num: string,
   med: string,
+  medNum: string,
   qty: string,
   mod: string,
   equipList: EquipEntry[],
@@ -17,7 +18,8 @@ export function generateDescription(
   const modEntry   = modList.find(m => m.code === mod);
 
   const equipLabel = equipEntry?.label ?? equip;
-  const medLabel   = medEntry?.label ?? (med || '');
+  const baseMedLabel = medEntry?.label ?? (med || '');
+  const medLabel   = baseMedLabel && medNum ? `${baseMedLabel} ${medNum}` : baseMedLabel;
   const qtyLabel   = qtyEntry?.label ?? qty;
   const modLabel   = modEntry?.label ?? (mod || '');
 

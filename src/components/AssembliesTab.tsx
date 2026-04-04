@@ -5,6 +5,7 @@ import {
   Assembly, AssemblyPoint, ControllerModel, ExpansionModule, IOCount, SemanticConfig,
 } from '../types';
 import { isMedAllowed, isQtyAllowed, getValidMods } from '../validation';
+import { buildName } from '../nameBuilder';
 
 interface Props {
   equip: EquipEntry[];
@@ -33,7 +34,7 @@ const IO_COLORS: Record<string, { bg: string; text: string }> = {
 function AssemblyPointRow({
   point, index, total,
   equipCode, medList, qtyList, modList, semanticConfig,
-  onUpdate, onDelete, onMoveUp, onMoveDown,
+  onUpdate, onDelete, onMoveUp, onMoveDown, onClone,
 }: {
   point: AssemblyPoint;
   index: number;
@@ -47,8 +48,10 @@ function AssemblyPointRow({
   onDelete: () => void;
   onMoveUp: () => void;
   onMoveDown: () => void;
+  onClone: () => void;
 }) {
-  const suffix = point.med + point.qty + point.mod;
+  const medNum = point.medNum ?? '';
+  const previewName = buildName(equipCode, '#', point.med, medNum, point.qty, point.mod);
   const qtyEntry = qtyList.find(q => q.code === point.qty);
 
   // Filter MED: only show media allowed for this EQUIP, sorted A→Z
@@ -76,9 +79,16 @@ function AssemblyPointRow({
   }, [point.qty, modList, semanticConfig]);
 
   function handleMedChange(code: string) {
-    // Clear QTY if it's no longer valid for the new MED
+    // Clear QTY if it's no longer valid for the new MED; clear medNum if MED is cleared or doesn't take a number
     const qtyStillOk = !point.qty || isQtyAllowed(code, point.qty, semanticConfig);
-    onUpdate({ ...point, med: code, qty: qtyStillOk ? point.qty : '', mod: qtyStillOk ? point.mod : '' });
+    const newMedTakesNum = medList.find(m => m.code === code)?.takesNum === true;
+    onUpdate({
+      ...point,
+      med: code,
+      medNum: (code && newMedTakesNum) ? (point.medNum ?? '') : '',
+      qty: qtyStillOk ? point.qty : '',
+      mod: qtyStillOk ? point.mod : '',
+    });
   }
 
   function handleQtyChange(code: string) {
@@ -130,6 +140,19 @@ function AssemblyPointRow({
         ))}
       </select>
 
+      {/* Clone button — only when MED selected and that MED takes a number */}
+      {point.med && medList.find(m => m.code === point.med)?.takesNum === true && (
+        <button
+          type="button"
+          onClick={onClone}
+          className="flex-shrink-0 flex items-center gap-1 px-2 py-1 rounded border text-xs font-medium transition-colors"
+          style={{ borderColor: '#1D9E75', color: '#1D9E75', background: '#E1F5EE' }}
+          title="Clone this point — adds the next instance number (TB1, TB2 …)"
+        >
+          <span style={{ fontSize: '14px', lineHeight: 1 }}>⊕</span> Clone
+        </button>
+      )}
+
       {/* QTY */}
       <select
         className="border rounded px-1.5 py-1 text-xs font-mono"
@@ -157,9 +180,9 @@ function AssemblyPointRow({
         ))}
       </select>
 
-      {/* Preview suffix */}
-      <span className="font-mono text-xs font-bold flex-shrink-0" style={{ color: '#2C2C2A', minWidth: '90px' }}>
-        {equipCode}#{suffix || '···'}
+      {/* Preview name */}
+      <span className="font-mono text-xs font-bold flex-shrink-0" style={{ color: '#2C2C2A', minWidth: '120px' }}>
+        {point.qty ? previewName : '···'}
       </span>
 
       {/* IO type + AV/BV override */}
@@ -228,7 +251,7 @@ function AssemblyModal({
   const [error, setError] = useState('');
 
   function addPoint() {
-    setPoints(p => [...p, { id: uuidv4(), med: '', qty: '', mod: '' }]);
+    setPoints(p => [...p, { id: uuidv4(), med: '', medNum: '', qty: '', mod: '' }]);
   }
 
   function updatePoint(index: number, updated: AssemblyPoint) {
@@ -244,6 +267,30 @@ function AssemblyModal({
     setPoints(p => {
       const arr = [...p];
       [arr[index - 1], arr[index]] = [arr[index], arr[index - 1]];
+      return arr;
+    });
+  }
+
+  function clonePoint(index: number) {
+    setPoints(p => {
+      const pt = p[index];
+      if (!pt.med) return p;
+      // Find all sibling points sharing the same MED
+      const siblings = p.filter(x => x.med === pt.med);
+      const usedNums = siblings.map(x => parseInt(x.medNum ?? '0') || 0);
+      const maxNum = Math.max(0, ...usedNums);
+      if (maxNum >= 9) return p; // already at limit
+
+      // If none have a number yet, assign 1 to current point and insert clone with 2
+      const arr = [...p];
+      if (maxNum === 0) {
+        arr[index] = { ...pt, medNum: '1' };
+        arr.splice(index + 1, 0, { ...pt, id: uuidv4(), medNum: '2' });
+      } else {
+        // Insert a new clone at next number, right after the last sibling
+        const lastIdx = arr.reduce((best, x, i) => x.med === pt.med ? i : best, index);
+        arr.splice(lastIdx + 1, 0, { ...pt, id: uuidv4(), medNum: String(maxNum + 1) });
+      }
       return arr;
     });
   }
@@ -362,6 +409,7 @@ function AssemblyModal({
                     onDelete={() => deletePoint(i)}
                     onMoveUp={() => moveUp(i)}
                     onMoveDown={() => moveDown(i)}
+                    onClone={() => clonePoint(i)}
                   />
                 ))}
               </div>

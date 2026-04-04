@@ -8,6 +8,7 @@ import {
 } from '../types';
 import { validateVariable, getValidMods, isMedAllowed, isQtyAllowed } from '../validation';
 import { generateDescription } from '../descriptionGen';
+import { buildName } from '../nameBuilder';
 import { exportProjectXlsx } from '../exportXlsx';
 
 interface Props {
@@ -318,6 +319,7 @@ interface FormState {
   equip: string;
   num: string;
   med: string;
+  medNum: string;
   qty: string;
   mod: string;
   ioOverride: 'AV' | 'BV' | null;
@@ -335,7 +337,7 @@ function VariableForm({
   existingNames: string[];
   onAdd: (v: ControllerVariable) => void;
 }) {
-  const [form, setForm] = useState<FormState>({ equip: equipList[0]?.code ?? '', num: '1', med: '', qty: '', mod: '', ioOverride: null });
+  const [form, setForm] = useState<FormState>({ equip: equipList[0]?.code ?? '', num: '1', med: '', medNum: '', qty: '', mod: '', ioOverride: null });
 
   const isSys = form.equip === 'SYS';
 
@@ -349,6 +351,12 @@ function VariableForm({
       qty: '',
       mod: '',
     }));
+  }
+
+  // When MED changes, clear medNum if MED cleared or new MED doesn't take a number
+  function handleMedChange(code: string) {
+    const newMedTakesNum = medList.find(m => m.code === code)?.takesNum === true;
+    setForm(f => ({ ...f, med: code, medNum: (code && newMedTakesNum) ? f.medNum : '', qty: '', mod: '' }));
   }
 
   // Available MEDs — only those valid for selected EQUIP
@@ -386,7 +394,7 @@ function VariableForm({
   }
 
   // Live name
-  const liveName = form.equip + (isSys ? '' : form.num) + form.med + form.qty + form.mod;
+  const liveName = buildName(form.equip, isSys ? '' : form.num, form.med, form.medNum, form.qty, form.mod);
 
   // Validation
   const validationResult = useMemo(() => {
@@ -395,6 +403,7 @@ function VariableForm({
       form.equip,
       isSys ? '' : form.num,
       form.med,
+      form.medNum,
       form.qty,
       form.mod,
       existingNames,
@@ -410,7 +419,7 @@ function VariableForm({
   const description = useMemo(() => {
     if (!form.equip || !form.qty) return '';
     return generateDescription(
-      form.equip, isSys ? '' : form.num, form.med, form.qty, form.mod,
+      form.equip, isSys ? '' : form.num, form.med, form.medNum, form.qty, form.mod,
       equipList, medList, qtyList, modList
     );
   }, [form, isSys, equipList, medList, qtyList, modList]);
@@ -431,6 +440,7 @@ function VariableForm({
       equip: form.equip,
       num: isSys ? '' : form.num,
       med: form.med,
+      medNum: form.medNum,
       qty: form.qty,
       mod: form.mod,
       name: validationResult.name,
@@ -475,9 +485,9 @@ function VariableForm({
         <div className="text-right">
           <span
             className="text-sm font-mono font-bold"
-            style={{ color: nameLen === 12 ? '#EF9F27' : nameLen > 12 ? '#E24B4A' : '#888780' }}
+            style={{ color: nameLen === 20 ? '#EF9F27' : nameLen > 20 ? '#E24B4A' : '#888780' }}
           >
-            {nameLen}/12
+            {nameLen}/20
           </span>
           {description && (
             <p className="text-xs mt-1" style={{ color: '#D3D1C7', maxWidth: '240px' }}>{description}</p>
@@ -536,7 +546,7 @@ function VariableForm({
             className="border rounded px-2 py-1.5 text-sm font-mono"
             style={{ borderColor: '#D3D1C7', minWidth: '140px' }}
             value={form.med}
-            onChange={e => setForm(f => ({ ...f, med: e.target.value, qty: '', mod: '' }))}
+            onChange={e => handleMedChange(e.target.value)}
           >
             <option value="">— none —</option>
             {filteredMeds.map(m => (
@@ -544,6 +554,24 @@ function VariableForm({
             ))}
           </select>
         </div>
+
+        {/* MEDNUM — only when MED is selected and that MED takes a number */}
+        {form.med && medList.find(m => m.code === form.med)?.takesNum === true && (
+          <div>
+            <label className="text-xs font-medium block mb-1" style={{ color: '#888780' }}>No.</label>
+            <input
+              className="border rounded px-2 py-1.5 text-sm font-mono"
+              style={{ borderColor: '#D3D1C7', width: '48px', fontFamily: 'JetBrains Mono, monospace' }}
+              maxLength={1}
+              value={form.medNum}
+              onChange={e => {
+                const v = e.target.value;
+                if (v === '' || /^[1-9]$/.test(v)) setForm(f => ({ ...f, medNum: v }));
+              }}
+              placeholder="—"
+            />
+          </div>
+        )}
 
         {/* QTY */}
         <div>
@@ -914,7 +942,7 @@ function ApplyAssemblyModal({
     for (let n = 1; n <= 99; n++) {
       const candidate = String(n);
       const hasConflict = assembly.points.some(pt => {
-        const name = assembly.equipCode + candidate + pt.med + pt.qty + pt.mod;
+        const name = buildName(assembly.equipCode, candidate, pt.med, pt.medNum ?? '', pt.qty, pt.mod);
         return existingNames.includes(name);
       });
       if (!hasConflict) return candidate;
@@ -944,17 +972,18 @@ function ApplyAssemblyModal({
     const runningNames = [...existingNames];
 
     for (const pt of selectedAssembly.points) {
+      const ptMedNum = pt.medNum ?? '';
       const result = validateVariable(
-        equip, effectiveNum, pt.med, pt.qty, pt.mod,
+        equip, effectiveNum, pt.med, ptMedNum, pt.qty, pt.mod,
         runningNames, semanticConfig, allEquip, medList, qtyList, modList
       );
-      const varName = equip + effectiveNum + pt.med + pt.qty + pt.mod;
+      const varName = buildName(equip, effectiveNum, pt.med, ptMedNum, pt.qty, pt.mod);
       if (result.valid) {
-        const desc = generateDescription(equip, effectiveNum, pt.med, pt.qty, pt.mod,
+        const desc = generateDescription(equip, effectiveNum, pt.med, ptMedNum, pt.qty, pt.mod,
           allEquip, medList, qtyList, modList);
         const v: ControllerVariable = {
           id: uuidv4(),
-          equip, num: effectiveNum, med: pt.med, qty: pt.qty, mod: pt.mod,
+          equip, num: effectiveNum, med: pt.med, medNum: ptMedNum, qty: pt.qty, mod: pt.mod,
           name: varName, description: desc,
           ioOverride: pt.ioOverride ?? null,
         };
